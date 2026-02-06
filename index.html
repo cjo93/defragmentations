@@ -1,0 +1,73 @@
+
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>DEFRAG | The Missing Manual</title>
+    
+    <!-- iOS Home Screen / PWA Meta Tags -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="DEFRAG">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#000000">
+    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/5968/5968263.png">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --safe-area-inset-top: env(safe-area-inset-top);
+            --safe-area-inset-bottom: env(safe-area-inset-bottom);
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #000000;
+            color: #ededed;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+            overflow-x: hidden;
+            overscroll-behavior-y: none;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        .mono { font-family: 'JetBrains Mono', monospace; }
+        
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #262626; border-radius: 10px; }
+        
+        .safe-bottom { padding-bottom: calc(1.5rem + var(--safe-area-inset-bottom)); }
+        .safe-top { padding-top: calc(1rem + var(--safe-area-inset-top)); }
+
+        .ios-glass {
+          background: rgba(10, 10, 10, 0.7);
+          -webkit-backdrop-filter: blur(30px) saturate(180%);
+          backdrop-filter: blur(30px) saturate(180%);
+        }
+
+        .no-flicker { -webkit-transform: translate3d(0,0,0); }
+        
+        /* High-Impact Typography Utilities */
+        .text-huge { font-size: clamp(4rem, 15vw, 14rem); line-height: 0.75; }
+        .tracking-kernel { tracking: 0.5em; text-transform: uppercase; font-weight: 900; }
+        
+        /* Tactical Card Shadows */
+        .card-shadow { box-shadow: 0 40px 100px -20px rgba(0,0,0,0.8), 0 0 0 1px rgba(255,255,255,0.05); }
+    </style>
+<script type="importmap">
+{
+  "imports": {
+    "react/": "https://esm.sh/react@^19.2.4/",
+    "react": "https://esm.sh/react@^19.2.4",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.4/",
+    "@google/genai": "https://esm.sh/@google/genai@^1.40.0"
+  }
+}
+</script>
+</head>
+<body class="overflow-x-hidden">
+    <div id="root" class="h-full w-full"></div>
+</body>
+</html>
