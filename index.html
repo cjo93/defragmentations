@@ -3,7 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>DEFRAG | Utility</title>
+    <title>DEFRAG // Human Architecture</title>
+    <meta name="description" content="The hardware store for the human psyche. Map your personality architecture with relational physics, alchemical inversion, and structural realism. Stop fixing. Start mapping.">
+    
+    <!-- Open Graph / Social -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="DEFRAG // Human Architecture">
+    <meta property="og:description" content="Clear the noise. Find the signal. Map the architecture of your personality — how you are built to think, feel, and connect.">
+    <meta property="og:url" content="https://defrag.app">
+    <meta property="og:image" content="https://defrag.app/og-image.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="DEFRAG // Human Architecture">
+    <meta name="twitter:description" content="Clear the noise. Find the signal. Debug your life with structural realism.">
     
     <!-- iOS Home Screen / PWA Meta Tags -->
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -11,18 +22,19 @@
     <meta name="apple-mobile-web-app-title" content="DEFRAG">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="theme-color" content="#050505">
-    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/5968/5968263.png">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%23050505' width='100' height='100' rx='20'/><polygon points='50,15 80,45 50,85 20,45' fill='none' stroke='%23E2E2E8' stroke-width='3'/><polygon points='50,25 70,45 50,75 30,45' fill='%23E2E2E8' opacity='0.12'/><circle cx='50' cy='48' r='4' fill='%23E2E2E8'/></svg>">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%23050505' width='100' height='100' rx='20'/><polygon points='50,15 80,45 50,85 20,45' fill='none' stroke='%23E2E2E8' stroke-width='3'/><polygon points='50,25 70,45 50,75 30,45' fill='%23E2E2E8' opacity='0.12'/><circle cx='50' cy='48' r='4' fill='%23E2E2E8'/></svg>">
     
     <!-- CRITICAL: Polyfill for process.env to prevent crash in services -->
     <script>
-      window.process = {
-        env: {
-          NODE_ENV: 'development',
-          API_KEY: '', // API Key handled via UI prompts or injection
-          VITE_STRIPE_PUBLIC_KEY: ''
-        }
-      };
-    </script>
+  // POLYFILL: Fixes "process is not defined" error in AI service modules
+  window.process = {
+    env: {
+      NODE_ENV: 'development',
+      HF_TOKEN: '' // Optional: Set VITE_HF_TOKEN for higher rate limits
+    }
+  };
+</script>
     
     <!-- Styles: Tailwind & Fonts -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -34,13 +46,13 @@
               'studio-bg': '#050505',
               'studio-panel': '#1E1F20',
               'studio-border': '#444746',
-              'studio-primary': '#F59E0B',
+              'studio-primary': '#E2E2E8',
               'studio-text': '#E3E3E3',
               'studio-text-dim': '#94A3B8',
               'soul': {
-                DEFAULT: '#F59E0B', // Amber 500
-                glow: '#D97706',    // Amber 600
-                dim: '#78350F',     // Amber 900
+                DEFAULT: '#E2E2E8', // Platinum 400
+                glow: '#C8C8D0',    // Platinum 500
+                dim: '#1A1A2E',     // Deep Steel
               }
             },
             fontFamily: {
@@ -103,19 +115,19 @@
         /* --- DEFRAG GOLDEN STUDIO THEME --- */
         @layer components {
           .studio-panel {
-            @apply bg-[#0A0A0A]/40 backdrop-blur-xl border border-[#F59E0B]/10 rounded-2xl relative overflow-hidden transition-all duration-500;
+            @apply bg-[#0A0A0A]/40 backdrop-blur-xl border border-[#E2E2E8]/10 rounded-2xl relative overflow-hidden transition-all duration-500;
             box-shadow: 0 4px 24px -1px rgba(0, 0, 0, 0.5);
           }
           .studio-panel:hover {
-            @apply bg-[#0A0A0A]/60 border-[#F59E0B]/50;
-            box-shadow: 0 0 40px -5px rgba(245, 158, 11, 0.15);
+            @apply bg-[#0A0A0A]/60 border-[#E2E2E8]/50;
+            box-shadow: 0 0 40px -5px rgba(226, 226, 232, 0.15);
             transform: translateY(-4px) scale(1.01);
           }
           .studio-input {
-            @apply bg-[#0A0A0A]/50 backdrop-blur-md border border-[#444746] text-[#E3E3E3] rounded-lg px-4 py-3 font-mono text-sm focus:border-[#F59E0B] focus:bg-[#0A0A0A]/80 focus:outline-none transition-all;
+            @apply bg-[#0A0A0A]/50 backdrop-blur-md border border-[#444746] text-[#E3E3E3] rounded-lg px-4 py-3 font-mono text-sm focus:border-[#E2E2E8] focus:bg-[#0A0A0A]/80 focus:outline-none transition-all;
           }
           .studio-btn-primary {
-            @apply bg-[#F59E0B] text-black hover:bg-[#D97706] font-medium px-6 py-2.5 rounded-full text-sm transition-colors flex items-center justify-center gap-2;
+            @apply bg-[#E2E2E8] text-black hover:bg-[#C8C8D0] font-medium px-6 py-2.5 rounded-full text-sm transition-colors flex items-center justify-center gap-2;
           }
         }
         
@@ -123,6 +135,42 @@
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         .animate-pulse-slow { animation: pulse 8s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+
+        /* Premium micro-interactions */
+        @keyframes shimmer {
+          0% { background-position: -400px 0; }
+          100% { background-position: 400px 0; }
+        }
+        .animate-shimmer {
+          background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.04) 50%, transparent 100%);
+          background-size: 400px 100%;
+          animation: shimmer 2.5s ease-in-out infinite;
+        }
+        @keyframes breathe {
+          0%, 100% { opacity: 0.5; transform: scale(1); }
+          50% { opacity: 1; transform: scale(1.3); }
+        }
+        .animate-breathe {
+          animation: breathe 3s ease-in-out infinite;
+        }
+        @keyframes glow-ring {
+          0%, 100% { box-shadow: 0 0 0 0 rgba(226,226,232,0); }
+          50% { box-shadow: 0 0 20px -4px rgba(226,226,232,0.15); }
+        }
+        .animate-glow-ring {
+          animation: glow-ring 4s ease-in-out infinite;
+        }
+        /* Focus glow on inputs */
+        input:focus, textarea:focus {
+          box-shadow: 0 0 0 1px rgba(226,226,232,0.15), 0 0 20px -6px rgba(226,226,232,0.1) !important;
+        }
+        /* Button press feedback */
+        button:active:not(:disabled) {
+          transform: scale(0.97);
+          transition: transform 0.1s ease;
+        }
+        /* Smooth scrollbar track */
+        * { scroll-behavior: smooth; }
     </style>
 <script type="importmap">
 {
@@ -131,11 +179,11 @@
     "react-dom/": "https://esm.sh/react-dom@^19.2.4/",
     "react/": "https://esm.sh/react@^19.2.4/",
     "react-router-dom": "https://esm.sh/react-router-dom@^7.13.0",
-    "@google/genai": "https://esm.sh/@google/genai@^1.40.0",
     "fs": "https://esm.sh/fs@^0.0.1-security",
     "path": "https://esm.sh/path@^0.12.7",
     "lucide-react": "https://esm.sh/lucide-react@^0.563.0",
-    "@stripe/stripe-js": "https://esm.sh/@stripe/stripe-js@^8.7.0"
+    "@stripe/stripe-js": "https://esm.sh/@stripe/stripe-js@^8.7.0",
+    "framer-motion": "https://esm.sh/framer-motion@^11.0.0"
   }
 }
 </script>

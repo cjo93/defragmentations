@@ -20,13 +20,13 @@ const ConnectionLine = ({ type, x1, y1, x2, y2 }: any) => {
   }
   
   if (type === 'FUSION') {
-    // AMBER TRIPLE LINE (Enmeshment)
+    // PLATINUM TRIPLE LINE (Enmeshment)
     return (
       <g>
-        <line x1={x1} y1={y1} x2={x2} y2={y2} stroke="#F59E0B" strokeWidth="6" opacity="0.15" />
-        <line x1={x1} y1={y1} x2={x2} y2={y2} stroke="#F59E0B" strokeWidth="2" />
-        <line x1={x1} y1={y1} x2={x2} y2={y2} stroke="#F59E0B" strokeWidth="0.5" transform="translate(0, -4)" />
-        <line x1={x1} y1={y1} x2={x2} y2={y2} stroke="#F59E0B" strokeWidth="0.5" transform="translate(0, 4)" />
+        <line x1={x1} y1={y1} x2={x2} y2={y2} stroke="#E2E2E8" strokeWidth="6" opacity="0.15" />
+        <line x1={x1} y1={y1} x2={x2} y2={y2} stroke="#E2E2E8" strokeWidth="2" />
+        <line x1={x1} y1={y1} x2={x2} y2={y2} stroke="#E2E2E8" strokeWidth="0.5" transform="translate(0, -4)" />
+        <line x1={x1} y1={y1} x2={x2} y2={y2} stroke="#E2E2E8" strokeWidth="0.5" transform="translate(0, 4)" />
       </g>
     );
   }
@@ -42,11 +42,11 @@ const ConnectionLine = ({ type, x1, y1, x2, y2 }: any) => {
 
 const Node = ({ x, y, label, isSelf }: any) => (
   <g transform={`translate(${x},${y})`}>
-    <circle r={isSelf ? 25 : 18} fill="#020617" stroke={isSelf ? "#F59E0B" : "#475569"} strokeWidth="2" />
+    <circle r={isSelf ? 25 : 18} fill="#020617" stroke={isSelf ? "#E2E2E8" : "#475569"} strokeWidth="2" />
     <text y={isSelf ? 40 : 32} textAnchor="middle" fill="#94A3B8" fontSize="10" className="uppercase tracking-widest font-mono">
       {label}
     </text>
-    {isSelf && <circle r="4" fill="#F59E0B" className="animate-ping" opacity="0.5" />}
+    {isSelf && <circle r="4" fill="#E2E2E8" className="animate-ping" opacity="0.5" />}
   </g>
 );
 

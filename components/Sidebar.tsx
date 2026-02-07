@@ -1,5 +1,6 @@
 
 import React from 'react';
+import { motion } from 'framer-motion';
 import { View, UserProfile } from '../types';
 
 interface SidebarProps {
@@ -9,50 +10,80 @@ interface SidebarProps {
   onLogout: () => void;
 }
 
-export const Sidebar: React.FC<SidebarProps> = ({ currentView, onNavigate, user, onLogout }) => {
-  const navItems = [
-    { id: View.DASHBOARD, label: 'Hub', icon: 'M4 6h16M4 12h16' },
-    { id: View.MANUAL, label: 'Blueprint', icon: 'M9.663 17h4.673M12 3v1' },
-    { id: View.ORBIT, label: 'Dynamics', icon: 'M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z' },
-    { id: View.LIVE_VOICE, label: 'Insights', icon: 'M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4' },
-    { id: View.INTELLIGENCE, label: 'Research', icon: 'M21 21l-6-6' },
-    { id: View.IMAGE_STUDIO, label: 'Visuals', icon: 'M4 16l4.586-4.586a2 2 0 012.828 0L16 16' },
-    { id: View.SAFE_PLACE, label: 'Rest', icon: 'M4.318 6.318a4.5 4.5 0 000 6.364' },
-  ];
+const NAV_ITEMS: { id: View; label: string; icon: string }[] = [
+  { id: View.DASHBOARD, label: 'The Lab', icon: 'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-4 0h4' },
+  { id: View.MANUAL, label: 'Blueprint', icon: 'M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z' },
+  { id: View.ORBIT, label: 'Orbit', icon: 'M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z' },
+  { id: View.INTELLIGENCE, label: 'Research', icon: 'M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z' },
+  { id: View.CHATBOT, label: 'The Forge', icon: 'M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z' },
+  { id: View.LIVE_VOICE, label: 'Live', icon: 'M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m-4-8a3 3 0 016 0v1' },
+  { id: View.SIGNAL, label: 'Signal', icon: 'M13 10V3L4 14h7v7l9-11h-7z' },
+  { id: View.ECHO, label: 'The Archive', icon: 'M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15' },
+  { id: View.SAFE_PLACE, label: 'Rest', icon: 'M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z' },
+];
 
+const NavItem: React.FC<{ item: typeof NAV_ITEMS[0]; active: boolean; onClick: (view: View) => void; index: number }> = ({ item, active, onClick, index }) => (
+  <motion.button
+    initial={{ opacity: 0, x: -12 }}
+    animate={{ opacity: 1, x: 0 }}
+    transition={{ delay: 0.05 * index + 0.2, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+    onClick={() => onClick(item.id)}
+    className="group relative flex items-center justify-center w-12 h-12 md:w-full md:h-auto md:justify-start md:px-5 md:py-3.5 mb-1 rounded-xl transition-all"
+    whileHover={{ x: 2 }}
+    whileTap={{ scale: 0.97 }}
+  >
+    {active && (
+      <motion.div
+        layoutId="activeTab"
+        className="absolute inset-0 bg-white/[0.06] rounded-xl border border-white/[0.06] shadow-[0_0_20px_-4px_rgba(226,226,232,0.1)]"
+        transition={{ type: "spring", stiffness: 300, damping: 30 }}
+      />
+    )}
+
+    <svg
+      className={`w-[18px] h-[18px] relative z-10 transition-colors duration-300 shrink-0 ${active ? 'text-[#E2E2E8]' : 'text-white/30 group-hover:text-white/70'}`}
+      fill="none" stroke="currentColor" viewBox="0 0 24 24"
+    >
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d={item.icon} />
+    </svg>
+
+    <span className={`hidden md:block ml-3 text-[13px] font-medium relative z-10 transition-colors duration-300 ${active ? 'text-white' : 'text-white/30 group-hover:text-white/70'}`}>
+      {item.label}
+    </span>
+
+    <div className="absolute inset-0 rounded-xl bg-white/[0.03] opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+  </motion.button>
+);
+
+export const Sidebar: React.FC<SidebarProps> = ({ currentView, onNavigate, onLogout }) => {
   return (
-    <aside className="w-20 md:w-64 border-r border-[#444746] flex flex-col bg-[#0A0A0A] z-50 transition-all">
-      <div className="p-6 md:p-10 text-center md:text-left">
-        <h1 className="text-lg font-bold tracking-tight text-white hidden md:block">DEFRAG</h1>
-        <div className="w-1.5 h-1.5 rounded-full bg-soul-DEFAULT mx-auto md:mx-0 md:mt-1 opacity-80 shadow-[0_0_10px_rgba(245,158,11,0.5)]" />
+    <aside className="w-20 md:w-60 h-full flex flex-col items-center md:items-stretch py-6 px-2 md:px-3 border-r border-white/[0.04] bg-[#050505]/60 backdrop-blur-2xl transition-all">
+
+      {/* Brand Mark */}
+      <div className="mb-8 px-2 flex justify-center md:justify-start md:px-5">
+        <div className="flex items-center gap-3">
+          <div className="w-2 h-2 rounded-full bg-[#E2E2E8] shadow-[0_0_12px_rgba(226,226,232,0.5)] animate-breathe" />
+          <span className="hidden md:block text-sm font-semibold tracking-tight text-white">DEFRAG</span>
+        </div>
       </div>
-      
-      <nav className="flex-1 px-2 md:px-4 space-y-1">
-        {navItems.map((item) => (
-          <button
-            key={item.id}
-            onClick={() => onNavigate(item.id)}
-            className={`w-full flex flex-col md:flex-row items-center gap-2 md:gap-4 px-3 md:px-6 py-4 rounded-lg text-[10px] md:text-xs font-medium transition-all ${
-              currentView === item.id
-                ? 'bg-[#1E1F20] text-[#E3E3E3] border border-white/5'
-                : 'text-[#767779] hover:text-[#E3E3E3]'
-            }`}
-          >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={item.icon} />
-            </svg>
-            <span className="hidden md:inline">{item.label}</span>
-          </button>
+
+      {/* Navigation */}
+      <nav className="flex-1 w-full space-y-0.5">
+        {NAV_ITEMS.map((item, i) => (
+          <NavItem key={item.id} item={item} active={currentView === item.id} onClick={onNavigate} index={i} />
         ))}
       </nav>
 
-      <div className="p-4 md:p-8 border-t border-[#444746]">
-        <button 
+      {/* Exit */}
+      <div className="mt-auto pt-4 border-t border-white/[0.04] w-full px-1">
+        <button
           onClick={onLogout}
-          className="w-full flex items-center justify-center md:justify-start gap-4 p-3 md:p-4 text-[#767779] hover:text-[#E3E3E3] transition-colors"
+          className="group w-full flex items-center justify-center md:justify-start md:px-5 py-3 rounded-xl text-white/20 hover:text-white/50 transition-colors"
         >
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4 4H3" /></svg>
-          <span className="hidden md:inline text-xs font-medium">Exit</span>
+          <svg className="w-[18px] h-[18px] transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+          </svg>
+          <span className="hidden md:block ml-3 text-[13px] font-medium">Exit</span>
         </button>
       </div>
     </aside>

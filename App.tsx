@@ -4,6 +4,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { DEFRAG_MANIFEST } from './constants/manifest';
 import { LivingBackground } from './components/visuals/LivingBackground';
 import { MainLayout } from './components/layout/MainLayout';
+import { ToastProvider } from './components/visuals/Toast';
 
 // Import Feature Components
 import { Dashboard } from './components/Dashboard';
@@ -17,16 +18,23 @@ import { Transcriber } from './components/Transcriber';
 import { SpeechLab } from './components/SpeechLab';
 import { IntelligenceHub } from './components/IntelligenceHub';
 import { SafePlace } from './components/SafePlace';
+import { Signal } from './components/Signal';
+import { Echo } from './components/Echo';
 import { Login } from './components/auth/Login';
 import { Onboarding } from './components/auth/Onboarding';
 import { LandingPage } from './pages/LandingPage';
+import { AboutPage } from './pages/AboutPage';
+import { ManifestoPage } from './pages/ManifestoPage';
 
 const App = () => {
   return (
-    <BrowserRouter>
-      <Routes>
+    <ToastProvider>
+      <BrowserRouter>
+        <Routes>
         {/* PUBLIC ROUTES */}
         <Route path="/" element={<LandingPage />} />
+        <Route path="/about" element={<AboutPage />} />
+        <Route path="/manifesto" element={<ManifestoPage />} />
         <Route path="/login" element={<Login />} />
         <Route path="/onboarding" element={<Onboarding />} />
 
@@ -43,11 +51,14 @@ const App = () => {
           <Route path="/speech" element={<SpeechLab />} />
           <Route path="/intelligence" element={<IntelligenceHub />} />
           <Route path="/safe-place" element={<SafePlace />} />
+          <Route path="/signal" element={<Signal />} />
+          <Route path="/echo" element={<Echo />} />
         </Route>
 
         <Route path="*" element={<Navigate to="/" />} />
-      </Routes>
-    </BrowserRouter>
+        </Routes>
+      </BrowserRouter>
+    </ToastProvider>
   );
 };
 

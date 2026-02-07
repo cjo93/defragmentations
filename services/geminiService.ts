@@ -1,9 +1,61 @@
+/**
+ * DEFRAG — AI Service Layer
+ * 
+ * Powered by Hugging Face Inference API (free tier).
+ * No personal API key required. Optionally set VITE_HF_TOKEN for higher rate limits.
+ * 
+ * Model Registry (swap freely):
+ *  - Chat:  Mixtral-8x7B-Instruct (agentic, empathetic, strong instruction-following)
+ *  - TTS:   Facebook MMS-TTS (fast, high-quality English speech)
+ *  - STT:   OpenAI Whisper (industry-standard transcription)
+ *  - Image: FLUX.1-schnell (high-fidelity generation)
+ */
 
-import { GoogleGenAI, Type, Modality } from "@google/genai";
 import { DEFRAG_MANIFEST } from '../constants/manifest';
 import { processBirthData, calculateFriction } from './engine';
 import { calculateSEDA } from './sedaCalculator';
 import { getFrequency } from './frequencies';
+
+// ── HF Inference API ────────────────────────────────────────
+const HF_API = 'https://api-inference.huggingface.co';
+
+const MODELS = {
+  CHAT:  'mistralai/Mixtral-8x7B-Instruct-v0.1',
+  TTS:   'facebook/mms-tts-eng',
+  STT:   'openai/whisper-large-v3-turbo',
+  IMAGE: 'black-forest-labs/FLUX.1-schnell',
+};
+
+const getToken = (): string => (typeof process !== 'undefined' && process.env?.HF_TOKEN) || '';
+
+function hfHeaders(contentType?: string): Record<string, string> {
+  const headers: Record<string, string> = {};
+  if (contentType) headers['Content-Type'] = contentType;
+  const token = getToken();
+  if (token) headers['Authorization'] = `Bearer ${token}`;
+  return headers;
+}
+
+/** Retry-aware fetch for HF Inference (handles cold-start 503s) */
+async function hfFetch(url: string, options: RequestInit, retries = 3): Promise<Response> {
+  for (let attempt = 0; attempt < retries; attempt++) {
+    const res = await fetch(url, options);
+    if (res.status === 503) {
+      // Model is loading — wait and retry
+      let waitMs = 20000;
+      try {
+        const body = await res.json();
+        waitMs = Math.min((body.estimated_time || 20) * 1000, 60000);
+      } catch {}
+      await new Promise(r => setTimeout(r, waitMs));
+      continue;
+    }
+    return res;
+  }
+  throw new Error('Model failed to load after retries. Try again in a moment.');
+}
+
+// ── Audio Helpers (unchanged) ───────────────────────────────
 
 export function encode(bytes: Uint8Array): string {
   let binary = '';
@@ -33,7 +85,6 @@ export async function decodeAudioData(
   const dataInt16 = new Int16Array(data.buffer);
   const frameCount = dataInt16.length / numChannels;
   const buffer = ctx.createBuffer(numChannels, frameCount, sampleRate);
-
   for (let channel = 0; channel < numChannels; channel++) {
     const channelData = buffer.getChannelData(channel);
     for (let i = 0; i < frameCount; i++) {
@@ -43,13 +94,51 @@ export async function decodeAudioData(
   return buffer;
 }
 
-export const getGeminiInstance = () => {
-  return new GoogleGenAI({ apiKey: process.env.API_KEY || '' });
-};
+// ── Chat Completion ─────────────────────────────────────────
 
-// THE DEFRAG PERSONA: Wise Guide (Plain English)
-export const getSystemInstruction = (user: string) => {
-  return `${DEFRAG_MANIFEST.SYSTEM_PROMPTS.CORE_IDENTITY}
+export async function chatWithModel(options: {
+  systemPrompt: string;
+  userMessage: string;
+  maxTokens?: number;
+  temperature?: number;
+}): Promise<string> {
+  const { systemPrompt, userMessage, maxTokens = 2048, temperature = 0.7 } = options;
+
+  const res = await hfFetch(
+    `${HF_API}/models/${MODELS.CHAT}/v1/chat/completions`,
+    {
+      method: 'POST',
+      headers: hfHeaders('application/json'),
+      body: JSON.stringify({
+        model: MODELS.CHAT,
+        messages: [
+          { role: 'system', content: systemPrompt },
+          { role: 'user', content: userMessage },
+        ],
+        max_tokens: maxTokens,
+        temperature,
+      }),
+    }
+  );
+
+  if (!res.ok) {
+    const errBody = await res.text();
+    throw new Error(`AI service error (${res.status}): ${errBody}`);
+  }
+
+  const data = await res.json();
+  return data.choices?.[0]?.message?.content || '';
+}
+
+// ── System Instruction (unchanged) ──────────────────────────
+
+export const getSystemInstruction = (user: string, persona?: 'CHARON' | 'PUCK') => {
+  // Base identity — either persona or default Architect
+  const identity = persona && DEFRAG_MANIFEST.VOICE_PERSONAS?.[persona]
+    ? DEFRAG_MANIFEST.VOICE_PERSONAS[persona].SYSTEM_PROMPT
+    : DEFRAG_MANIFEST.SYSTEM_PROMPTS.CORE_IDENTITY;
+
+  return `${identity}
 
 [GLOBAL SAFETY GUIDELINES]
 ${DEFRAG_MANIFEST.SAFETY_PROTOCOL.UNIVERSAL_TONE}
@@ -72,14 +161,15 @@ ${JSON.stringify(DEFRAG_MANIFEST.PSYCH_TRANSLATION_LAYER.CONCEPTS, null, 2)}
 4. GUIDE: Offer a simple, practical way to find flow again.`;
 };
 
+// ── Shadow Scanning (unchanged) ─────────────────────────────
+
 export const scanForShadows = (text: string, gates: number[]) => {
   const matches: { gate: number; shadow: string; gift: string }[] = [];
   const lowerText = text.toLowerCase();
-  
   gates.forEach(gate => {
     const f = getFrequency(gate);
     if (f.shadow !== "Unknown") {
-      if (lowerText.includes(f.shadow.toLowerCase()) || 
+      if (lowerText.includes(f.shadow.toLowerCase()) ||
           lowerText.includes(f.victimState.toLowerCase())) {
         matches.push({ gate, shadow: f.shadow, gift: f.gift });
       }
@@ -88,118 +178,121 @@ export const scanForShadows = (text: string, gates: number[]) => {
   return matches;
 };
 
-export const generateImage = async (prompt: string, aspectRatio: string = "1:1") => {
-  const ai = getGeminiInstance();
-  const response = await ai.models.generateContent({
-    model: 'gemini-3-pro-image-preview',
-    contents: { parts: [{ text: prompt }] },
-    config: {
-      imageConfig: { aspectRatio: aspectRatio as any, imageSize: "1K" }
-    }
-  });
+// ── Image Generation (HF FLUX.1-schnell) ────────────────────
 
-  for (const part of response.candidates?.[0]?.content?.parts || []) {
-    if (part.inlineData) {
-      return `data:image/png;base64,${part.inlineData.data}`;
-    }
-  }
-  return null;
-};
-
-export const editImage = async (base64Image: string, prompt: string) => {
-  const ai = getGeminiInstance();
-  const data = base64Image.includes(',') ? base64Image.split(',')[1] : base64Image;
-  const response = await ai.models.generateContent({
-    model: 'gemini-3-pro-image-preview',
-    contents: {
-      parts: [
-        {
-          inlineData: {
-            data: data,
-            mimeType: 'image/png',
-          },
-        },
-        {
-          text: prompt,
-        },
-      ],
-    },
-    config: {
-      imageConfig: {
-        aspectRatio: "1:1",
-        imageSize: "1K"
-      }
-    }
-  });
-
-  for (const part of response.candidates?.[0]?.content?.parts || []) {
-    if (part.inlineData) {
-      return `data:image/png;base64,${part.inlineData.data}`;
-    }
-  }
-  return null;
-};
-
-export const generateSpeech = async (text: string, voice: string = 'Kore') => {
-  const ai = getGeminiInstance();
-  const response = await ai.models.generateContent({
-    model: "gemini-2.5-flash-preview-tts",
-    contents: [{ parts: [{ text }] }],
-    config: {
-      responseModalities: [Modality.AUDIO],
-      speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: voice } } },
-    },
-  });
-  return response.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data;
-};
-
-export const transcribeAudio = async (base64Audio: string) => {
-  const ai = getGeminiInstance();
-  const response = await ai.models.generateContent({
-    model: 'gemini-3-flash-preview',
-    contents: [
+export const generateImage = async (prompt: string, aspectRatio: string = "1:1"): Promise<string | null> => {
+  try {
+    const res = await hfFetch(
+      `${HF_API}/models/${MODELS.IMAGE}`,
       {
-        parts: [
-          { inlineData: { data: base64Audio, mimeType: 'audio/wav' } },
-          { text: "Transcribe this audio exactly. Return only the text." }
-        ]
+        method: 'POST',
+        headers: hfHeaders('application/json'),
+        body: JSON.stringify({ inputs: prompt }),
       }
-    ]
-  });
-  return response.text;
-};
-
-export const generateVideoFromImage = async (prompt: string, base64Image: string, aspectRatio: "16:9" | "9:16") => {
-  const ai = getGeminiInstance();
-  let operation = await ai.models.generateVideos({
-    model: 'veo-3.1-fast-generate-preview',
-    prompt,
-    image: { imageBytes: base64Image.split(',')[1] || base64Image, mimeType: 'image/png' },
-    config: { numberOfVideos: 1, resolution: '720p', aspectRatio }
-  });
-
-  while (!operation.done) {
-    await new Promise(resolve => setTimeout(resolve, 10000));
-    operation = await ai.operations.getVideosOperation({ operation: operation });
+    );
+    if (!res.ok) return null;
+    const blob = await res.blob();
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result as string);
+      reader.readAsDataURL(blob);
+    });
+  } catch (err) {
+    console.error('[DEFRAG IMAGE]', err);
+    return null;
   }
-
-  const downloadLink = operation.response?.generatedVideos?.[0]?.video?.uri;
-  if (!downloadLink) return null;
-  const res = await fetch(`${downloadLink}&key=${process.env.API_KEY}`);
-  return URL.createObjectURL(await res.blob());
 };
 
-// --- DEFRAG ENGINE INTEGRATION ---
+export const editImage = async (_base64Image: string, prompt: string): Promise<string | null> => {
+  // HF free tier: re-generate from prompt (no free image-edit model available)
+  return generateImage(prompt);
+};
+
+// ── Text-to-Speech (HF MMS-TTS) ────────────────────────────
+
+export const generateSpeech = async (text: string, _voice?: string): Promise<Blob | null> => {
+  try {
+    const res = await hfFetch(
+      `${HF_API}/models/${MODELS.TTS}`,
+      {
+        method: 'POST',
+        headers: hfHeaders('application/json'),
+        body: JSON.stringify({ inputs: text }),
+      }
+    );
+    if (!res.ok) return null;
+    return res.blob();
+  } catch (err) {
+    console.error('[DEFRAG TTS]', err);
+    return null;
+  }
+};
+
+// ── Speech-to-Text (HF Whisper) ─────────────────────────────
+
+export const transcribeAudio = async (base64Audio: string): Promise<string> => {
+  try {
+    // Convert base64 → Blob
+    const binary = atob(base64Audio);
+    const bytes = new Uint8Array(binary.length);
+    for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+    const blob = new Blob([bytes], { type: 'audio/wav' });
+
+    const res = await hfFetch(
+      `${HF_API}/models/${MODELS.STT}`,
+      {
+        method: 'POST',
+        headers: hfHeaders(),
+        body: blob,
+      }
+    );
+    if (!res.ok) return '';
+    const data = await res.json();
+    return data.text || '';
+  } catch (err) {
+    console.error('[DEFRAG STT]', err);
+    return '';
+  }
+};
+
+/** Transcribe from a raw Blob (used by LiveVoice) */
+export const transcribeAudioBlob = async (audioBlob: Blob): Promise<string> => {
+  try {
+    const res = await hfFetch(
+      `${HF_API}/models/${MODELS.STT}`,
+      {
+        method: 'POST',
+        headers: { ...hfHeaders(), },
+        body: audioBlob,
+      }
+    );
+    if (!res.ok) return '';
+    const data = await res.json();
+    return data.text || '';
+  } catch (err) {
+    console.error('[DEFRAG STT]', err);
+    return '';
+  }
+};
+
+// ── Video Generation (not available on free tier) ───────────
+
+export const generateVideoFromImage = async (
+  _prompt: string, _base64Image: string, _aspectRatio: "16:9" | "9:16"
+): Promise<string | null> => {
+  console.warn('[DEFRAG VIDEO] Video generation requires a paid API. This feature is coming soon.');
+  return null;
+};
+
+// ── DEFRAG Engine Integration ───────────────────────────────
 
 interface DefragRequest {
   userText: string;
-  userBirthData?: { date: string; time: string }; // User A
-  partnerBirthData?: { date: string; time: string }; // User B (Optional)
+  userBirthData?: { date: string; time: string };
+  partnerBirthData?: { date: string; time: string };
 }
 
 export async function runDefragAnalysis(request: DefragRequest) {
-  const ai = getGeminiInstance();
-
   // 1. HARDWARE LAYER: Calculate Charts
   let systemContext = "";
   let frictionAnalysis = null;
@@ -209,19 +302,18 @@ export async function runDefragAnalysis(request: DefragRequest) {
   if (request.userBirthData) {
     const userChart = processBirthData(request.userBirthData.date, request.userBirthData.time);
     userGates = userChart.personality.gates;
-    
-    systemContext += `\n[USER DESIGN DATA]\ncenters_defined: ${JSON.stringify(userChart.personality.centers)}`;
-    
-    // FRAMEWORK AWARENESS - Scan for Shadows
+    systemContext += `\n[SUBJECT BLUEPRINT]\nCenters Defined: ${JSON.stringify(userChart.personality.centers)}`;
+
+    // FRAMEWORK AWARENESS — Scan for Shadows
     const activeShadows: string[] = [];
-    systemContext += "\n[USER HARDWARE SPECS]:\n";
+    systemContext += "\n[SUBJECT ARCHITECTURE]:\n";
     userGates.forEach(gate => {
-       const f = getFrequency(gate);
-       systemContext += `- Gate ${gate}: Shadow(${f.shadow}) -> Gift(${f.gift})\n`;
+      const f = getFrequency(gate);
+      systemContext += `- Gate ${gate}: Shadow(${f.shadow}) → Gift(${f.gift})\n`;
     });
     const detected = scanForShadows(request.userText, userGates);
     detected.forEach(d => activeShadows.push(`${d.shadow} (Gate ${d.gate})`));
-    
+
     if (activeShadows.length > 0) {
       systemContext += `\n[DETECTED SHADOW ACTIVATION]\nThe user is speaking from these Shadows: ${activeShadows.join(', ')}\n`;
     }
@@ -229,35 +321,36 @@ export async function runDefragAnalysis(request: DefragRequest) {
     if (request.partnerBirthData) {
       const partnerChart = processBirthData(request.partnerBirthData.date, request.partnerBirthData.time);
       partnerGates = partnerChart.personality.gates;
-      // 2. PHYSICS LAYER: Calculate Friction
       frictionAnalysis = calculateFriction(userChart.personality, partnerChart.personality);
-      systemContext += `\n[PARTNER DESIGN DATA]\ncenters_defined: ${JSON.stringify(partnerChart.personality.centers)}`;
-      systemContext += `\n[RELATIONAL PHYSICS]\nScore: ${frictionAnalysis.score}\nConflicts: ${frictionAnalysis.conflicts}\nFlow: ${frictionAnalysis.flow}`;
-      
+      systemContext += `\n[PARTNER BLUEPRINT]\nCenters Defined: ${JSON.stringify(partnerChart.personality.centers)}`;
+      systemContext += `\n[RELATIONAL DYNAMICS]\nAlignment: ${frictionAnalysis.score}\nTension Points: ${frictionAnalysis.conflicts}\nFlow Points: ${frictionAnalysis.flow}`;
       systemContext += `
-      [RELATIONAL DYNAMICS - CROSS-CHECK]
-      User Gates: [${userGates.join(', ')}]
+      [RELATIONAL GEOMETRY]
+      Subject Gates: [${userGates.join(', ')}]
       Partner Gates: [${partnerGates.join(', ')}]
       
-      1. **ELECTROMAGNETIC HOOKS:**
-         If User has Gate X and Partner has Gate Y (and they form a Channel), check if the User's text is about "Attraction" or "Repulsion."
+      1. **ATTRACTION POINTS:**
+         Where their gates form channels with yours, there is a natural pull.
          
-      2. **DOMINANCE (THE TRIGGER):**
-         If Partner has a full Channel that the User has NONE of, this is a conditioning point.
-         *Example:* "Your partner has the Channel of Judgment (18-58). You might feel criticized, but mechanically, they are just trying to correct the pattern, not you."
+      2. **CONDITIONING POINTS:**
+         Where a partner has a defined channel that the subject lacks, this creates an influence zone.
          
-      3. **INVERSION FOR GROUPS:**
-         If the group dynamic is "Critical," guide the user to see it as "Correction" (the Gift of Gate 18).
-         Help the user **depersonalize** the behavior.
+      3. **DEPERSONALIZATION:**
+         Help the subject see friction as structural, not personal. Different designs process differently — neither is wrong.
       `;
     }
   }
 
   // 3. DIAGNOSTIC LAYER: SEDA Assessment & Tone Regulation
   const seda = calculateSEDA(request.userText);
+
+  // ── CIRCUIT BREAKER: If distress exceeds threshold, bypass analysis entirely
+  if (seda.score > 75) {
+    return `Structural load detected. We are pausing analysis.\n\nRight now, the most useful thing is to slow down. Place both feet on the ground. Breathe in for four counts. Hold for four. Exhale for six.\n\nYou are not broken. Your system is carrying more weight than it was designed to hold in this moment.\n\nIf this intensity persists, please reach out to someone who can hold space with you:\n\n• **988 Suicide & Crisis Lifeline** — Call or text 988\n• **Crisis Text Line** — Text HOME to 741741\n• **SAMHSA Helpline** — 1-800-662-4357\n\nWhen you are ready, return here. The architecture will be waiting.`;
+  }
+
   systemContext += `\n[SEDA ASSESSMENT]\nRisk Score: ${seda.score}\nFlags: ${JSON.stringify(seda.flags)}`;
 
-  // Select the Tone based on SEDA
   const currentModeDescription = DEFRAG_MANIFEST.SAFETY_PROTOCOL.MODES[seda.toneDirective as keyof typeof DEFRAG_MANIFEST.SAFETY_PROTOCOL.MODES];
 
   // 4. CONVERSATIONAL ANALYSIS PROMPT
@@ -282,9 +375,9 @@ export async function runDefragAnalysis(request: DefragRequest) {
     [PROTOCOL: ALCHEMICAL INVERSION]
     If a Shadow is present in [DETECTED SHADOW ACTIVATION], do NOT fix it. INVERT it.
     
-    1. **Validate the Shadow:** Acknowledge the heaviness (e.g., "It makes sense you feel [Shadow] right now.")
-    2. **Identify the Mechanic:** Explain *why* this gate produces this shadow (e.g., "Gate 63 is designed to doubt so it can find the truth, but right now it's just spinning.")
-    3. **Pivot to Gift:** Offer a simple micro-action to unlock the Gift frequency. (e.g., "To move from Doubt to Inquiry, ask a question you *can* answer.")
+    1. **Validate the Shadow:** Acknowledge the heaviness.
+    2. **Identify the Mechanic:** Explain *why* this gate produces this shadow.
+    3. **Pivot to Gift:** Offer a simple micro-action to unlock the Gift frequency.
     
     [USER SITUATION]
     User says: "${request.userText}"
@@ -305,10 +398,10 @@ export async function runDefragAnalysis(request: DefragRequest) {
     Make the user feel understood. Give them a simple, practical way to find flow again.
   `;
 
-  const response = await ai.models.generateContent({
-    model: 'gemini-3-pro-preview',
-    contents: safePrompt,
+  return chatWithModel({
+    systemPrompt: safePrompt,
+    userMessage: request.userText,
+    maxTokens: 2048,
+    temperature: 0.7,
   });
-
-  return response.text;
 }

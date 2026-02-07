@@ -9,7 +9,7 @@ interface LayoutProps {
 
 export default function CinemaLayout({ children, showNav = true, intensity = 'low' }: LayoutProps) {
   return (
-    <div className="relative min-h-full font-sans selection:bg-amber-900 selection:text-white">
+    <div className="relative min-h-full font-sans selection:bg-neutral-800 selection:text-white">
       {/* 
          safe-area-inset logic is critical for iOS.
          'pt-[env(safe-area-inset-top)]' and 'pb-[env(safe-area-inset-bottom)]' ensure 

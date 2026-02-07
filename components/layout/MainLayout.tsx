@@ -1,9 +1,10 @@
 
 import React from 'react';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Sidebar } from '../Sidebar';
 import { View } from '../../types';
-import { LivingBackground } from '../visuals/LivingBackground';
+import LivingBackground from '../visuals/LivingBackground';
 
 export const MainLayout = () => {
   const navigate = useNavigate();
@@ -21,6 +22,8 @@ export const MainLayout = () => {
     if (path.includes('speech')) return View.SPEECH_LAB;
     if (path.includes('intelligence')) return View.INTELLIGENCE;
     if (path.includes('safe-place')) return View.SAFE_PLACE;
+    if (path.includes('signal')) return View.SIGNAL;
+    if (path.includes('echo')) return View.ECHO;
     return View.DASHBOARD;
   };
 
@@ -37,27 +40,41 @@ export const MainLayout = () => {
       case View.SPEECH_LAB: navigate('/speech'); break;
       case View.INTELLIGENCE: navigate('/intelligence'); break;
       case View.SAFE_PLACE: navigate('/safe-place'); break;
+      case View.SIGNAL: navigate('/signal'); break;
+      case View.ECHO: navigate('/echo'); break;
       default: navigate('/dashboard'); break;
     }
   };
 
   return (
-    <div className="flex min-h-screen bg-black text-slate-200 font-sans overflow-hidden">
+    <div className="flex h-screen bg-[#050505] text-white overflow-hidden font-sans selection:bg-[#E2E2E8]/20">
+      {/* Persistent Ambient World */}
       <LivingBackground mode="calm" />
-      
-      {/* Sidebar is fixed on left */}
-      <div className="relative z-50 h-full border-r border-white/5 bg-black">
-        <Sidebar 
-          currentView={getCurrentView()} 
-          onNavigate={handleNavigate} 
+
+      {/* Sidebar — fixed left, above background */}
+      <div className="relative z-50 h-full flex-shrink-0">
+        <Sidebar
+          currentView={getCurrentView()}
+          onNavigate={handleNavigate}
           user="PILLAR_USER"
           onLogout={() => navigate('/')}
         />
       </div>
 
-      {/* Content Area */}
-      <main className="flex-1 relative z-10 overflow-y-auto h-screen w-full">
-        <Outlet /> 
+      {/* Content Area — scrollable with page transition */}
+      <main className="flex-1 relative z-10 overflow-y-auto overflow-x-hidden scroll-smooth h-screen">
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={location.pathname}
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -6 }}
+            transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+            className="h-full"
+          >
+            <Outlet />
+          </motion.div>
+        </AnimatePresence>
       </main>
     </div>
   );

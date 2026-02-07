@@ -1,36 +1,16 @@
-
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { generateImage, editImage } from '../services/geminiService';
 
 export const ImageStudio: React.FC = () => {
-  const [hasKey, setHasKey] = useState(false);
   const [prompt, setPrompt] = useState('');
   const [aspect, setAspect] = useState("1:1");
   const [resultImage, setResultImage] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
 
-  // Add fix: Mandatory key selection check for Gemini 3 Pro usage
-  useEffect(() => {
-    const checkKey = async () => {
-      const selected = await (window as any).aistudio?.hasSelectedApiKey?.();
-      setHasKey(!!selected);
-    };
-    checkKey();
-  }, []);
-
-  const handleSelectKey = async () => {
-    try {
-      await (window as any).aistudio?.openSelectKey?.();
-      setHasKey(true);
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
   const aspectRatios = ["1:1", "3:4", "4:3", "9:16", "16:9"];
 
-  // Add fix: Handle image upload for editing
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -66,44 +46,17 @@ export const ImageStudio: React.FC = () => {
     }
   };
 
-  if (!hasKey) {
-    return (
-      <div className="flex-1 flex items-center justify-center p-8">
-        <div className="max-w-md w-full bg-neutral-900 border border-neutral-800 rounded-3xl p-10 text-center space-y-6">
-          <div className="w-20 h-20 bg-blue-600/10 rounded-2xl flex items-center justify-center mx-auto text-blue-500 mb-6">
-            <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.581-1.581a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
-          </div>
-          <h3 className="text-2xl font-bold tracking-tight">Gemini Pro Image Access Required</h3>
-          <p className="text-neutral-400 text-sm leading-relaxed">
-            High-fidelity asset generation requires a paid Google AI Studio API key. 
-            Please select your project key to proceed.
-          </p>
-          <div className="pt-4 space-y-4">
-            <button
-              onClick={handleSelectKey}
-              className="w-full py-4 bg-blue-600 hover:bg-blue-500 text-white rounded-2xl font-bold shadow-lg shadow-blue-600/20 transition-all active:scale-[0.98]"
-            >
-              Select API Key
-            </button>
-            <a 
-              href="https://ai.google.dev/gemini-api/docs/billing" 
-              target="_blank" 
-              className="block text-xs text-neutral-500 hover:text-neutral-300 underline"
-            >
-              Learn about billing and project setup
-            </a>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="flex-1 flex flex-col p-8 overflow-hidden">
-      <div className="mb-8">
+      <motion.div
+        initial={{ opacity: 0, y: -12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+        className="mb-8"
+      >
         <h2 className="text-3xl font-bold tracking-tighter">Asset Generation</h2>
-        <p className="text-neutral-500">G3P Pro with custom aspect ratio control and structural editing.</p>
-      </div>
+        <p className="text-neutral-500">FLUX.1 high-fidelity image synthesis with structural editing.</p>
+      </motion.div>
 
       <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-8 overflow-hidden">
         <div className="lg:col-span-4 space-y-6 overflow-y-auto pr-2">
@@ -134,7 +87,7 @@ export const ImageStudio: React.FC = () => {
                 value={prompt}
                 onChange={(e) => setPrompt(e.target.value)}
                 placeholder="Describe the structural asset..."
-                className="w-full bg-black border border-neutral-800 rounded-2xl p-4 text-sm h-32 focus:border-blue-500 outline-none resize-none"
+                className="w-full bg-black border border-neutral-800 rounded-2xl p-4 text-sm h-32 focus:border-neutral-300/50 outline-none resize-none transition-all"
               />
             </div>
             <div className="space-y-2">
@@ -145,7 +98,7 @@ export const ImageStudio: React.FC = () => {
                     key={r}
                     onClick={() => setAspect(r)}
                     className={`py-2 rounded-lg text-[10px] font-bold border transition-all ${
-                      aspect === r ? 'bg-blue-600 text-white border-blue-500' : 'bg-neutral-800 text-neutral-400 border-neutral-700 hover:bg-neutral-700'
+                      aspect === r ? 'bg-[#E2E2E8] text-black border-[#E2E2E8]' : 'bg-neutral-800 text-neutral-400 border-neutral-700 hover:bg-neutral-700'
                     }`}
                   >
                     {r}
@@ -157,7 +110,7 @@ export const ImageStudio: React.FC = () => {
               <button
                 onClick={handleGenerate}
                 disabled={loading || !prompt}
-                className="flex-1 py-4 bg-blue-600 text-white font-bold rounded-2xl hover:bg-blue-500 disabled:opacity-50 transition-all shadow-xl shadow-blue-600/20"
+                className="flex-1 py-4 bg-[#E2E2E8] text-black font-bold rounded-2xl hover:bg-[#C8C8D0] disabled:opacity-50 transition-all shadow-[0_4px_24px_-4px_rgba(226,226,232,0.3)]"
               >
                 GENERATE
               </button>
@@ -169,17 +122,45 @@ export const ImageStudio: React.FC = () => {
                 EDIT
               </button>
             </div>
+            <p className="text-[10px] text-neutral-600 text-center">Powered by FLUX.1 · Free inference via Hugging Face</p>
           </div>
         </div>
         <div className="lg:col-span-8 bg-neutral-900 border border-neutral-800 rounded-3xl overflow-hidden flex items-center justify-center p-8 relative">
-          {loading && (
-             <div className="absolute inset-0 z-10 bg-black/80 backdrop-blur-sm flex flex-col items-center justify-center">
-               <div className="w-12 h-12 border-4 border-blue-500/20 border-t-blue-500 rounded-full animate-spin mb-4"></div>
-               <p className="text-xs font-bold text-blue-500 animate-pulse">SYNTHESIZING PIXELS...</p>
-             </div>
-          )}
+          <AnimatePresence>
+            {loading && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.3 }}
+                className="absolute inset-0 z-10 bg-black/80 backdrop-blur-sm flex flex-col items-center justify-center"
+              >
+                <div className="relative">
+                  <motion.div
+                    className="w-16 h-16 rounded-full border-2 border-neutral-600"
+                    animate={{ rotate: 360 }}
+                    transition={{ duration: 2, repeat: Infinity, ease: 'linear' }}
+                  >
+                    <div className="absolute top-0 left-1/2 -translate-x-1/2 w-2 h-2 -mt-1 rounded-full bg-[#E2E2E8]" />
+                  </motion.div>
+                </div>
+                <motion.p
+                  className="text-xs font-bold text-neutral-300 mt-4"
+                  animate={{ opacity: [0.4, 1, 0.4] }}
+                  transition={{ duration: 2, repeat: Infinity }}
+                >
+                  SYNTHESIZING PIXELS...
+                </motion.p>
+              </motion.div>
+            )}
+          </AnimatePresence>
           {resultImage ? (
-            <div className="relative group max-h-full">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+              className="relative group max-h-full"
+            >
               <img src={resultImage} className="max-h-full rounded-2xl shadow-2xl border border-neutral-800" />
               <button 
                 onClick={() => setUploadedImage(resultImage)}
@@ -188,7 +169,7 @@ export const ImageStudio: React.FC = () => {
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
                 USE AS BASE
               </button>
-            </div>
+            </motion.div>
           ) : (
             <div className="text-neutral-700 text-center font-bold italic">Awaiting structural input</div>
           )}

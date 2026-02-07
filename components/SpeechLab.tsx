@@ -1,24 +1,20 @@
-
 import React, { useState } from 'react';
-import { generateSpeech, decode, decodeAudioData } from '../services/geminiService';
+import { generateSpeech } from '../services/geminiService';
 
 export const SpeechLab: React.FC = () => {
   const [text, setText] = useState('');
   const [loading, setLoading] = useState(false);
-  const [voice, setVoice] = useState('Kore');
 
   const speak = async () => {
     if (!text.trim() || loading) return;
     setLoading(true);
     try {
-      const base64 = await generateSpeech(text, voice);
-      if (base64) {
-        const ctx = new AudioContext();
-        const buffer = await decodeAudioData(decode(base64), ctx, 24000, 1);
-        const source = ctx.createBufferSource();
-        source.buffer = buffer;
-        source.connect(ctx.destination);
-        source.start();
+      const audioBlob = await generateSpeech(text);
+      if (audioBlob) {
+        const url = URL.createObjectURL(audioBlob);
+        const audio = new Audio(url);
+        audio.onended = () => URL.revokeObjectURL(url);
+        await audio.play();
       }
     } catch (err) {
       console.error(err);
@@ -31,41 +27,26 @@ export const SpeechLab: React.FC = () => {
     <div className="flex-1 flex flex-col p-8 overflow-hidden">
       <div className="mb-8">
         <h2 className="text-3xl font-bold tracking-tighter">Vocal Synthesis</h2>
-        <p className="text-neutral-500">Gemini 2.5 TTS Vocal Engine.</p>
+        <p className="text-neutral-500">High-fidelity text-to-speech engine.</p>
       </div>
       <div className="bg-neutral-900 border border-neutral-800 rounded-3xl p-10 max-w-2xl mx-auto w-full space-y-8">
-        <div className="space-y-2">
-          <label className="text-xs font-bold text-neutral-500 uppercase">Voice Selection</label>
-          <div className="grid grid-cols-4 gap-2">
-            {['Kore', 'Puck', 'Charon', 'Fenrir'].map(v => (
-              <button 
-                key={v} 
-                onClick={() => setVoice(v)}
-                className={`py-3 rounded-xl text-xs font-bold transition-all border ${
-                  voice === v ? 'bg-blue-600 text-white border-blue-500' : 'bg-neutral-800 text-neutral-500 border-neutral-700'
-                }`}
-              >
-                {v.toUpperCase()}
-              </button>
-            ))}
-          </div>
-        </div>
         <div className="space-y-2">
           <label className="text-xs font-bold text-neutral-500 uppercase">Script</label>
           <textarea 
             value={text}
             onChange={(e) => setText(e.target.value)}
-            className="w-full bg-black border border-neutral-800 rounded-2xl p-6 text-sm h-48 focus:border-blue-500 outline-none"
+            className="w-full bg-black border border-neutral-800 rounded-2xl p-6 text-sm h-48 focus:border-neutral-300/50 outline-none transition-all"
             placeholder="Enter text for high-fidelity vocalization..."
           />
         </div>
         <button 
           onClick={speak}
           disabled={loading || !text.trim()}
-          className="w-full py-5 bg-white text-black font-bold rounded-2xl hover:bg-neutral-200 active:scale-[0.98] transition-all"
+          className="w-full py-5 bg-[#E2E2E8] text-black font-bold rounded-2xl hover:bg-[#C8C8D0] active:scale-[0.98] transition-all shadow-[0_4px_24px_-4px_rgba(226,226,232,0.3)] disabled:opacity-40 disabled:cursor-not-allowed"
         >
           {loading ? 'Synthesizing...' : 'GENERATE AUDIO'}
         </button>
+        <p className="text-[10px] text-neutral-600 text-center">Powered by Facebook MMS-TTS · Free, no API key required</p>
       </div>
     </div>
   );

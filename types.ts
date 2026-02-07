@@ -10,7 +10,9 @@ export enum View {
   TRANSCRIBER = 'TRANSCRIBER',
   SPEECH_LAB = 'SPEECH_LAB',
   INTELLIGENCE = 'INTELLIGENCE',
-  SAFE_PLACE = 'SAFE_PLACE'
+  SAFE_PLACE = 'SAFE_PLACE',
+  SIGNAL = 'SIGNAL',
+  ECHO = 'ECHO'
 }
 
 export type UserProfile = 'PILLAR_USER';

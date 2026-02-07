@@ -18,7 +18,7 @@ const DifferentiationGauge = ({ score }: { score: number }) => (
     <div className="relative h-2 bg-slate-800 rounded-full overflow-hidden mb-2">
       {/* The Bar */}
       <div 
-        className="absolute top-0 left-0 h-full bg-gradient-to-r from-red-500 via-amber-500 to-emerald-500 transition-all duration-1000 ease-out" 
+        className="absolute top-0 left-0 h-full bg-gradient-to-r from-red-500 via-neutral-300 to-emerald-500 transition-all duration-1000 ease-out" 
         style={{ width: `${score}%` }}
       />
     </div>
@@ -62,7 +62,7 @@ export const Manual: React.FC<ManualProps> = ({ data: initialData }) => {
 
   return (
     <div className="space-y-6 max-w-4xl mx-auto pt-6 animate-fade-in">
-      <h2 className="text-3xl font-bold tracking-tight text-white mb-6">User Blueprint</h2>
+      <h2 className="text-3xl font-bold tracking-tight text-white mb-6">Your Blueprint</h2>
       
       {/* DIFFERENTIATION SCALE */}
       <div className="bg-[#0A0A0A]/40 backdrop-blur-md rounded-2xl border border-white/5 overflow-hidden">
@@ -71,10 +71,10 @@ export const Manual: React.FC<ManualProps> = ({ data: initialData }) => {
 
       {/* SYSTEM MAP (BOWEN GENOGRAM) */}
       <section className="bg-[#0A0A0A]/40 backdrop-blur-md h-[400px] rounded-2xl border border-white/5 flex flex-col items-center relative overflow-hidden">
-        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-amber-900 to-transparent opacity-50"></div>
+        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-neutral-800 to-transparent opacity-50"></div>
         <div className="absolute top-4 left-4 z-10">
           <h3 className="text-xs font-bold text-white uppercase tracking-widest flex items-center gap-2">
-            <Network className="w-3 h-3 text-amber-500" />
+            <Network className="w-3 h-3 text-neutral-300" />
             System Map
           </h3>
         </div>
@@ -104,9 +104,9 @@ export const Manual: React.FC<ManualProps> = ({ data: initialData }) => {
       </section>
       
       {/* ANALYST NOTE */}
-      <div className="p-5 bg-amber-900/10 rounded-xl border border-amber-500/10 relative">
-        <div className="text-[10px] font-bold text-amber-500 uppercase tracking-widest mb-2">Architect's Note</div>
-        <p className="text-xs text-amber-100/70 leading-relaxed font-medium">
+      <div className="p-5 bg-neutral-800/10 rounded-xl border border-neutral-300/10 relative">
+        <div className="text-[10px] font-bold text-neutral-300 uppercase tracking-widest mb-2">Architect's Note</div>
+        <p className="text-xs text-neutral-100/70 leading-relaxed font-medium">
           Your system map indicates {dynamics.filter((d: any) => d.type === 'FUSION').length > 0 ? "potential fusion" : "relative stability"} in the primary nodes. 
           To increase differentiation, focus on defining where you end and others begin. 
           Respond to facts, not the emotional climate of the room.

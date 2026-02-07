@@ -1,6 +1,7 @@
 
 import React, { useState } from 'react';
-import { getGeminiInstance, scanForShadows } from '../services/geminiService';
+import { motion, AnimatePresence } from 'framer-motion';
+import { chatWithModel, scanForShadows } from '../services/geminiService';
 import { getFrequency } from '../services/frequencies';
 import { Message } from '../types';
 import { calculateSEDA } from '../services/sedaCalculator';
@@ -33,8 +34,6 @@ export const IntelligenceHub: React.FC<IntelligenceHubProps> = ({ manifest, user
     setActiveInversion(null); // Reset on new message
 
     try {
-      const ai = getGeminiInstance();
-      
       // 1. Contextual Scanning (Framework Awareness)
       let frameworkContext = "";
       let activeShadows: string[] = [];
@@ -43,10 +42,10 @@ export const IntelligenceHub: React.FC<IntelligenceHubProps> = ({ manifest, user
       if (userData && userData.personality && userData.personality.gates) {
         userGates = userData.personality.gates;
         
-        frameworkContext += "\n[USER HARDWARE SPECS]:\n";
+        frameworkContext += "\n[SUBJECT ARCHITECTURE]:\n";
         userGates.forEach(gate => {
           const f = getFrequency(gate);
-          frameworkContext += `- Gate ${gate}: Shadow(${f.shadow}) -> Gift(${f.gift})\n`;
+          frameworkContext += `- Gate ${gate}: Shadow(${f.shadow}) → Gift(${f.gift})\n`;
         });
 
         // Scan for shadows in the user text
@@ -95,17 +94,16 @@ export const IntelligenceHub: React.FC<IntelligenceHubProps> = ({ manifest, user
         User Query: ${input}
       `;
 
-      const response = await ai.models.generateContent({
-        model: 'gemini-3-flash-preview',
-        contents: [{ parts: [{ text: input }] }],
-        config: {
-          systemInstruction: systemPrompt,
-        }
+      const responseText = await chatWithModel({
+        systemPrompt,
+        userMessage: input,
+        maxTokens: 2048,
+        temperature: 0.7,
       });
 
       const modelMsg: Message = {
         role: 'model',
-        content: response.text || "I couldn't generate a response.",
+        content: responseText || "I couldn't generate a response.",
       };
 
       setMessages(prev => [...prev, modelMsg]);
@@ -119,26 +117,37 @@ export const IntelligenceHub: React.FC<IntelligenceHubProps> = ({ manifest, user
 
   return (
     <div className="flex flex-col h-full bg-transparent">
-      <div className="p-6 border-b border-white/5 bg-slate-900/50 backdrop-blur-sm">
-        <h2 className="text-xl font-bold text-white tracking-tight">Intelligence Hub</h2>
-        <p className="text-slate-500 text-sm">Ask about your design, friction points, or daily weather.</p>
-      </div>
+      <motion.div
+        initial={{ opacity: 0, y: -12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+        className="p-6 border-b border-white/[0.04] bg-white/[0.02] backdrop-blur-2xl"
+      >
+        <h2 className="text-xl font-bold text-white tracking-tight">Research</h2>
+        <p className="text-white/40 text-sm">Deep analytical queries processed through structural intelligence.</p>
+      </motion.div>
 
       <div className="flex-1 overflow-y-auto p-6 space-y-6">
         {messages.length === 0 && (
-           <div className="h-full flex flex-col items-center justify-center text-center opacity-40">
-              <div className="w-12 h-12 bg-white/10 rounded-full flex items-center justify-center mb-4">
-                 <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" /></svg>
+           <div className="h-full flex flex-col items-center justify-center text-center opacity-30">
+              <div className="w-14 h-14 border border-white/[0.08] rounded-full flex items-center justify-center mb-5">
+                 <div className="w-2 h-2 bg-[#E2E2E8]/40 rounded-full shadow-[0_0_8px_rgba(226,226,232,0.2)]" />
               </div>
-              <p className="text-sm font-medium">Ready to analyze your blueprint.</p>
+              <p className="text-[10px] font-semibold uppercase tracking-[0.2em]">What would you like to explore?</p>
            </div>
         )}
         {messages.map((m, i) => (
-          <div key={i} className={`flex flex-col w-full ${m.role === 'user' ? 'items-end' : 'items-start'}`}>
+          <motion.div
+            key={i}
+            initial={{ opacity: 0, y: 14, scale: 0.97 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+            className={`flex flex-col w-full ${m.role === 'user' ? 'items-end' : 'items-start'}`}
+          >
             <div className={`max-w-[80%] rounded-2xl p-4 text-sm leading-relaxed ${
               m.role === 'user' 
                 ? 'bg-white text-black font-medium' 
-                : 'bg-slate-800 text-slate-200 border border-white/5'
+                : 'bg-white/[0.03] text-[#A3A3A3] border border-white/[0.06] backdrop-blur-sm'
             }`}>
               {m.content}
             </div>
@@ -152,35 +161,47 @@ export const IntelligenceHub: React.FC<IntelligenceHubProps> = ({ manifest, user
                  />
               </div>
             )}
-          </div>
+          </motion.div>
         ))}
-        {loading && (
-          <div className="flex justify-start">
-             <div className="bg-slate-800/50 rounded-2xl p-4 flex gap-2 items-center">
-                <div className="w-2 h-2 bg-slate-500 rounded-full animate-bounce" />
-                <div className="w-2 h-2 bg-slate-500 rounded-full animate-bounce delay-100" />
-                <div className="w-2 h-2 bg-slate-500 rounded-full animate-bounce delay-200" />
-             </div>
-          </div>
-        )}
+        <AnimatePresence>
+          {loading && (
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              className="flex justify-start"
+            >
+              <div className="bg-white/[0.03] rounded-2xl p-4 flex gap-1.5 items-center border border-white/[0.06]">
+                {[0, 1, 2].map(d => (
+                  <motion.div
+                    key={d}
+                    className="w-1.5 h-1.5 bg-[#E2E2E8]/50 rounded-full"
+                    animate={{ y: [0, -5, 0], opacity: [0.3, 1, 0.3] }}
+                    transition={{ duration: 0.9, repeat: Infinity, delay: d * 0.12, ease: 'easeInOut' }}
+                  />
+                ))}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
 
-      <div className="p-4 border-t border-white/5 bg-slate-900/80 backdrop-blur-md">
+      <div className="p-4 border-t border-white/[0.04] bg-[#050505]/60 backdrop-blur-2xl">
         <div className="flex gap-3">
           <input
             type="text"
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleSend()}
-            placeholder="Type your question..."
-            className="flex-1 bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:border-amber-500 outline-none transition-all placeholder:text-slate-600"
+            placeholder="What would you like to explore…"
+            className="flex-1 bg-black/20 border border-white/[0.08] rounded-xl px-5 py-3.5 text-sm text-white focus:border-[#E2E2E8]/50 focus:ring-1 focus:ring-[#E2E2E8]/30 outline-none transition-all placeholder:text-white/20"
           />
           <button
             onClick={handleSend}
             disabled={loading || !input.trim()}
-            className="px-6 py-3 bg-white text-black font-bold rounded-xl text-sm hover:bg-amber-400 disabled:opacity-50 disabled:hover:bg-white transition-all"
+            className="px-6 py-3.5 bg-white text-black font-medium rounded-xl text-sm hover:bg-neutral-50 disabled:opacity-30 transition-all"
           >
-            Send
+            Ask
           </button>
         </div>
       </div>

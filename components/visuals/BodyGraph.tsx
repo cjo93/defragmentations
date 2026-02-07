@@ -10,8 +10,8 @@ interface BodyGraphProps {
 
 export const BodyGraph: React.FC<BodyGraphProps> = ({ centers, channels, className }) => {
   const isDefined = (centerName: string) => centers[centerName];
-  const getColor = (centerName: string) => isDefined(centerName) ? "#F59E0B" : "#1E1F20"; // Amber vs Dark Gray
-  const getStroke = (centerName: string) => isDefined(centerName) ? "#F59E0B" : "#333";
+  const getColor = (centerName: string) => isDefined(centerName) ? "#E2E2E8" : "#1E1F20"; // Platinum vs Dark Gray
+  const getStroke = (centerName: string) => isDefined(centerName) ? "#E2E2E8" : "#333";
 
   // Coordinates (approximate for standard HD layout)
   const coords = {
