@@ -1,30 +1,29 @@
 
 import React from 'react';
-import LivingBackground from '../visuals/LivingBackground';
-import { Link } from 'react-router-dom';
+import { LivingBackground } from '../visuals/LivingBackground';
 
 interface LayoutProps {
-  children?: React.ReactNode;
+  children: React.ReactNode;
+  showNav?: boolean; // Optional prop to hide nav in deep focus modes
   intensity?: 'low' | 'high';
 }
 
-export default function CinemaLayout({ children, intensity = 'low' }: LayoutProps) {
+export default function CinemaLayout({ children, showNav = true, intensity = 'low' }: LayoutProps) {
   return (
-    <div className="min-h-screen w-full relative font-sans text-[#EDEDED] selection:bg-amber-500 selection:text-black">
-      <LivingBackground intensity={intensity} />
+    <div className="relative min-h-screen bg-black text-slate-200 font-sans selection:bg-amber-900 selection:text-white">
+      <LivingBackground mode={intensity === 'high' ? 'active' : 'calm'} />
       
-      {/* Nav Bar */}
-      <nav className="relative z-50 w-full max-w-7xl mx-auto px-6 py-8 flex justify-between items-center">
-        <Link to="/" className="flex items-center gap-2 group">
-          <div className="w-2 h-2 rounded-full bg-amber-500 group-hover:animate-pulse" />
-          <span className="font-mono text-xs font-bold tracking-widest text-white/60 group-hover:text-amber-500 transition-colors">DEFRAG_OS</span>
-        </Link>
-      </nav>
+      {/* safe-area-inset logic is critical for iOS.
+         'pt-[env(safe-area-inset-top)]' and 'pb-[env(safe-area-inset-bottom)]' ensure 
+         content clears the iPhone Notch and Home Indicator.
+      */}
+      <div className="relative z-10 w-full h-full flex flex-col pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)]">
+        
+        <div className="flex-grow w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-12">
+          {children}
+        </div>
 
-      {/* Main Content */}
-      <main className="relative z-10 w-full max-w-7xl mx-auto px-6 pb-20">
-        {children}
-      </main>
+      </div>
     </div>
   );
-}
+};

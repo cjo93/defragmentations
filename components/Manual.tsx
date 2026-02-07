@@ -1,109 +1,106 @@
 
-import React, { useState } from 'react';
-import { ArrowRight, Cpu, Activity, Shield } from 'lucide-react';
-import CinemaLayout from '../components/layout/CinemaLayout';
+import React from 'react';
+import { Activity, Network, ShieldCheck } from 'lucide-react';
+import { SystemMap } from './visuals/SystemMap';
 
-export default function Manual() {
-  const [step, setStep] = useState(1);
-  const [loading, setLoading] = useState(false);
+interface ManualProps {
+  data?: any;
+}
 
-  const handleAnalyze = () => {
-    setLoading(true);
-    setTimeout(() => setStep(2), 2500);
-  };
+const DifferentiationGauge = ({ score }: { score: number }) => (
+  <div className="w-full p-6 border-b border-white/5">
+    <div className="flex justify-between text-[10px] font-bold uppercase text-slate-500 mb-3 tracking-widest">
+      <span>Reactivity (Fused)</span>
+      <span>Differentiation (Solid)</span>
+    </div>
+    
+    <div className="relative h-2 bg-slate-800 rounded-full overflow-hidden mb-2">
+      {/* The Bar */}
+      <div 
+        className="absolute top-0 left-0 h-full bg-gradient-to-r from-red-500 via-amber-500 to-emerald-500 transition-all duration-1000 ease-out" 
+        style={{ width: `${score}%` }}
+      />
+    </div>
+    
+    <div className="flex justify-between items-end">
+      <p className="text-[10px] text-slate-400 max-w-[70%]">
+        {score < 50 ? "High emotional reactivity detected. Focus on grounding." : 
+         score < 75 ? "Functional balance. System is operating within normal parameters." : 
+         "Optimal state. High clarity and low friction."}
+      </p>
+      <div className="text-right">
+        <span className="text-2xl font-bold text-white">{score}</span>
+        <span className="text-[9px] text-slate-500 block">/100 STABILITY</span>
+      </div>
+    </div>
+  </div>
+);
+
+export const Manual: React.FC<ManualProps> = ({ data }) => {
+  if (!data) {
+    return (
+      <div className="bg-slate-900/50 p-6 rounded-lg border border-white/5 text-center">
+        <p className="text-slate-500">No blueprint data available.</p>
+      </div>
+    );
+  }
+
+  // Use Differentiation score from engine or default to 50
+  const differentiationScore = data.differentiationScore || 50;
+  const dynamics = data.dynamics || [];
 
   return (
-    <CinemaLayout intensity={loading ? 'high' : 'low'}>
-      <div className="max-w-4xl mx-auto pt-10">
-        
-        {/* HEADER */}
-        <div className="text-center mb-16">
-          <h1 className="text-5xl font-medium text-white tracking-tight mb-4">
-            System <span className="text-amber-500">Analysis</span>
-          </h1>
-          <p className="text-[#94A3B8] text-lg font-light max-w-lg mx-auto">
-            Input natal metrics to map your internal architecture.
-          </p>
-        </div>
-
-        {/* THE GLASS CARD */}
-        {step === 1 && (
-          <div className="studio-panel p-10 max-w-xl mx-auto backdrop-blur-2xl bg-[#0A0A0A]/40 border border-white/10 relative overflow-hidden">
-            {/* Form Content */}
-            <div className="space-y-6 relative z-10">
-              <div>
-                <label className="text-xs font-mono text-amber-500/80 uppercase tracking-wider mb-2 block">Subject Name</label>
-                <input type="text" className="studio-input w-full bg-[#050505]/50 border-white/10 focus:border-amber-500 transition-all" placeholder="Enter name" />
-              </div>
-              
-              <div className="grid grid-cols-2 gap-6">
-                <div>
-                  <label className="text-xs font-mono text-amber-500/80 uppercase tracking-wider mb-2 block">Date of Birth</label>
-                  <input type="date" className="studio-input w-full bg-[#050505]/50 border-white/10 focus:border-amber-500" />
-                </div>
-                <div>
-                  <label className="text-xs font-mono text-amber-500/80 uppercase tracking-wider mb-2 block">Time</label>
-                  <input type="time" className="studio-input w-full bg-[#050505]/50 border-white/10 focus:border-amber-500" />
-                </div>
-              </div>
-
-              <button 
-                onClick={handleAnalyze}
-                className="w-full bg-amber-500 text-black font-medium py-4 rounded-lg hover:bg-amber-400 transition-all flex items-center justify-center gap-2 mt-6"
-              >
-                {loading ? (
-                  <>
-                    <Cpu className="w-4 h-4 animate-spin" />
-                    PROCESSING...
-                  </>
-                ) : (
-                  <>
-                    RUN DIAGNOSTIC
-                    <ArrowRight className="w-4 h-4" />
-                  </>
-                )}
-              </button>
-            </div>
-          </div>
-        )}
-
-        {/* RESULTS PREVIEW */}
-        {step === 2 && (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {/* Data Card */}
-            <div className="studio-panel p-8 border-amber-500/20 bg-[#0A0A0A]/60 backdrop-blur-xl">
-              <div className="flex items-center gap-3 mb-6">
-                <Activity className="w-5 h-5 text-amber-500" />
-                <span className="text-xs font-mono text-amber-500 uppercase">Core Data</span>
-              </div>
-              <div className="space-y-4 font-mono text-sm">
-                <p className="flex justify-between border-b border-white/5 pb-2">
-                  <span className="text-gray-500">TYPE</span>
-                  <span className="text-white">PROJECTOR</span>
-                </p>
-                <p className="flex justify-between border-b border-white/5 pb-2">
-                  <span className="text-gray-500">PROFILE</span>
-                  <span className="text-white">3/5</span>
-                </p>
-                <p className="text-xs text-amber-500 mt-4 bg-amber-500/10 p-3 rounded">
-                  DIAGNOSIS: Systemic drag detected in decision-making centers.
-                </p>
-              </div>
-            </div>
-
-            {/* Product Card */}
-            <div className="studio-panel p-8 flex flex-col justify-center text-center bg-[#0A0A0A]/60 backdrop-blur-xl border-white/10">
-              <h3 className="text-xl text-white font-medium mb-2">Operating Manual</h3>
-              <p className="text-gray-400 text-sm mb-6">Unlock the full 25-page technical guide.</p>
-              <div className="text-4xl font-light text-white mb-8">$29.00</div>
-              <button className="w-full bg-white text-black font-medium py-3 rounded-lg hover:bg-gray-200 transition-colors">
-                SECURE ACCESS
-              </button>
-            </div>
-          </div>
-        )}
-
+    <div className="space-y-6">
+      
+      {/* DIFFERENTIATION SCALE */}
+      <div className="bg-[#050505] rounded-2xl border border-white/5 overflow-hidden">
+        <DifferentiationGauge score={differentiationScore} />
       </div>
-    </CinemaLayout>
+
+      {/* SYSTEM MAP (BOWEN GENOGRAM) */}
+      <section className="bg-[#050505] h-[400px] rounded-2xl border border-white/5 flex flex-col items-center relative overflow-hidden">
+        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-amber-900 to-transparent opacity-50"></div>
+        <div className="absolute top-4 left-4 z-10">
+          <h3 className="text-xs font-bold text-white uppercase tracking-widest flex items-center gap-2">
+            <Network className="w-3 h-3 text-amber-500" />
+            System Map
+          </h3>
+        </div>
+        <SystemMap dynamics={dynamics} />
+      </section>
+
+      {/* METRICS GRID */}
+      <section className="grid grid-cols-2 gap-4">
+        <div className="bg-white/5 p-4 rounded-xl border border-white/5 backdrop-blur-sm">
+          <div className="flex items-center gap-2 mb-2">
+             <ShieldCheck className="w-3 h-3 text-neutral-500" />
+             <span className="text-[10px] font-bold uppercase tracking-widest text-neutral-500">Boundaries</span>
+          </div>
+          <div className="text-xl font-mono text-white">
+            {differentiationScore > 70 ? "Intact" : differentiationScore > 50 ? "Porous" : "Fused"}
+          </div>
+        </div>
+        <div className="bg-white/5 p-4 rounded-xl border border-white/5 backdrop-blur-sm">
+          <div className="flex items-center gap-2 mb-2">
+             <Activity className="w-3 h-3 text-neutral-500" />
+             <span className="text-[10px] font-bold uppercase tracking-widest text-neutral-500">Anxiety</span>
+          </div>
+          <div className="text-xl font-mono text-white">
+            {differentiationScore > 70 ? "Low" : differentiationScore > 50 ? "Moderate" : "Chronic"}
+          </div>
+        </div>
+      </section>
+      
+      {/* ANALYST NOTE */}
+      <div className="p-5 bg-amber-900/10 rounded-xl border border-amber-500/10 relative">
+        <div className="text-[10px] font-bold text-amber-500 uppercase tracking-widest mb-2">Architect's Note</div>
+        <p className="text-xs text-amber-100/70 leading-relaxed font-medium">
+          Your system map indicates {dynamics.filter((d: any) => d.type === 'FUSION').length > 0 ? "potential fusion" : "relative stability"} in the primary nodes. 
+          To increase differentiation, focus on defining where you end and others begin. 
+          Respond to facts, not the emotional climate of the room.
+        </p>
+      </div>
+
+    </div>
   );
-}
+};

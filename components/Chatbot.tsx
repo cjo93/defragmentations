@@ -42,11 +42,12 @@ export const Chatbot: React.FC<ChatbotProps> = ({ user }) => {
     }
   }, [messages, user]);
 
-  const handleSend = async () => {
-    if (!input.trim() || loading) return;
-    const userMsg: Message = { role: 'user', content: input };
+  const handleSend = async (overrideInput?: string) => {
+    const msgContent = overrideInput || input;
+    if (!msgContent.trim() || loading) return;
+    
+    const userMsg: Message = { role: 'user', content: msgContent };
     setMessages(prev => [...prev, userMsg]);
-    const currentInput = input;
     setInput('');
     setLoading(true);
 
@@ -54,7 +55,7 @@ export const Chatbot: React.FC<ChatbotProps> = ({ user }) => {
       const ai = getGeminiInstance();
       const response = await ai.models.generateContent({
         model: 'gemini-3-pro-preview',
-        contents: currentInput,
+        contents: msgContent,
         config: {
           systemInstruction: getSystemInstruction(user),
           thinkingConfig: { thinkingBudget: 32768 }
@@ -67,6 +68,16 @@ export const Chatbot: React.FC<ChatbotProps> = ({ user }) => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleRecalibrate = () => {
+    const recalibrateMsg = "SYSTEM ALERT: The previous analysis was a misinterpretation of the data logs. Please re-scan and adjust parameters based on manual user override.";
+    handleSend(recalibrateMsg);
+  };
+
+  const handleConfirm = () => {
+    setMessages(prev => [...prev, { role: 'user', content: "[SIGNAL CONFIRMED: LOGGING ACCURACY]" }]);
+    // In a real app, this would train the model or save feedback
   };
 
   const getStatusColor = (status: string) => {
@@ -109,14 +120,33 @@ export const Chatbot: React.FC<ChatbotProps> = ({ user }) => {
           )}
           
           {messages.map((m, i) => (
-            <div key={i} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-              <div className={`max-w-[90%] md:max-w-[75%] space-y-2 ${m.role === 'user' ? 'items-end' : 'items-start'}`}>
+            <div key={i} className={`flex flex-col ${m.role === 'user' ? 'items-end' : 'items-start'}`}>
+              <div className={`max-w-[90%] md:max-w-[75%] space-y-2`}>
                 <div className={`p-6 rounded-[32px] text-xs leading-relaxed shadow-sm transition-all ${
                   m.role === 'user' ? 'bg-white text-black font-medium' : 'bg-neutral-800/50 text-neutral-200 border border-neutral-700/50'
                 }`}>
                   {m.content}
                 </div>
               </div>
+              
+              {/* Reality Check / Calibration UI - Show only for the latest message if it is from the model */}
+              {m.role === 'model' && i === messages.length - 1 && !loading && (
+                <div className="flex gap-3 mt-2 ml-4 text-[9px] uppercase tracking-wider font-bold text-neutral-500 animate-in fade-in duration-500">
+                  <span>Signal Accuracy Check:</span>
+                  <button 
+                    onClick={handleConfirm}
+                    className="hover:text-emerald-400 transition-colors flex items-center gap-1"
+                  >
+                    [CONFIRM]
+                  </button>
+                  <button 
+                    onClick={handleRecalibrate}
+                    className="hover:text-amber-500 transition-colors flex items-center gap-1"
+                  >
+                    [RECALIBRATE]
+                  </button>
+                </div>
+              )}
             </div>
           ))}
           
@@ -139,7 +169,7 @@ export const Chatbot: React.FC<ChatbotProps> = ({ user }) => {
               className="flex-1 bg-neutral-800/50 border border-neutral-700/50 rounded-[28px] px-8 py-5 text-xs focus:border-white/40 focus:bg-neutral-800 outline-none transition-all placeholder:text-neutral-600"
             />
             <button 
-              onClick={handleSend}
+              onClick={() => handleSend()}
               disabled={loading || !input.trim()}
               className="w-16 h-16 bg-white text-black flex items-center justify-center rounded-full hover:bg-neutral-200 active:scale-90 transition-all shadow-xl disabled:opacity-30 disabled:pointer-events-none"
             >

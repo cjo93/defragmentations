@@ -1,99 +1,75 @@
 
-import React from 'react';
-import { FileText, Users, ArrowRight, Mic } from 'lucide-react';
-import { Link } from 'react-router-dom';
-import CinemaLayout from './layout/CinemaLayout';
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { DEFRAG_MANIFEST } from '../constants/manifest';
+import { processBirthData } from '../services/engine';
+import { SystemMap } from './visuals/SystemMap';
+import { LivingBackground } from './visuals/LivingBackground';
 
-export const Dashboard: React.FC = () => {
+export const Dashboard = () => {
+  const navigate = useNavigate();
+  const [userData, setUserData] = useState<any>(null);
+
+  useEffect(() => {
+    // Load Demo Data immediately so preview isn't blank
+    const demo = processBirthData("1993-07-26", "20:00");
+    setUserData(demo);
+  }, []);
+
+  if (!userData) return <div className="bg-black min-h-screen text-white p-10 font-mono text-xs">INITIALIZING KERNEL...</div>;
+
   return (
-    <CinemaLayout intensity="low">
-      <div className="min-h-full flex flex-col items-center justify-center py-20">
+    <div className="relative min-h-screen bg-black text-slate-200 font-sans overflow-hidden">
+      <LivingBackground mode="active" />
+      
+      {/* HEADER */}
+      <header className="relative z-10 flex justify-between items-center p-6 border-b border-white/10 bg-black/40 backdrop-blur">
+        <div className="font-bold text-lg tracking-tight">{DEFRAG_MANIFEST.BRAND.NAME}</div>
+        <div className="flex items-center gap-2 text-xs text-emerald-500 font-mono uppercase">
+          <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
+          System Stable
+        </div>
+      </header>
+
+      {/* CONTENT */}
+      <main className="relative z-10 p-6 max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-6">
         
-        <main className="relative z-10 max-w-6xl mx-auto px-6 flex flex-col items-center">
-          
-          {/* MANIFESTO / HEADER */}
-          <header className="text-center mb-16 max-w-3xl">
-            <h1 className="text-4xl md:text-5xl font-medium text-white tracking-tight mb-6">
-              We are the hardware store <br/> for the <span className="text-amber-500">human psyche</span>.
-            </h1>
-            <p className="text-[#94A3B8] text-lg font-light leading-relaxed">
-              Defrag is not therapy. It is not spiritual. It is mechanical. <br/>
-              We believe that human friction—anger, burnout, confusion—is just <strong>physics</strong>. <br/>
-              You are trying to run high-voltage energy through a low-voltage wire. <br/>
-              We just show you the wire.
-            </p>
-          </header>
-
-          {/* CARDS GRID (Floating Glass) */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-4xl">
-            
-            {/* 1. THE MANUAL */}
-            <Link 
-              to="/manual"
-              className="group studio-panel p-10 flex flex-col h-64 justify-between text-left"
-            >
-              <div className="flex justify-between items-start w-full">
-                <div className="p-4 bg-amber-500/10 rounded-xl border border-amber-500/20 group-hover:border-amber-500 group-hover:bg-amber-500/20 transition-all duration-500">
-                  <FileText className="w-8 h-8 text-amber-500" />
-                </div>
-                <ArrowRight className="w-6 h-6 text-[#444746] group-hover:text-amber-500 group-hover:translate-x-1 transition-all duration-300" />
-              </div>
-              
-              <div>
-                <h3 className="text-2xl font-medium text-white mb-2 group-hover:text-amber-400 transition-colors">The Manual</h3>
-                <p className="text-[#94A3B8] group-hover:text-[#E3E3E3] transition-colors">
-                  Generate your operating documentation.
-                </p>
-                <p className="text-[10px] font-bold text-amber-500 mt-2 tracking-widest">$29.00</p>
-              </div>
-            </Link>
-
-            {/* 2. ORBIT */}
-            <Link 
-              to="/orbit"
-              className="group studio-panel p-10 flex flex-col h-64 justify-between text-left"
-            >
-              <div className="flex justify-between items-start w-full">
-                <div className="p-4 bg-amber-500/10 rounded-xl border border-amber-500/20 group-hover:border-amber-500 group-hover:bg-amber-500/20 transition-all duration-500">
-                  <Users className="w-8 h-8 text-amber-500" />
-                </div>
-                <ArrowRight className="w-6 h-6 text-[#444746] group-hover:text-amber-500 group-hover:translate-x-1 transition-all duration-300" />
-              </div>
-              
-              <div>
-                <h3 className="text-2xl font-medium text-white mb-2 group-hover:text-amber-400 transition-colors">Orbit</h3>
-                <p className="text-[#94A3B8] group-hover:text-[#E3E3E3] transition-colors">
-                  Relational friction analysis.
-                </p>
-                <p className="text-[10px] font-bold text-amber-500 mt-2 tracking-widest">$19.00</p>
-              </div>
-            </Link>
-
-            {/* 3. LIVE VOICE */}
-            <Link 
-              to="/live"
-              className="group studio-panel p-10 flex flex-col h-64 justify-between text-left md:col-span-2"
-            >
-              <div className="flex justify-between items-start w-full">
-                <div className="p-4 bg-amber-500/10 rounded-xl border border-amber-500/20 group-hover:border-amber-500 group-hover:bg-amber-500/20 transition-all duration-500">
-                  <Mic className="w-8 h-8 text-amber-500" />
-                </div>
-                <ArrowRight className="w-6 h-6 text-[#444746] group-hover:text-amber-500 group-hover:translate-x-1 transition-all duration-300" />
-              </div>
-              
-              <div>
-                <h3 className="text-2xl font-medium text-white mb-2 group-hover:text-amber-400 transition-colors">Live Voice</h3>
-                <p className="text-[#94A3B8] group-hover:text-[#E3E3E3] transition-colors">
-                  Real-time logic processing and audio stream.
-                </p>
-                <p className="text-[10px] font-bold text-amber-500 mt-2 tracking-widest">ACCESS GRANTED</p>
-              </div>
-            </Link>
-
+        {/* LEFT: SYSTEM MAP (The Visuals) */}
+        <div className="md:col-span-5 space-y-6">
+          <div className="h-[350px] bg-black/40 border border-white/10 rounded-2xl p-2 shadow-2xl relative">
+            <SystemMap dynamics={userData.relationalDynamics} />
           </div>
           
-        </main>
-      </div>
-    </CinemaLayout>
+          <div className="p-6 bg-slate-900/50 border border-white/5 rounded-2xl backdrop-blur-md">
+             <h3 className="text-amber-500 text-xs font-bold uppercase tracking-widest mb-4">Operating Specs</h3>
+             <div className="space-y-3 text-sm">
+               <div className="flex justify-between border-b border-white/5 pb-2">
+                 <span className="text-slate-500">Type</span>
+                 <span className="font-mono">{userData.type}</span>
+               </div>
+               <div className="flex justify-between border-b border-white/5 pb-2">
+                 <span className="text-slate-500">Strategy</span>
+                 <span className="font-mono">{userData.strategy}</span>
+               </div>
+               <div className="flex justify-between border-b border-white/5 pb-2">
+                 <span className="text-slate-500">Authority</span>
+                 <span className="font-mono">{userData.authority}</span>
+               </div>
+             </div>
+          </div>
+        </div>
+
+        {/* RIGHT: CHAT (Placeholder) */}
+        <div className="md:col-span-7 h-[600px] bg-slate-900/20 border border-white/10 rounded-2xl flex items-center justify-center text-slate-500 backdrop-blur-sm">
+           <div className="text-center">
+             <div className="w-16 h-16 border-2 border-white/10 rounded-full flex items-center justify-center mx-auto mb-4">
+               <div className="w-2 h-2 bg-white/20 rounded-full"></div>
+             </div>
+             <p className="text-xs font-bold uppercase tracking-widest">[INTELLIGENCE HUB READY]</p>
+           </div>
+        </div>
+
+      </main>
+    </div>
   );
 };

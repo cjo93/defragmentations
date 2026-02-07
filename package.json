@@ -1,5 +1,5 @@
 {
-  "name": "defrag-ai-playground",
+  "name": "defrag.app-platform",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -15,7 +15,9 @@
     "@google/genai": "^1.40.0",
     "lucide-react": "^0.468.0",
     "path": "^0.12.7",
-    "fs": "^0.0.1-security"
+    "fs": "^0.0.1-security",
+    "@stripe/stripe-js": "^8.7.0",
+    "astronomy-engine": "2.1.0"
   },
   "devDependencies": {
     "@types/node": "^22.14.0",

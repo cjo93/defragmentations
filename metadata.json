@@ -1,5 +1,5 @@
 {
-  "name": "Defrag AI Playground",
+  "name": "Defrag.app Platform",
   "description": "A high-performance multi-modal workspace featuring Gemini 3 Pro, Live Audio, Veo Video Generation, and Grounded Intelligence.",
   "requestFramePermissions": [
     "camera",
