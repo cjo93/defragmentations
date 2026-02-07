@@ -1,58 +1,99 @@
 
 import React from 'react';
-import { View, UserProfile } from '../types';
+import { FileText, Users, ArrowRight, Mic } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import CinemaLayout from './layout/CinemaLayout';
 
-interface DashboardProps {
-  onNavigate: (view: View) => void;
-  user: UserProfile;
-}
-
-export const Dashboard: React.FC<DashboardProps> = ({ onNavigate, user }) => {
-  const tools = [
-    { id: View.LIVE_VOICE, title: 'Live Defrag', desc: 'Real-time truth for your interactions.', icon: 'M13 10V3L4 14h7v7l9-11h-7z' },
-    { id: View.CHATBOT, title: 'Deep Logic', desc: 'Detailed analysis of complex behavior.', icon: 'M9.663 17h4.673M12 3v1m6.364 1.636' },
-    { id: View.IMAGE_STUDIO, title: 'Asset Forge', desc: 'Visualize the manual with precise images.', icon: 'M4 16l4.586-4.586a2 2 0 012.828 0L16 16' },
-    { id: View.VIDEO_LAB, title: 'Motion Lab', desc: 'Simulate motion and patterns in 4K.', icon: 'M15 10l4.553-2.276A1 1 0 0121 8.618v6.764' },
-    { id: View.INTELLIGENCE, title: 'Intel', desc: 'Research grounded in global facts.', icon: 'M21 21l-6-6m2-5a7 7 0 11-14 0' },
-    { id: View.SAFE_PLACE, title: 'Safe Place', desc: 'The override for your nervous system.', icon: 'M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364' },
-  ];
-
+export const Dashboard: React.FC = () => {
   return (
-    <div className="p-6 md:p-20 max-w-7xl mx-auto space-y-16">
-      <header className="space-y-6">
-        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 text-[9px] font-black text-neutral-500 tracking-widest uppercase">
-          Online • {user}
-        </div>
-        <h1 className="text-5xl md:text-8xl font-black tracking-tighter uppercase italic leading-[0.8]">
-          THE HUB.
-        </h1>
-      </header>
+    <CinemaLayout intensity="low">
+      <div className="min-h-full flex flex-col items-center justify-center py-20">
+        
+        <main className="relative z-10 max-w-6xl mx-auto px-6 flex flex-col items-center">
+          
+          {/* MANIFESTO / HEADER */}
+          <header className="text-center mb-16 max-w-3xl">
+            <h1 className="text-4xl md:text-5xl font-medium text-white tracking-tight mb-6">
+              We are the hardware store <br/> for the <span className="text-amber-500">human psyche</span>.
+            </h1>
+            <p className="text-[#94A3B8] text-lg font-light leading-relaxed">
+              Defrag is not therapy. It is not spiritual. It is mechanical. <br/>
+              We believe that human friction—anger, burnout, confusion—is just <strong>physics</strong>. <br/>
+              You are trying to run high-voltage energy through a low-voltage wire. <br/>
+              We just show you the wire.
+            </p>
+          </header>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-        {tools.map(tool => (
-          <button 
-            key={tool.id}
-            onClick={() => onNavigate(tool.id)}
-            className="group p-10 bg-neutral-900/30 border border-white/5 rounded-[40px] hover:border-white/20 hover:bg-neutral-900 transition-all text-left flex flex-col justify-between h-[320px] md:h-[380px]"
-          >
-            <div className="space-y-6">
-              <div className="w-14 h-14 rounded-2xl bg-white text-black flex items-center justify-center">
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d={tool.icon} />
-                </svg>
-              </div>
-              <div className="space-y-2">
-                <h3 className="text-2xl font-black uppercase tracking-tighter italic">{tool.title}</h3>
-                <p className="text-sm text-neutral-500 font-medium leading-snug">{tool.desc}</p>
-              </div>
-            </div>
+          {/* CARDS GRID (Floating Glass) */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-4xl">
             
-            <div className="text-[9px] font-black text-neutral-700 uppercase tracking-widest group-hover:text-white transition-colors">
-               Initialize Module
-            </div>
-          </button>
-        ))}
+            {/* 1. THE MANUAL */}
+            <Link 
+              to="/manual"
+              className="group studio-panel p-10 flex flex-col h-64 justify-between text-left"
+            >
+              <div className="flex justify-between items-start w-full">
+                <div className="p-4 bg-amber-500/10 rounded-xl border border-amber-500/20 group-hover:border-amber-500 group-hover:bg-amber-500/20 transition-all duration-500">
+                  <FileText className="w-8 h-8 text-amber-500" />
+                </div>
+                <ArrowRight className="w-6 h-6 text-[#444746] group-hover:text-amber-500 group-hover:translate-x-1 transition-all duration-300" />
+              </div>
+              
+              <div>
+                <h3 className="text-2xl font-medium text-white mb-2 group-hover:text-amber-400 transition-colors">The Manual</h3>
+                <p className="text-[#94A3B8] group-hover:text-[#E3E3E3] transition-colors">
+                  Generate your operating documentation.
+                </p>
+                <p className="text-[10px] font-bold text-amber-500 mt-2 tracking-widest">$29.00</p>
+              </div>
+            </Link>
+
+            {/* 2. ORBIT */}
+            <Link 
+              to="/orbit"
+              className="group studio-panel p-10 flex flex-col h-64 justify-between text-left"
+            >
+              <div className="flex justify-between items-start w-full">
+                <div className="p-4 bg-amber-500/10 rounded-xl border border-amber-500/20 group-hover:border-amber-500 group-hover:bg-amber-500/20 transition-all duration-500">
+                  <Users className="w-8 h-8 text-amber-500" />
+                </div>
+                <ArrowRight className="w-6 h-6 text-[#444746] group-hover:text-amber-500 group-hover:translate-x-1 transition-all duration-300" />
+              </div>
+              
+              <div>
+                <h3 className="text-2xl font-medium text-white mb-2 group-hover:text-amber-400 transition-colors">Orbit</h3>
+                <p className="text-[#94A3B8] group-hover:text-[#E3E3E3] transition-colors">
+                  Relational friction analysis.
+                </p>
+                <p className="text-[10px] font-bold text-amber-500 mt-2 tracking-widest">$19.00</p>
+              </div>
+            </Link>
+
+            {/* 3. LIVE VOICE */}
+            <Link 
+              to="/live"
+              className="group studio-panel p-10 flex flex-col h-64 justify-between text-left md:col-span-2"
+            >
+              <div className="flex justify-between items-start w-full">
+                <div className="p-4 bg-amber-500/10 rounded-xl border border-amber-500/20 group-hover:border-amber-500 group-hover:bg-amber-500/20 transition-all duration-500">
+                  <Mic className="w-8 h-8 text-amber-500" />
+                </div>
+                <ArrowRight className="w-6 h-6 text-[#444746] group-hover:text-amber-500 group-hover:translate-x-1 transition-all duration-300" />
+              </div>
+              
+              <div>
+                <h3 className="text-2xl font-medium text-white mb-2 group-hover:text-amber-400 transition-colors">Live Voice</h3>
+                <p className="text-[#94A3B8] group-hover:text-[#E3E3E3] transition-colors">
+                  Real-time logic processing and audio stream.
+                </p>
+                <p className="text-[10px] font-bold text-amber-500 mt-2 tracking-widest">ACCESS GRANTED</p>
+              </div>
+            </Link>
+
+          </div>
+          
+        </main>
       </div>
-    </div>
+    </CinemaLayout>
   );
 };

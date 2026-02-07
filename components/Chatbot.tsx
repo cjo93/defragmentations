@@ -1,6 +1,7 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { getGeminiInstance, getSystemInstruction } from '../services/geminiService';
+import { calculateSEDA } from '../services/sedaCalculator';
 import { Message, UserProfile } from '../types';
 
 interface ChatbotProps {
@@ -11,6 +12,7 @@ export const Chatbot: React.FC<ChatbotProps> = ({ user }) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
+  const [riskAssessment, setRiskAssessment] = useState({ score: 50, status: 'SAFE' });
   const scrollRef = useRef<HTMLDivElement>(null);
 
   // Persistent storage unique to each user profile
@@ -31,6 +33,13 @@ export const Chatbot: React.FC<ChatbotProps> = ({ user }) => {
   useEffect(() => {
     localStorage.setItem(`defrag_chat_v2_${user}`, JSON.stringify(messages));
     scrollRef.current?.scrollTo(0, scrollRef.current.scrollHeight);
+    
+    // Recalculate SEDA Score based on recent conversation context
+    if (messages.length > 0) {
+      const recentContext = messages.slice(-5).map(m => m.content).join(' ');
+      const seda = calculateSEDA(recentContext);
+      setRiskAssessment({ score: seda.score, status: seda.status });
+    }
   }, [messages, user]);
 
   const handleSend = async () => {
@@ -60,12 +69,25 @@ export const Chatbot: React.FC<ChatbotProps> = ({ user }) => {
     }
   };
 
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'DANGER': return 'text-red-500 border-red-500 bg-red-500/10';
+      case 'CAUTION': return 'text-amber-500 border-amber-500 bg-amber-500/10';
+      default: return 'text-emerald-500 border-emerald-500 bg-emerald-500/10';
+    }
+  };
+
   return (
     <div className="flex-1 flex flex-col p-6 md:p-10 overflow-hidden h-full safe-bottom">
       <div className="mb-6 flex justify-between items-center">
         <div>
           <h2 className="text-2xl md:text-3xl font-bold tracking-tighter uppercase leading-none">Deep Think Hub</h2>
-          <p className="text-neutral-500 text-[10px] font-bold uppercase tracking-widest mt-2">Max Token Thinking Mode | Profile: {user}</p>
+          <div className="flex items-center gap-4 mt-2">
+            <p className="text-neutral-500 text-[10px] font-bold uppercase tracking-widest">Profile: {user}</p>
+            <div className={`px-2 py-1 rounded border text-[9px] font-black uppercase tracking-widest ${getStatusColor(riskAssessment.status)}`}>
+               SEDA STATUS: {riskAssessment.status} ({Math.round(riskAssessment.score)}%)
+            </div>
+          </div>
         </div>
         <button 
           onClick={() => { if(confirm("Clear logic history?")) setMessages([]); }}
