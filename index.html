@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en" class="dark">
 <head>
@@ -14,6 +13,18 @@
     <meta name="theme-color" content="#050505">
     <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/5968/5968263.png">
     
+    <!-- CRITICAL: Polyfill for process.env to prevent crash in services -->
+    <script>
+      window.process = {
+        env: {
+          NODE_ENV: 'development',
+          API_KEY: '', // API Key handled via UI prompts or injection
+          VITE_STRIPE_PUBLIC_KEY: ''
+        }
+      };
+    </script>
+    
+    <!-- Styles: Tailwind & Fonts -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
       tailwind.config = {
@@ -55,6 +66,7 @@
       }
     </script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    
     <style type="text/tailwindcss">
         :root {
             --safe-area-inset-top: env(safe-area-inset-top);
@@ -90,76 +102,47 @@
 
         /* --- DEFRAG GOLDEN STUDIO THEME --- */
         @layer components {
-          /* THE GOLDEN GLASS CARD */
           .studio-panel {
-            /* Glass Base */
             @apply bg-[#0A0A0A]/40 backdrop-blur-xl border border-[#F59E0B]/10 rounded-2xl relative overflow-hidden transition-all duration-500;
             box-shadow: 0 4px 24px -1px rgba(0, 0, 0, 0.5);
           }
-
-          /* The Hover State */
           .studio-panel:hover {
-            @apply bg-[#0A0A0A]/60 border-[#F59E0B]/50; /* Amber Border */
-            box-shadow: 0 0 40px -5px rgba(245, 158, 11, 0.15); /* Gold Glow */
+            @apply bg-[#0A0A0A]/60 border-[#F59E0B]/50;
+            box-shadow: 0 0 40px -5px rgba(245, 158, 11, 0.15);
             transform: translateY(-4px) scale(1.01);
           }
-
-          /* Inputs (Gold Focus) */
           .studio-input {
             @apply bg-[#0A0A0A]/50 backdrop-blur-md border border-[#444746] text-[#E3E3E3] rounded-lg px-4 py-3 font-mono text-sm focus:border-[#F59E0B] focus:bg-[#0A0A0A]/80 focus:outline-none transition-all;
           }
-
-          /* Buttons */
           .studio-btn-primary {
             @apply bg-[#F59E0B] text-black hover:bg-[#D97706] font-medium px-6 py-2.5 rounded-full text-sm transition-colors flex items-center justify-center gap-2;
           }
         }
         
         .no-flicker { -webkit-transform: translate3d(0,0,0); }
-
-        /* Scrollbar hiding for the Chat Interface on Mobile for clean look */
-        .no-scrollbar::-webkit-scrollbar {
-          display: none;
-        }
-        .no-scrollbar {
-          -ms-overflow-style: none;
-          scrollbar-width: none;
-        }
-
-        /* Restored Animations */
-        @keyframes blob {
-          0% { transform: translate(0px, 0px) scale(1); }
-          33% { transform: translate(30px, -50px) scale(1.1); }
-          66% { transform: translate(-20px, 20px) scale(0.9); }
-          100% { transform: translate(0px, 0px) scale(1); }
-        }
-
-        .animate-blob {
-          animation: blob 10s infinite;
-        }
-
-        .animate-pulse-slow {
-          animation: pulse 8s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-        }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .animate-pulse-slow { animation: pulse 8s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
     </style>
 <script type="importmap">
 {
   "imports": {
-    "react/": "https://esm.sh/react@^19.2.4/",
     "react": "https://esm.sh/react@^19.2.4",
     "react-dom/": "https://esm.sh/react-dom@^19.2.4/",
-    "react-router-dom": "https://esm.sh/react-router-dom@6.22.3",
+    "react/": "https://esm.sh/react@^19.2.4/",
+    "react-router-dom": "https://esm.sh/react-router-dom@^7.13.0",
     "@google/genai": "https://esm.sh/@google/genai@^1.40.0",
-    "lucide-react": "https://esm.sh/lucide-react@^0.468.0",
-    "path": "https://esm.sh/path@^0.12.7",
     "fs": "https://esm.sh/fs@^0.0.1-security",
-    "@stripe/stripe-js": "https://esm.sh/@stripe/stripe-js@^8.7.0",
-    "astronomy-engine": "https://esm.sh/astronomy-engine@2.1.0"
+    "path": "https://esm.sh/path@^0.12.7",
+    "lucide-react": "https://esm.sh/lucide-react@^0.563.0",
+    "@stripe/stripe-js": "https://esm.sh/@stripe/stripe-js@^8.7.0"
   }
 }
 </script>
 </head>
 <body class="overflow-x-hidden">
     <div id="root" class="h-full w-full"></div>
+    <!-- CRITICAL: Entry point for React Application -->
+    <script type="module" src="/index.tsx"></script>
 </body>
 </html>

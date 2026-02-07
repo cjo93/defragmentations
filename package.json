@@ -11,13 +11,12 @@
   "dependencies": {
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
-    "react-router-dom": "6.22.3",
+    "react-router-dom": "^7.13.0",
     "@google/genai": "^1.40.0",
-    "lucide-react": "^0.468.0",
-    "path": "^0.12.7",
     "fs": "^0.0.1-security",
-    "@stripe/stripe-js": "^8.7.0",
-    "astronomy-engine": "2.1.0"
+    "path": "^0.12.7",
+    "lucide-react": "^0.563.0",
+    "@stripe/stripe-js": "^8.7.0"
   },
   "devDependencies": {
     "@types/node": "^22.14.0",

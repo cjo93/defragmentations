@@ -1,7 +1,8 @@
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Activity, Network, ShieldCheck } from 'lucide-react';
 import { SystemMap } from './visuals/SystemMap';
+import { processBirthData } from '../services/engine';
 
 interface ManualProps {
   data?: any;
@@ -36,29 +37,40 @@ const DifferentiationGauge = ({ score }: { score: number }) => (
   </div>
 );
 
-export const Manual: React.FC<ManualProps> = ({ data }) => {
+export const Manual: React.FC<ManualProps> = ({ data: initialData }) => {
+  const [data, setData] = useState<any>(initialData);
+
+  useEffect(() => {
+    if (!data) {
+      // Mock loading if data isn't provided via props
+      const loaded = processBirthData("1993-07-26", "20:00");
+      setData(loaded);
+    }
+  }, [data]);
+
   if (!data) {
     return (
       <div className="bg-slate-900/50 p-6 rounded-lg border border-white/5 text-center">
-        <p className="text-slate-500">No blueprint data available.</p>
+        <p className="text-slate-500 text-xs font-mono">LOADING BLUEPRINT...</p>
       </div>
     );
   }
 
   // Use Differentiation score from engine or default to 50
   const differentiationScore = data.differentiationScore || 50;
-  const dynamics = data.dynamics || [];
+  const dynamics = data.relationalDynamics || [];
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 max-w-4xl mx-auto pt-6 animate-fade-in">
+      <h2 className="text-3xl font-bold tracking-tight text-white mb-6">User Blueprint</h2>
       
       {/* DIFFERENTIATION SCALE */}
-      <div className="bg-[#050505] rounded-2xl border border-white/5 overflow-hidden">
+      <div className="bg-[#0A0A0A]/40 backdrop-blur-md rounded-2xl border border-white/5 overflow-hidden">
         <DifferentiationGauge score={differentiationScore} />
       </div>
 
       {/* SYSTEM MAP (BOWEN GENOGRAM) */}
-      <section className="bg-[#050505] h-[400px] rounded-2xl border border-white/5 flex flex-col items-center relative overflow-hidden">
+      <section className="bg-[#0A0A0A]/40 backdrop-blur-md h-[400px] rounded-2xl border border-white/5 flex flex-col items-center relative overflow-hidden">
         <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-amber-900 to-transparent opacity-50"></div>
         <div className="absolute top-4 left-4 z-10">
           <h3 className="text-xs font-bold text-white uppercase tracking-widest flex items-center gap-2">

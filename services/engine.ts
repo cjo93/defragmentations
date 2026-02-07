@@ -41,3 +41,30 @@ export const processBirthData = (date: string, time: string) => {
 export const calculateFriction = (p1: any, p2: any) => {
     return { score: 75, conflicts: 2, flow: 1, summary: "Mock Friction Analysis" };
 };
+
+export const calculateSynastry = (personA: any, personB: any) => {
+  // Logic: Compare their "Centers" (Mocking it for now)
+  // In real life: If Person A has Open Solar Plexus and Person B has Defined, 
+  // that creates "Emotional Conditioning" (Fusion risk).
+  
+  return {
+    compatibilityScore: 78,
+    dynamics: [
+      { 
+        type: 'FUSION', 
+        source: 'Emotional Center', 
+        description: 'High emotional transfer. You feel their moods as your own.' 
+      },
+      { 
+        type: 'CONFLICT', 
+        source: 'Root Pressure', 
+        description: 'Adrenaline mismatch. One pushes, the other resists.' 
+      },
+      { 
+        type: 'HEALTHY', 
+        source: 'Throat', 
+        description: 'Communication flow is open and unblocked.' 
+      }
+    ]
+  };
+};

@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom';
 import { DEFRAG_MANIFEST } from '../constants/manifest';
 import { processBirthData } from '../services/engine';
 import { SystemMap } from './visuals/SystemMap';
-import { LivingBackground } from './visuals/LivingBackground';
 
 export const Dashboard = () => {
   const navigate = useNavigate();
@@ -16,14 +15,13 @@ export const Dashboard = () => {
     setUserData(demo);
   }, []);
 
-  if (!userData) return <div className="bg-black min-h-screen text-white p-10 font-mono text-xs">INITIALIZING KERNEL...</div>;
+  if (!userData) return <div className="bg-transparent text-white p-10 font-mono text-xs">INITIALIZING KERNEL...</div>;
 
   return (
-    <div className="relative min-h-screen bg-black text-slate-200 font-sans overflow-hidden">
-      <LivingBackground mode="active" />
+    <div className="relative text-slate-200 font-sans overflow-hidden h-full">
       
       {/* HEADER */}
-      <header className="relative z-10 flex justify-between items-center p-6 border-b border-white/10 bg-black/40 backdrop-blur">
+      <header className="relative z-10 flex justify-between items-center p-6 border-b border-white/10 bg-black/20 backdrop-blur">
         <div className="font-bold text-lg tracking-tight">{DEFRAG_MANIFEST.BRAND.NAME}</div>
         <div className="flex items-center gap-2 text-xs text-emerald-500 font-mono uppercase">
           <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
@@ -36,7 +34,7 @@ export const Dashboard = () => {
         
         {/* LEFT: SYSTEM MAP (The Visuals) */}
         <div className="md:col-span-5 space-y-6">
-          <div className="h-[350px] bg-black/40 border border-white/10 rounded-2xl p-2 shadow-2xl relative">
+          <div className="h-[350px] bg-black/40 border border-white/10 rounded-2xl p-2 shadow-2xl relative backdrop-blur-sm">
             <SystemMap dynamics={userData.relationalDynamics} />
           </div>
           
