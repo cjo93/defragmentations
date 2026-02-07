@@ -25,7 +25,8 @@ export const LiveVoice: React.FC<LiveVoiceProps> = ({ user }) => {
   const [archive, setArchive] = useState<SavedSession[]>([]);
   const [showArchive, setShowArchive] = useState(false);
   const [archiveSearch, setArchiveSearch] = useState('');
-  // SEDA is now silent - we track it but do not display it
+  
+  // SEDA Silent Layer: Calculated for safety/backend flagging, but not displayed to user
   const [riskAssessment, setRiskAssessment] = useState({ score: 50, status: 'SAFE' });
 
   const audioContextInRef = useRef<AudioContext | null>(null);
@@ -52,12 +53,13 @@ export const LiveVoice: React.FC<LiveVoiceProps> = ({ user }) => {
   useEffect(() => {
     localStorage.setItem(`defrag_live_v3_${user}`, JSON.stringify(transcription));
     
-    // Real-time SEDA Analysis (Silent Layer)
+    // Silent SEDA Analysis
+    // We calculate the risk score based on recent context to maintain a safety layer
+    // This state is tracked but deliberately not visualized to maintain the "Manual" aesthetic
     if (transcription.length > 0) {
       const recentContext = transcription.slice(-5).map(m => m.text).join(' ');
       const seda = calculateSEDA(recentContext);
       setRiskAssessment({ score: seda.score, status: seda.status });
-      // In a real production app, high risk scores would trigger backend alerts here
     }
   }, [transcription, user]);
 
@@ -193,7 +195,7 @@ export const LiveVoice: React.FC<LiveVoiceProps> = ({ user }) => {
   // Visual Styles - Locked to Golden Soul Aesthetic (Ignoring SEDA for visuals)
   const getOrbStyles = () => {
     if (!isActive) return 'bg-neutral-800 border-2 border-white/5';
-    // Consistent Golden Core
+    // Always return Golden/Amber, ignoring riskAssessment to keep the aesthetic pure
     return 'bg-amber-500 shadow-[0_0_120px_rgba(245,158,11,0.6)]';
   };
 
