@@ -1,6 +1,6 @@
 
 import React, { Suspense, lazy } from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { ToastProvider } from './components/visuals/Toast';
 import { ErrorBoundary } from './components/visuals/ErrorBoundary';
 import { AuthGuard } from './components/auth/AuthGuard';
@@ -13,6 +13,8 @@ import { LandingPage } from './pages/LandingPage';
 import { AboutPage } from './pages/AboutPage';
 import { ManifestoPage } from './pages/ManifestoPage';
 import { ContactPage } from './pages/ContactPage';
+import { LegalPage } from './pages/LegalPage';
+import { NotFoundPage } from './pages/NotFoundPage';
 
 // Protected routes — lazy loaded for code-splitting
 const Dashboard = lazy(() => import('./components/Dashboard').then(m => ({ default: m.Dashboard })));
@@ -52,6 +54,7 @@ const App = () => {
             <Route path="/about" element={<AboutPage />} />
             <Route path="/manifesto" element={<ManifestoPage />} />
             <Route path="/contact" element={<ContactPage />} />
+            <Route path="/legal" element={<LegalPage />} />
             <Route path="/login" element={<Login />} />
             <Route path="/onboarding" element={<Onboarding />} />
 
@@ -72,7 +75,7 @@ const App = () => {
               <Route path="/echo" element={<Suspense fallback={<LoadingFallback />}><Echo /></Suspense>} />
             </Route>
 
-            <Route path="*" element={<Navigate to="/" />} />
+            <Route path="*" element={<NotFoundPage />} />
           </Routes>
         </BrowserRouter>
       </ToastProvider>

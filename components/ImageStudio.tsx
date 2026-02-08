@@ -161,7 +161,7 @@ export const ImageStudio: React.FC = () => {
               transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
               className="relative group max-h-full"
             >
-              <img src={resultImage} className="max-h-full rounded-2xl shadow-2xl border border-neutral-800" />
+              <img src={resultImage} alt="Generated result" className="max-h-full rounded-2xl shadow-2xl border border-neutral-800" />
               <button 
                 onClick={() => setUploadedImage(resultImage)}
                 className="absolute top-4 right-4 bg-black/60 backdrop-blur-md border border-white/10 p-2 rounded-xl text-white opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-2 text-[10px] font-bold"

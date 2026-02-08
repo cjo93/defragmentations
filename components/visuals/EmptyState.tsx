@@ -118,7 +118,7 @@ export const EchoEmptyState = ({ onStart }: { onStart?: () => void }) => (
   />
 );
 
-export const OrbitEmptyState = ({ onStart }: { onStart?: () => void }) => (
+export const OrbitEmptyState = (_props: { onStart?: () => void }) => (
   <EmptyState
     icon="orbit"
     title="Define Your Orbit"

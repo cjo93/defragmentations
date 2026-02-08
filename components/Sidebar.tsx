@@ -28,6 +28,8 @@ const NavItem: React.FC<{ item: typeof NAV_ITEMS[0]; active: boolean; onClick: (
     animate={{ opacity: 1, x: 0 }}
     transition={{ delay: 0.05 * index + 0.2, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
     onClick={() => onClick(item.id)}
+    aria-label={item.label}
+    aria-current={active ? 'page' : undefined}
     className="group relative flex items-center justify-center w-12 h-12 md:w-full md:h-auto md:justify-start md:px-5 md:py-3.5 mb-1 rounded-xl transition-all"
     whileHover={{ x: 2 }}
     whileTap={{ scale: 0.97 }}
@@ -68,7 +70,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentView, onNavigate, onLog
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 w-full space-y-0.5">
+      <nav className="flex-1 w-full space-y-0.5" aria-label="Main navigation">
         {NAV_ITEMS.map((item, i) => (
           <NavItem key={item.id} item={item} active={currentView === item.id} onClick={onNavigate} index={i} />
         ))}
@@ -78,6 +80,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentView, onNavigate, onLog
       <div className="mt-auto pt-4 border-t border-white/[0.04] w-full px-1">
         <button
           onClick={onLogout}
+          aria-label="Sign out"
           className="group w-full flex items-center justify-center md:justify-start md:px-5 py-3 rounded-xl text-white/20 hover:text-white/50 transition-colors"
         >
           <svg className="w-[18px] h-[18px] transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">

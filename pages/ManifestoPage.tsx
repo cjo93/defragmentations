@@ -9,7 +9,7 @@ const fadeUp = {
   hidden: { opacity: 0, y: 30 },
   visible: (i: number = 0) => ({
     opacity: 1, y: 0,
-    transition: { delay: i * 0.15, duration: 0.9, ease: [0.22, 1, 0.36, 1] },
+    transition: { delay: i * 0.15, duration: 0.9, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] },
   }),
 };
 const stagger = { visible: { transition: { staggerChildren: 0.12 } } };

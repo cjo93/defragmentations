@@ -10,7 +10,7 @@ const fadeUp = {
   hidden: { opacity: 0, y: 30 },
   visible: (i: number = 0) => ({
     opacity: 1, y: 0,
-    transition: { delay: i * 0.15, duration: 0.9, ease: [0.22, 1, 0.36, 1] },
+    transition: { delay: i * 0.15, duration: 0.9, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] },
   }),
 };
 const stagger = { visible: { transition: { staggerChildren: 0.12 } } };
@@ -59,7 +59,7 @@ export const ContactPage: React.FC = () => {
 
   return (
     <div className="relative min-h-screen bg-[#050505] text-white overflow-hidden">
-      <LivingBackground />
+      <LivingBackground mode="calm" />
 
       {/* ─── NAV BAR ─────────────────────────────────────── */}
       <nav className="fixed top-0 left-0 right-0 z-50 backdrop-blur-xl bg-black/40 border-b border-white/[0.04]">

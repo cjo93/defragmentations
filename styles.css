@@ -1,0 +1,86 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ─── CSS Variables ──────────────────────────────────────────── */
+:root {
+  --safe-area-inset-top: env(safe-area-inset-top);
+  --safe-area-inset-bottom: env(safe-area-inset-bottom);
+}
+
+/* ─── Base Styles ────────────────────────────────────────────── */
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: #050505;
+  color: #E3E3E3;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  overflow-x: hidden;
+  overscroll-behavior-y: none;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ─── Scrollbar ──────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #444746; border-radius: 10px; }
+
+/* ─── Safe Area ──────────────────────────────────────────────── */
+.safe-bottom { padding-bottom: calc(1.5rem + var(--safe-area-inset-bottom)); }
+.safe-top { padding-top: calc(1rem + var(--safe-area-inset-top)); }
+
+/* ─── Legacy Glass ───────────────────────────────────────────── */
+.ios-glass {
+  background: rgba(30, 31, 32, 0.95);
+  border-bottom: 1px solid #444746;
+}
+
+/* ─── Utility Labels ─────────────────────────────────────────── */
+.text-mono-label {
+  @apply text-[10px] font-bold uppercase tracking-widest text-neutral-500;
+}
+
+/* ─── DEFRAG Studio Theme ────────────────────────────────────── */
+@layer components {
+  .studio-panel {
+    @apply bg-[#0A0A0A]/40 backdrop-blur-xl border border-[#E2E2E8]/10 rounded-2xl relative overflow-hidden transition-all duration-500;
+    box-shadow: 0 4px 24px -1px rgba(0, 0, 0, 0.5);
+  }
+  .studio-panel:hover {
+    @apply bg-[#0A0A0A]/60 border-[#E2E2E8]/50;
+    box-shadow: 0 0 40px -5px rgba(226, 226, 232, 0.15);
+    transform: translateY(-4px) scale(1.01);
+  }
+  .studio-input {
+    @apply bg-[#0A0A0A]/50 backdrop-blur-md border border-[#444746] text-[#E3E3E3] rounded-lg px-4 py-3 font-mono text-sm focus:border-[#E2E2E8] focus:bg-[#0A0A0A]/80 focus:outline-none transition-all;
+  }
+  .studio-btn-primary {
+    @apply bg-[#E2E2E8] text-black hover:bg-[#C8C8D0] font-medium px-6 py-2.5 rounded-full text-sm transition-colors flex items-center justify-center gap-2;
+  }
+}
+
+/* ─── Utility Classes ────────────────────────────────────────── */
+.no-flicker { -webkit-transform: translate3d(0,0,0); }
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* ─── Shimmer Animation ──────────────────────────────────────── */
+.animate-shimmer {
+  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.04) 50%, transparent 100%);
+  background-size: 400px 100%;
+}
+
+/* ─── Focus States ───────────────────────────────────────────── */
+input:focus, textarea:focus {
+  box-shadow: 0 0 0 1px rgba(226,226,232,0.15), 0 0 20px -6px rgba(226,226,232,0.1) !important;
+}
+
+/* ─── Button Feedback ────────────────────────────────────────── */
+button:active:not(:disabled) {
+  transform: scale(0.97);
+  transition: transform 0.1s ease;
+}
+
+/* ─── Smooth Scroll ──────────────────────────────────────────── */
+* { scroll-behavior: smooth; }

@@ -187,6 +187,7 @@ export const AboutPage: React.FC = () => {
           </div>
           <div className="flex items-center gap-8 text-[11px] text-neutral-600">
             <Link to="/" className="hover:text-neutral-400 transition">Home</Link>
+            <Link to="/contact" className="hover:text-neutral-400 transition">Contact</Link>
             <Link to="/legal" className="hover:text-neutral-400 transition">Terms</Link>
           </div>
           <p className="text-[11px] text-neutral-700">&copy; {new Date().getFullYear()} DEFRAG</p>
