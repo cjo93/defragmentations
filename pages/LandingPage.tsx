@@ -353,7 +353,7 @@ export const LandingPage = () => {
             <span className="text-[10px] font-semibold uppercase tracking-[0.25em] text-neutral-500">Three Pillars</span>
             <h2 className="text-3xl md:text-[2.75rem] font-bold mt-5 tracking-tight leading-tight">Signal. Structure. Pattern.</h2>
             <p className="text-neutral-400 mt-6 text-base md:text-lg leading-relaxed max-w-2xl mx-auto">
-              Three precision engines working in synthesis. Each maps a different layer of your internal architecture to produce a unified system map.
+              Three tools working together. Each reads a different part of how you operate — then combines them into one clear picture.
             </p>
           </motion.div>
 
@@ -363,21 +363,21 @@ export const LandingPage = () => {
               label="Pillar I"
               icon={<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-white/50"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>}
               title="The Signal Filter"
-              body="Internal Architecture — Maps your 9 energy centers and 64 activation points. Your baseline wiring — how you process energy, make decisions, and where friction accumulates."
+              body="Your Personal Profile — Maps how you process information, make decisions, and where stress tends to build up. Your baseline — generated once, referenced in everything DEFRAG does."
             />
             <PillarCard
               index={2}
               label="Pillar II"
               icon={<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-white/50"><circle cx="12" cy="5" r="3"/><circle cx="5" cy="19" r="3"/><circle cx="19" cy="19" r="3"/><path d="M12 8v4M8.5 16.5l-1 .5M15.5 16.5l1 .5"/></svg>}
               title="The Triangulation Engine"
-              body="Relational Dynamics — Detects stabilizers, scapegoats, and relief valves across 3-body systems. Reveals who carries the emotional load and how tension redistributes."
+              body="Relationship Mapping — Analyzes the dynamics between three people at a time. Shows who carries the emotional weight, who creates tension, and how it moves between you."
             />
             <PillarCard
               index={3}
               label="Pillar III"
               icon={<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-white/50"><path d="M12 20h9M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>}
               title="The Echo Engine"
-              body="Pattern Recognition — Scans 30-day behavioral windows for recurring loops, clustering friction patterns into visible, addressable structure."
+              body="Pattern Tracking — Monitors your behavior over 30 days to spot recurring cycles. The arguments, reactions, and shutdown moments you keep repeating — made visible so you can break them."
             />
           </div>
         </motion.div>
@@ -399,16 +399,16 @@ export const LandingPage = () => {
             <span className="text-[10px] font-semibold uppercase tracking-[0.25em] text-neutral-500">How It Works</span>
             <h2 className="text-3xl md:text-[2.75rem] font-bold mt-5 tracking-tight leading-tight">Four layers. One system.</h2>
             <p className="text-neutral-400 mt-6 text-base md:text-lg leading-relaxed max-w-2xl mx-auto">
-              DEFRAG reads your design across four dimensions — then synthesizes them into a single, unified intelligence that learns as you do.
+              Four tools that work together to show you how you're wired, where you get stuck, and what to do about it.
             </p>
           </motion.div>
 
           <div className="grid md:grid-cols-2 gap-6">
             {[
-              { num: '01', name: 'The Map', sub: 'Personal Blueprint', body: 'Understanding your natural energy and where you are most likely to get stuck. Your 9 centers, 64 activation points, and core strategy — decoded from your birth data.', icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-white/50"><path d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l5.447 2.724A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/></svg> },
-              { num: '02', name: 'The Field', sub: 'Relational Geometry', body: 'Seeing how the people around you pull you out of balance. Triangulation detection across 3-body systems reveals stabilizers, scapegoats, and invisible load.', icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-white/50"><circle cx="12" cy="5" r="3"/><circle cx="5" cy="19" r="3"/><circle cx="19" cy="19" r="3"/><path d="M12 8v4M8.5 16.5l-1 .5M15.5 16.5l1 .5"/></svg> },
-              { num: '03', name: 'The Shift', sub: 'Behavioral Inversion', body: 'Turning your biggest frustrations into operational strengths. What looks like a flaw is often a feature running in the wrong context — DEFRAG shows you the switch.', icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-white/50"><path d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"/></svg> },
-              { num: '04', name: 'The Memory', sub: 'Pattern Detection', body: 'Catching old habits before they repeat. 30-day behavioral windows reveal recurring loops — friction patterns your conscious mind overlooks, made visible and addressable.', icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-white/50"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg> },
+              { num: '01', name: 'The Map', sub: 'Personal Profile', body: 'A detailed picture of how you naturally think, decide, and respond — generated from your birth data. See your strengths, blind spots, and the patterns that shape your daily life.', icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-white/50"><path d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l5.447 2.724A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/></svg> },
+              { num: '02', name: 'The Field', sub: 'Relationship Dynamics', body: 'See how your close relationships actually work — who steadies things, who absorbs the tension, and where the friction comes from. Maps the dynamics between any three people.', icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-white/50"><circle cx="12" cy="5" r="3"/><circle cx="5" cy="19" r="3"/><circle cx="19" cy="19" r="3"/><path d="M12 8v4M8.5 16.5l-1 .5M15.5 16.5l1 .5"/></svg> },
+              { num: '03', name: 'The Shift', sub: 'Strength Mapping', body: 'Your biggest frustrations often point to your biggest strengths — used in the wrong situation. DEFRAG identifies the pattern and shows you where that trait works instead.', icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-white/50"><path d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"/></svg> },
+              { num: '04', name: 'The Memory', sub: 'Pattern Tracking', body: 'Tracks your recurring patterns over 30 days — the reactions, habits, and conflicts that keep showing up. Once you can see a loop, you can break it.', icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-white/50"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg> },
             ].map((item, i) => (
               <motion.div
                 key={item.num}
@@ -455,13 +455,13 @@ export const LandingPage = () => {
                 The Stability Meter.
               </h2>
               <p className="text-neutral-400 mt-6 text-base leading-relaxed">
-                Real-time stability monitoring. The SEDA engine scores every interaction across three dimensions — grounding, inflation, and distress — then regulates tone accordingly.
+                Real-time emotional safety monitoring. DEFRAG reads your state and adjusts how it responds — direct when you're steady, gentle when you're not.
               </p>
               <div className="mt-8 space-y-4">
                 {[
-                  { mode: 'LOGIC MODE', desc: 'Clear analytical output. Standard operation.' },
-                  { mode: 'HOLDING SPACE', desc: 'Structural load detected. Pace slows. Validation first.' },
-                  { mode: 'CRISIS MODE', desc: 'Analysis stops. Grounding protocol initiates.' },
+                  { mode: 'LOGIC MODE', desc: 'Clear, direct answers. Standard conversation.' },
+                  { mode: 'HOLDING SPACE', desc: 'Emotional weight detected. Pace slows. Your feelings come first.' },
+                  { mode: 'CRISIS MODE', desc: 'Analysis stops. Breathing exercises and support resources only.' },
                 ].map((m) => (
                   <div key={m.mode} className="flex items-start gap-3">
                     <div className="w-1.5 h-1.5 rounded-full bg-white/20 mt-2 flex-shrink-0" />
@@ -497,7 +497,7 @@ export const LandingPage = () => {
             Your complete<br />system map.
           </motion.h2>
           <motion.p variants={fadeUp} custom={2} className="text-neutral-400 mt-8 text-base md:text-lg leading-relaxed max-w-2xl mx-auto">
-            Every pattern, every relational dynamic, every recurring echo — synthesized into a single architectural blueprint. Not a label. A living, navigable map of how you actually work.
+            Your personality, your relationships, and your recurring patterns — combined into one clear picture. Not a label. A detailed, living map of how you actually work.
           </motion.p>
 
           {/* Visual accent — system node cluster */}

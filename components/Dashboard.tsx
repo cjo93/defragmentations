@@ -133,7 +133,7 @@ export const Dashboard = () => {
             <div className="absolute bottom-3 left-3 right-3 flex justify-between items-end">
               <div className="flex items-center gap-2">
                 <span className="text-[10px] font-semibold uppercase tracking-[0.15em] text-neutral-600">System Map</span>
-                <HelpIcon tooltip="Your 9-center blueprint showing which energy centers are consistently defined (colored) vs open (uncolored)" />
+                <HelpIcon tooltip="Your personal map — colored areas are your consistent traits, uncolored areas are where you're more influenced by others" />
               </div>
               <span className="text-[10px] text-neutral-700">Live</span>
             </div>
@@ -142,7 +142,7 @@ export const Dashboard = () => {
           {/* Progress Rings Row */}
           <div className="grid grid-cols-3 gap-4">
             <div className="bg-white/[0.02] border border-white/[0.06] rounded-2xl p-5 flex flex-col items-center">
-              <ProgressRing value={Math.round((definedCenters / totalCenters) * 100)} size={80} label="Defined" sub={`${definedCenters} centers`} />
+              <ProgressRing value={Math.round((definedCenters / totalCenters) * 100)} size={80} label="Defined" sub={`${definedCenters} of 9 areas`} />
             </div>
             <div className="bg-white/[0.02] border border-white/[0.06] rounded-2xl p-5 flex flex-col items-center">
               <ProgressRing value={72} size={80} label="Clarity" sub="Session avg" />
@@ -156,7 +156,7 @@ export const Dashboard = () => {
           {userData.astrology && (
             <div className="bg-white/[0.02] border border-white/[0.06] rounded-3xl backdrop-blur-2xl overflow-hidden">
               <div className="px-6 py-4 border-b border-white/[0.04]">
-                <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-neutral-500">Current Transits</span>
+                <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-neutral-500">Today's Influences</span>
               </div>
               <table className="w-full text-sm">
                 <tbody>
@@ -196,7 +196,7 @@ export const Dashboard = () => {
                 { label: 'Authority', value: userData.authority },
                 { label: 'Profile', value: userData.profile || '4/6' },
                 { label: 'Definition', value: userData.definition || 'Split' },
-                { label: 'Incarnation Cross', value: userData.cross || 'Right Angle' },
+                { label: 'Life Theme', value: userData.cross || 'Right Angle' },
               ].map((item, i) => (
                 <div key={i}>
                   <span className="text-[10px] text-neutral-600 uppercase tracking-wider block mb-1">{item.label}</span>
@@ -214,9 +214,9 @@ export const Dashboard = () => {
             </div>
             <div className="px-6 py-2">
               <ActivityItem icon="◉" text="Blueprint generated from birth data" time="Just now" accent="Blueprint" />
-              <ActivityItem icon="⬡" text={`${definedCenters} energy centers mapped and classified`} time="Just now" accent="Design" />
-              <ActivityItem icon="◈" text="Transit overlay active — your current environmental field is live" time="Just now" accent="Transits" />
-              <ActivityItem icon="◇" text="SEDA safety protocol active" time="Active" accent="Safety" />
+              <ActivityItem icon="⬡" text={`${definedCenters} personality areas mapped and classified`} time="Just now" accent="Design" />
+              <ActivityItem icon="◈" text="Daily influences active — today's conditions are being tracked" time="Just now" accent="Daily" />
+              <ActivityItem icon="◇" text="Emotional safety monitoring active" time="Active" accent="Safety" />
               <ActivityItem icon="▹" text="Start a session to begin analysis" time="Pending" />
             </div>
           </div>
