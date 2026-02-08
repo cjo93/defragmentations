@@ -51,7 +51,7 @@ export class ErrorBoundary extends Component<Props, State> {
 
             <h1 className="text-2xl font-bold tracking-tight mb-3">System Disruption</h1>
             <p className="text-sm text-neutral-400 leading-relaxed mb-2">
-              Something unexpected interrupted the architecture.
+              A structural fault interrupted the architecture. This is recoverable.
             </p>
 
             {this.state.error && (

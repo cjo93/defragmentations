@@ -10,7 +10,7 @@ export const FrequencyTuner = ({ shadow, gift, gate }: { shadow: string, gift: s
       <div className="relative z-10 flex items-center justify-between">
         {/* The Shadow (Left) */}
         <div className="text-left">
-          <div className="text-[10px] uppercase tracking-widest text-red-400 mb-1">Detected Signal</div>
+          <div className="text-[10px] uppercase tracking-widest text-red-400 mb-1">Friction Point</div>
           <div className="text-xl font-bold text-slate-400 group-hover:text-slate-500 transition">{shadow}</div>
         </div>
 
@@ -24,13 +24,13 @@ export const FrequencyTuner = ({ shadow, gift, gate }: { shadow: string, gift: s
 
         {/* The Gift (Right) */}
         <div className="text-right">
-          <div className="text-[10px] uppercase tracking-widest text-emerald-400 mb-1">Target Frequency</div>
+          <div className="text-[10px] uppercase tracking-widest text-emerald-400 mb-1">Gift Frequency</div>
           <div className="text-xl font-bold text-white group-hover:text-neutral-300 transition">{gift}</div>
         </div>
       </div>
 
       <div className="mt-3 text-[10px] text-center text-slate-500 border-t border-white/5 pt-2 uppercase tracking-widest">
-        Alchemical Inversion Protocol Active
+        Behavioral Inversion Active
       </div>
     </div>
   );

@@ -11,8 +11,8 @@ interface ManualProps {
 const DifferentiationGauge = ({ score }: { score: number }) => (
   <div className="w-full p-6 border-b border-white/5">
     <div className="flex justify-between text-[10px] font-bold uppercase text-slate-500 mb-3 tracking-widest">
-      <span>Reactivity (Fused)</span>
-      <span>Differentiation (Solid)</span>
+      <span>Reactive (High Friction)</span>
+      <span>Grounded (Low Friction)</span>
     </div>
     
     <div className="relative h-2 bg-slate-800 rounded-full overflow-hidden mb-2">
@@ -25,8 +25,8 @@ const DifferentiationGauge = ({ score }: { score: number }) => (
     
     <div className="flex justify-between items-end">
       <p className="text-[10px] text-slate-400 max-w-[70%]">
-        {score < 50 ? "High emotional reactivity detected. Focus on grounding." : 
-         score < 75 ? "Functional balance. System is operating within normal parameters." : 
+        {score < 50 ? "High structural friction detected. Focus on grounding." : 
+         score < 75 ? "Functional balance. System operating within normal parameters." : 
          "Optimal state. High clarity and low friction."}
       </p>
       <div className="text-right">
@@ -105,11 +105,11 @@ export const Manual: React.FC<ManualProps> = ({ data: initialData }) => {
       
       {/* ANALYST NOTE */}
       <div className="p-5 bg-neutral-800/10 rounded-xl border border-neutral-300/10 relative">
-        <div className="text-[10px] font-bold text-neutral-300 uppercase tracking-widest mb-2">Architect's Note</div>
+        <div className="text-[10px] font-bold text-neutral-300 uppercase tracking-widest mb-2">System Note</div>
         <p className="text-xs text-neutral-100/70 leading-relaxed font-medium">
-          Your system map indicates {dynamics.filter((d: any) => d.type === 'FUSION').length > 0 ? "potential fusion" : "relative stability"} in the primary nodes. 
-          To increase differentiation, focus on defining where you end and others begin. 
-          Respond to facts, not the emotional climate of the room.
+          Your system map indicates {dynamics.filter((d: any) => d.type === 'FUSION').length > 0 ? "overlapping boundaries" : "relative stability"} in the primary nodes. 
+          To increase clarity, focus on defining where you end and others begin. 
+          Respond to facts, not the emotional weather of the room.
         </p>
       </div>
 

@@ -52,12 +52,12 @@ export const SafePlace: React.FC = () => {
           transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
           className="space-y-3"
         >
-          <span className="text-[10px] font-semibold uppercase tracking-[0.25em] text-teal-400/60">Safe Place</span>
+          <span className="text-[10px] font-semibold uppercase tracking-[0.25em] text-teal-400/60">Grounding Protocol</span>
           <h1 className="text-3xl md:text-5xl font-bold text-white tracking-tight">
-            You are held.
+            Ground state.
           </h1>
           <p className="text-[#A3A3A3] text-sm md:text-base leading-relaxed max-w-md mx-auto">
-            Analysis has been paused. Right now, the only task is to settle the body. Breathe with the light.
+            Analysis paused. The only task right now is to settle the system. Breathe with the light.
           </p>
         </motion.div>
 

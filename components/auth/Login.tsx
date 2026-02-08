@@ -52,7 +52,7 @@ export const Login = () => {
               <Sparkles className="w-8 h-8 text-[#E2E2E8]" />
             </div>
             <h2 className="text-3xl font-light tracking-tight mb-2">Welcome Back</h2>
-            <p className="text-white/40 text-sm">Resume your work in the architecture.</p>
+            <p className="text-white/40 text-sm">Pick up where you left off.</p>
           </motion.div>
 
           <form onSubmit={handleLogin} className="space-y-6">

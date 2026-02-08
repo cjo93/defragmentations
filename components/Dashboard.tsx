@@ -156,7 +156,7 @@ export const Dashboard = () => {
           {userData.astrology && (
             <div className="bg-white/[0.02] border border-white/[0.06] rounded-3xl backdrop-blur-2xl overflow-hidden">
               <div className="px-6 py-4 border-b border-white/[0.04]">
-                <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-neutral-500">Current Weather</span>
+                <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-neutral-500">Current Transits</span>
               </div>
               <table className="w-full text-sm">
                 <tbody>
@@ -215,7 +215,7 @@ export const Dashboard = () => {
             <div className="px-6 py-2">
               <ActivityItem icon="◉" text="Blueprint generated from birth data" time="Just now" accent="Blueprint" />
               <ActivityItem icon="⬡" text={`${definedCenters} energy centers mapped and classified`} time="Just now" accent="Design" />
-              <ActivityItem icon="◈" text="Planetary positions calculated — your relational geometry is live" time="Just now" accent="Geometry" />
+              <ActivityItem icon="◈" text="Transit overlay active — your current environmental field is live" time="Just now" accent="Transits" />
               <ActivityItem icon="◇" text="SEDA safety protocol active" time="Active" accent="Safety" />
               <ActivityItem icon="▹" text="Start a session to begin analysis" time="Pending" />
             </div>

@@ -89,9 +89,9 @@ export const Onboarding = () => {
                 </div>
                 <div className="space-y-4 mb-10">
                   {[
-                    { icon: '◉', label: 'The Map', desc: 'Your 9-center blueprint and 64 activation points' },
-                    { icon: '⬡', label: 'The Field', desc: 'Relational geometry and triangulation patterns' },
-                    { icon: '◈', label: 'The Memory', desc: 'Pattern detection across 30-day windows' },
+                    { icon: '◉', label: 'The Map', desc: 'Your 9 energy centers and 64 activation points — decoded' },
+                    { icon: '⬡', label: 'The Field', desc: 'Relational geometry — how people pull you in or out of balance' },
+                    { icon: '◈', label: 'The Memory', desc: 'Pattern detection across 30-day behavioral windows' },
                   ].map((item, i) => (
                     <div key={i} className="flex items-start gap-4 p-4 rounded-2xl bg-white/[0.02] border border-white/[0.04]">
                       <span className="text-neutral-500 text-xl mt-0.5">{item.icon}</span>

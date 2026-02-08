@@ -27,7 +27,7 @@ export const SedaGauge: React.FC<SedaGaugeProps> = ({ spectrum, description }) =
       color: '#10B981',
       glow: 'rgba(16,185,129,0.4)',
       label: 'Opening',
-      defaultDesc: 'The architecture is open. This is the optimal state for alchemical inversion.',
+      defaultDesc: 'The architecture is open. This is the optimal state for behavioral inversion.',
     },
   };
 
