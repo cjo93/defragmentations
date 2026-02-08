@@ -617,6 +617,7 @@ export const LandingPage = () => {
           </div>
           <div className="flex items-center gap-8 text-[11px] text-neutral-600">
             <Link to="/manifesto" className="hover:text-neutral-400 transition">Manifesto</Link>
+            <Link to="/contact" className="hover:text-neutral-400 transition">Contact</Link>
             <Link to="/legal" className="hover:text-neutral-400 transition">Terms</Link>
             <Link to="/legal" className="hover:text-neutral-400 transition">Privacy</Link>
           </div>

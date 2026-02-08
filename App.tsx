@@ -12,6 +12,7 @@ import { Onboarding } from './components/auth/Onboarding';
 import { LandingPage } from './pages/LandingPage';
 import { AboutPage } from './pages/AboutPage';
 import { ManifestoPage } from './pages/ManifestoPage';
+import { ContactPage } from './pages/ContactPage';
 
 // Protected routes — lazy loaded for code-splitting
 const Dashboard = lazy(() => import('./components/Dashboard').then(m => ({ default: m.Dashboard })));
@@ -50,6 +51,7 @@ const App = () => {
             <Route path="/" element={<LandingPage />} />
             <Route path="/about" element={<AboutPage />} />
             <Route path="/manifesto" element={<ManifestoPage />} />
+            <Route path="/contact" element={<ContactPage />} />
             <Route path="/login" element={<Login />} />
             <Route path="/onboarding" element={<Onboarding />} />
 
