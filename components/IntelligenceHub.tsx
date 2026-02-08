@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { chatWithModel, scanForShadows } from '../services/geminiService';
+import { chatWithModel, scanForShadows } from '../services/aiService';
 import { getFrequency } from '../services/frequencies';
 import { Message } from '../types';
 import { calculateSEDA } from '../services/sedaCalculator';

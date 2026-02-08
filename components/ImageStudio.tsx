@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { generateImage, editImage } from '../services/geminiService';
+import { generateImage, editImage } from '../services/aiService';
 
 export const ImageStudio: React.FC = () => {
   const [prompt, setPrompt] = useState('');

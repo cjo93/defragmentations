@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { generateSpeech } from '../services/geminiService';
+import { generateSpeech } from '../services/aiService';
 
 export const SpeechLab: React.FC = () => {
   const [text, setText] = useState('');

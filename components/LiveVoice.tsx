@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback, useMemo } from 'react';
-import { chatWithModel, getSystemInstruction, generateSpeech, transcribeAudioBlob } from '../services/geminiService';
+import { chatWithModel, getSystemInstruction, generateSpeech, transcribeAudioBlob } from '../services/aiService';
 import { calculateSEDA } from '../services/sedaCalculator';
 import { UserProfile } from '../types';
 import CinemaLayout from './layout/CinemaLayout';

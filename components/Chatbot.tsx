@@ -2,7 +2,7 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { chatWithModel, getSystemInstruction } from '../services/geminiService';
+import { chatWithModel, getSystemInstruction } from '../services/aiService';
 import { calculateSEDA } from '../services/sedaCalculator';
 import { assembleGlobalContext, contextToPromptBlock, parseUICommands, UICommand } from '../services/globalContext';
 import { Message, UserProfile } from '../types';

@@ -1,6 +1,6 @@
 
 import React, { useState, useRef } from 'react';
-import { transcribeAudio } from '../services/geminiService';
+import { transcribeAudio } from '../services/aiService';
 
 export const Transcriber: React.FC = () => {
   const [isRecording, setIsRecording] = useState(false);
