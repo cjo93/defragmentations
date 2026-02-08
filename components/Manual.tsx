@@ -86,7 +86,7 @@ export const Manual: React.FC<ManualProps> = ({ data: initialData }) => {
         <div className="bg-white/5 p-4 rounded-xl border border-white/5 backdrop-blur-sm">
           <div className="flex items-center gap-2 mb-2">
              <ShieldCheck className="w-3 h-3 text-neutral-500" />
-             <span className="text-[10px] font-bold uppercase tracking-widest text-neutral-500">Boundaries</span>
+             <span className="text-[10px] font-bold uppercase tracking-widest text-neutral-500">Perimeter</span>
           </div>
           <div className="text-xl font-mono text-white">
             {differentiationScore > 70 ? "Intact" : differentiationScore > 50 ? "Porous" : "Fused"}
@@ -95,10 +95,10 @@ export const Manual: React.FC<ManualProps> = ({ data: initialData }) => {
         <div className="bg-white/5 p-4 rounded-xl border border-white/5 backdrop-blur-sm">
           <div className="flex items-center gap-2 mb-2">
              <Activity className="w-3 h-3 text-neutral-500" />
-             <span className="text-[10px] font-bold uppercase tracking-widest text-neutral-500">Anxiety</span>
+             <span className="text-[10px] font-bold uppercase tracking-widest text-neutral-500">System Tension</span>
           </div>
           <div className="text-xl font-mono text-white">
-            {differentiationScore > 70 ? "Low" : differentiationScore > 50 ? "Moderate" : "Chronic"}
+            {differentiationScore > 70 ? "Low" : differentiationScore > 50 ? "Moderate" : "Elevated"}
           </div>
         </div>
       </section>

@@ -196,7 +196,7 @@ export const Dashboard = () => {
                 { label: 'Authority', value: userData.authority },
                 { label: 'Profile', value: userData.profile || '4/6' },
                 { label: 'Definition', value: userData.definition || 'Split' },
-                { label: 'Incarnation', value: userData.cross || 'Right Angle' },
+                { label: 'Incarnation Cross', value: userData.cross || 'Right Angle' },
               ].map((item, i) => (
                 <div key={i}>
                   <span className="text-[10px] text-neutral-600 uppercase tracking-wider block mb-1">{item.label}</span>

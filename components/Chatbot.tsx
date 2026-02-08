@@ -130,7 +130,7 @@ export const Chatbot: React.FC<ChatbotProps> = ({ user }) => {
 
       // Parse UI commands from response
       const { cleanText, commands } = parseUICommands(responseText || '');
-      setMessages(prev => [...prev, { role: 'model', content: cleanText || "I couldn't generate a response. Try again?" }]);
+      setMessages(prev => [...prev, { role: 'model', content: cleanText || "Signal lost. Try sending that again." }]);
       
       // Execute any UI Bridge commands
       if (commands.length > 0) {
@@ -138,7 +138,7 @@ export const Chatbot: React.FC<ChatbotProps> = ({ user }) => {
       }
     } catch (err: any) {
       console.error(err);
-      setMessages(prev => [...prev, { role: 'model', content: `Something went wrong. Let’s try that again. (${err.message})` }]);
+      setMessages(prev => [...prev, { role: 'model', content: `Signal interrupted. Let's recalibrate. (${err.message})` }]);
     } finally {
       setLoading(false);
     }
@@ -213,7 +213,7 @@ export const Chatbot: React.FC<ChatbotProps> = ({ user }) => {
                <div className="max-w-md">
                  <h3 className="text-lg font-bold text-white mb-2">The Forge is ready</h3>
                  <p className="text-sm text-neutral-500 leading-relaxed mb-6">
-                   This is your singular intelligence. Ask anything — The Forge has access to your blueprint, echo patterns, transit weather, and stability score.
+                   This is your singular intelligence — the place where your blueprint, patterns, transits, and stability data converge. Ask anything about your architecture.
                  </p>
                  <div className="grid grid-cols-1 gap-2 text-left">
                    {[

@@ -8,13 +8,13 @@ export const DEFRAG_MANIFEST = {
   },
   LANDING: {
     HERO_TITLE: "From fragmentation to flow.",
-    HERO_SUB: "DEFRAG is a high-precision architecture that maps your internal circuitry. By synthesizing Human Design, Bowen Systems Theory, and Alchemical Inversion, we turn systemic friction into kinetic output.",
+    HERO_SUB: "DEFRAG maps your internal architecture — how you process, decide, and connect. Then it shows you where the friction lives, and how to remove it. The manual you never received.",
     CTA_PRIMARY: "Initialize System Map",
     CTA_SECONDARY: "Run Diagnostic",
     TIERS: {
-      SINGLE: { name: "Blueprint", price: "$29", desc: "A complete map of your personal architecture. One session that reveals how you process, decide, and connect.", ID: "price_blueprint_1" },
-      BASIC: { name: "Daily", price: "$9/mo", desc: "Continuous clarity. Daily insights calibrated to your natural rhythms and cycles.", ID: "price_daily_1" },
-      PRO: { name: "Orbit", price: "$19/mo", desc: "Full relational awareness. Family System Mapping (3+ People). Understand who carries the emotional load — and how to redistribute it through architecture.", ID: "price_orbit_1" }
+      SINGLE: { name: "Explorer", price: "Free", desc: "One complete blueprint per month. See how you process, decide, and connect — mapped from your birth data.", ID: "price_explorer_1" },
+      BASIC: { name: "Blueprint", price: "$9/mo", desc: "Continuous clarity. Daily transit weather, echo pattern detection, and your full architectural map — always current.", ID: "price_blueprint_1" },
+      PRO: { name: "Orbit", price: "$19/mo", desc: "Full relational geometry. Map the dynamics between you and the people in your life. Understand who carries the load — and how to redistribute it.", ID: "price_orbit_1" }
     }
   },
   COMMERCE: {
@@ -44,8 +44,8 @@ export const DEFRAG_MANIFEST = {
   },
   COMPANY: {
     ABOUT: {
-      TITLE: "Conscious Architecture.",
-      MISSION: "We don't want to fix you. We want to help you see what you were always designed to be.",
+      TITLE: "Behavioral Architecture.",
+      MISSION: "We don't fix people. We give them the manual they never received.",
     },
     LEGAL: {
       TOS_SUMMARY: "Defrag is an awareness tool, not a medical device.",

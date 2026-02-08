@@ -109,7 +109,7 @@ export const LiveVoice: React.FC<LiveVoiceProps> = ({ user }) => {
       }
     } catch (err) {
       console.error('[DEFRAG LIVE]', err);
-      setTranscription(prev => [...prev, { role: 'Architect', text: 'Connection interrupted. Please try again.' }]);
+      setTranscription(prev => [...prev, { role: 'Architect', text: 'Signal interrupted. Please try again.' }]);
       if (activeRef.current) setStatus('Listening…');
     } finally {
       processingRef.current = false;

@@ -103,13 +103,13 @@ export const IntelligenceHub: React.FC<IntelligenceHubProps> = ({ manifest, user
 
       const modelMsg: Message = {
         role: 'model',
-        content: responseText || "I couldn't generate a response.",
+        content: responseText || "Signal interrupted. Try that again.",
       };
 
       setMessages(prev => [...prev, modelMsg]);
     } catch (err) {
       console.error(err);
-      setMessages(prev => [...prev, { role: 'model', content: "Connection error." }]);
+      setMessages(prev => [...prev, { role: 'model', content: "Signal lost. The system will reconnect." }]);
     } finally {
       setLoading(false);
     }

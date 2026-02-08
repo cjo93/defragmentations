@@ -151,7 +151,7 @@ export const Echo = () => {
           Echo
         </h1>
         <p className="text-[#A3A3A3] text-sm md:text-base max-w-lg mx-auto leading-relaxed">
-          Log what you feel. Over time, the Architect identifies the loops — the recurring themes your conscious mind misses.
+          Log what you feel. Over time, the system identifies the loops — the recurring themes your conscious mind overlooks.
         </p>
       </div>
 
@@ -166,7 +166,7 @@ export const Echo = () => {
             <textarea
               value={newText}
               onChange={e => setNewText(e.target.value)}
-              placeholder="What are you feeling right now? What happened today? Write freely — the Architect is listening for patterns, not grammar."
+              placeholder="What are you feeling right now? What happened today? Write freely — the system is listening for patterns, not grammar."
               className="w-full bg-[#050505]/50 border border-white/[0.08] rounded-xl px-4 py-4 text-sm text-white focus:border-[#E2E2E8]/40 focus:outline-none transition-all resize-none leading-relaxed placeholder:text-neutral-600"
               rows={6}
             />
@@ -273,7 +273,7 @@ export const Echo = () => {
                       <svg className="w-5 h-5 text-teal-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M5 13l4 4L19 7" /></svg>
                     </div>
                     <h3 className="text-lg font-bold text-white mb-2">Clean signal.</h3>
-                    <p className="text-sm text-[#A3A3A3] max-w-sm mx-auto leading-relaxed">No recurring Not-Self loops detected in the last {report.windowDays} days. The architecture is running as designed.</p>
+                    <p className="text-sm text-[#A3A3A3] max-w-sm mx-auto leading-relaxed">No recurring friction loops detected in the last {report.windowDays} days. The architecture is running as designed.</p>
                   </motion.div>
                 )}
               </motion.div>

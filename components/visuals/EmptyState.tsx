@@ -111,8 +111,8 @@ export const EchoEmptyState = ({ onStart }: { onStart?: () => void }) => (
   <EmptyState
     icon="echo"
     title="No Echoes Yet"
-    description="Start logging your experiences to detect recurring patterns. The Memory watches for themes that repeat across time — habits, triggers, and loops that shape your architecture."
-    hint="The Architect needs at least 3 entries to begin pattern detection"
+    description="Start logging your experiences to detect recurring patterns. Echo watches for themes that repeat across time — habits, triggers, and loops that shape your architecture."
+    hint="The system needs at least 3 entries to begin pattern detection"
     actionLabel={onStart ? "Create First Entry" : undefined}
     onAction={onStart}
   />

@@ -121,7 +121,7 @@ export const Onboarding = () => {
               >
                 <div className="mb-8">
                   <h2 className="text-2xl font-bold tracking-tight mb-2">Your Blueprint</h2>
-                  <p className="text-neutral-400 text-sm">We need your birth data to calculate your precise architecture.</p>
+                  <p className="text-neutral-400 text-sm">Enter your birth data so we can map your precise architecture.</p>
                 </div>
 
                 <form onSubmit={handleBlueprintSubmit} className="space-y-6">
@@ -157,7 +157,7 @@ export const Onboarding = () => {
                       onChange={(e) => setFormData({...formData, location: e.target.value})}
                       className="w-full bg-white/[0.04] border border-white/[0.08] rounded-2xl px-5 py-4 text-white placeholder-white/20 focus:outline-none focus:border-[#E2E2E8]/50 transition-all"
                     />
-                    <p className="text-xs text-neutral-600 ml-1 mt-1">Used for precise planetary calculations.</p>
+                    <p className="text-xs text-neutral-600 ml-1 mt-1">Used for precise architectural calculations.</p>
                   </div>
 
                   <div className="flex gap-3 mt-8">
@@ -205,9 +205,9 @@ export const Onboarding = () => {
 
                 <div className="space-y-3 max-w-sm mx-auto">
                   {[
-                    { label: 'Calculating planetary positions', delay: 0 },
+                    { label: 'Calculating positional data', delay: 0 },
                     { label: 'Mapping energy centers', delay: 0.5 },
-                    { label: 'Detecting shadow frequencies', delay: 1 },
+                    { label: 'Detecting friction patterns', delay: 1 },
                     { label: 'Assembling your blueprint', delay: 1.5 },
                   ].map((item, i) => (
                     <motion.div

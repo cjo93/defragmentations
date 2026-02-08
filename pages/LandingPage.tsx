@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { motion, useScroll, useTransform, useInView, animate } from 'framer-motion';
 import { DEFRAG_MANIFEST } from '../constants/manifest';
 import LivingBackground from '../components/visuals/LivingBackground';
@@ -256,6 +256,7 @@ export const LandingPage = () => {
   const { scrollYProgress } = useScroll();
   const heroOpacity = useTransform(scrollYProgress, [0, 0.15], [1, 0]);
   const heroScale = useTransform(scrollYProgress, [0, 0.15], [1, 0.97]);
+  const navigate = useNavigate();
   const tiers = DEFRAG_MANIFEST.LANDING.TIERS;
 
   return (
@@ -281,13 +282,13 @@ export const LandingPage = () => {
         <motion.div initial="hidden" animate="visible" variants={stagger} className="max-w-3xl">
           <motion.div variants={fadeUp} custom={0} className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-white/[0.08] bg-white/[0.02] mb-10">
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-breathe" />
-            <span className="text-[11px] text-neutral-400 font-medium">Human Systems Architecture — now live</span>
+            <span className="text-[11px] text-neutral-400 font-medium">The Operating System of the Self — now live</span>
           </motion.div>
           <motion.h1 variants={fadeUp} custom={1} className="text-[clamp(2.5rem,6.5vw,5rem)] font-extrabold leading-[1.05] tracking-[-0.03em] mb-8">
             From fragmentation<br />to <span className="bg-gradient-to-r from-white via-neutral-400 to-white bg-clip-text text-transparent">flow.</span>
           </motion.h1>
           <motion.p variants={fadeUp} custom={2} className="max-w-xl mx-auto text-base md:text-lg text-neutral-400 leading-relaxed mb-12">
-            DEFRAG is a high-precision architecture that maps your internal circuitry. By synthesizing Human Design, Bowen Systems Theory, and Alchemical Inversion, we turn systemic friction into kinetic output.
+            DEFRAG maps your internal architecture — how you process, decide, and connect. Then it shows you where the friction lives, and how to remove it. The manual you never received.
           </motion.p>
           <motion.div variants={fadeUp} custom={3} className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link to="/login" className="group relative inline-flex items-center justify-center px-9 py-4 rounded-2xl bg-white text-black font-semibold text-sm overflow-hidden transition-all duration-500 hover:shadow-[0_0_60px_-5px_rgba(255,255,255,0.2)] hover:-translate-y-0.5">
@@ -325,13 +326,13 @@ export const LandingPage = () => {
             You're not broken.<br />You're fragmented.
           </motion.h2>
           <motion.p variants={fadeUp} custom={2} className="text-neutral-400 mt-8 text-base md:text-lg leading-relaxed max-w-2xl mx-auto">
-            The same arguments. The same shutdowns. The same invisible friction you can't explain to anyone — including yourself. The signal is there. It's buried under noise.
+            The same arguments. The same shutdowns. The same invisible friction you can't name — not to your partner, not to your therapist, not even to yourself.
           </motion.p>
           <motion.p variants={fadeUp} custom={3} className="text-neutral-400 mt-6 text-base md:text-lg leading-relaxed max-w-2xl mx-auto">
-            DEFRAG doesn't fix you. It <em className="text-white/80 not-italic font-medium">defragments</em> the noise — so the signal can finally emerge.
+            DEFRAG doesn't fix you. It <em className="text-white/80 not-italic font-medium">defragments</em> the noise — so you can finally see how you're built, and why the friction keeps showing up.
           </motion.p>
           <motion.p variants={fadeUp} custom={4} className="text-white font-semibold mt-6 text-lg md:text-xl">
-            This is subtractive engineering. We remove friction. Coherence follows.
+            We don't add features. We remove friction. Clarity is what remains.
           </motion.p>
         </motion.div>
       </section>
@@ -362,21 +363,21 @@ export const LandingPage = () => {
               label="Pillar I"
               icon={<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-white/50"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>}
               title="The Signal Filter"
-              body="Internal Architecture — Maps your 9 energy centers, 64 frequency gates, and shadow-gift inversions. Your baseline circuitry, decoded."
+              body="Internal Architecture — Maps your 9 energy centers and 64 activation points. Your baseline wiring — how you process energy, make decisions, and where friction accumulates."
             />
             <PillarCard
               index={2}
               label="Pillar II"
               icon={<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-white/50"><circle cx="12" cy="5" r="3"/><circle cx="5" cy="19" r="3"/><circle cx="19" cy="19" r="3"/><path d="M12 8v4M8.5 16.5l-1 .5M15.5 16.5l1 .5"/></svg>}
               title="The Triangulation Engine"
-              body="Relational Dynamics — Detects stabilizers, scapegoats, and relief valves across 3-body systems using Bowen Family Systems geometry."
+              body="Relational Dynamics — Detects stabilizers, scapegoats, and relief valves across 3-body systems. Reveals who carries the emotional load and how tension redistributes."
             />
             <PillarCard
               index={3}
               label="Pillar III"
               icon={<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-white/50"><path d="M12 20h9M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>}
               title="The Echo Engine"
-              body="Pattern Recognition — Scans 30-day behavioral windows for Not-Self loops, clustering recurring friction into visible structure."
+              body="Pattern Recognition — Scans 30-day behavioral windows for recurring loops, clustering friction patterns into visible, addressable structure."
             />
           </div>
         </motion.div>
@@ -406,8 +407,8 @@ export const LandingPage = () => {
             {[
               { num: '01', name: 'The Map', sub: 'Personal Blueprint', body: 'Understanding your natural energy and where you are most likely to get stuck. Your 9 centers, 64 activation points, and core strategy — decoded from your birth data.', icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-white/50"><path d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l5.447 2.724A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/></svg> },
               { num: '02', name: 'The Field', sub: 'Relational Geometry', body: 'Seeing how the people around you pull you out of balance. Triangulation detection across 3-body systems reveals stabilizers, scapegoats, and invisible load.', icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-white/50"><circle cx="12" cy="5" r="3"/><circle cx="5" cy="19" r="3"/><circle cx="19" cy="19" r="3"/><path d="M12 8v4M8.5 16.5l-1 .5M15.5 16.5l1 .5"/></svg> },
-              { num: '03', name: 'The Shift', sub: 'Alchemical Inversion', body: 'Turning your biggest frustrations into your greatest strengths. Shadow frequencies become gift frequencies through the inversion equation — G = (1/S) × A.', icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-white/50"><path d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"/></svg> },
-              { num: '04', name: 'The Memory', sub: 'Pattern Detection', body: 'Catching old habits before they repeat. 30-day behavioral windows reveal Not-Self loops — recurring friction patterns clustered into visible, addressable structure.', icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-white/50"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg> },
+              { num: '03', name: 'The Shift', sub: 'Behavioral Inversion', body: 'Turning your biggest frustrations into operational strengths. What looks like a flaw is often a feature running in the wrong context — DEFRAG shows you the switch.', icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-white/50"><path d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"/></svg> },
+              { num: '04', name: 'The Memory', sub: 'Pattern Detection', body: 'Catching old habits before they repeat. 30-day behavioral windows reveal recurring loops — friction patterns your conscious mind overlooks, made visible and addressable.', icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-white/50"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg> },
             ].map((item, i) => (
               <motion.div
                 key={item.num}
@@ -496,7 +497,7 @@ export const LandingPage = () => {
             Your complete<br />system map.
           </motion.h2>
           <motion.p variants={fadeUp} custom={2} className="text-neutral-400 mt-8 text-base md:text-lg leading-relaxed max-w-2xl mx-auto">
-            Every shadow frequency, every relational dynamic, every recurring echo — synthesized into a single architectural blueprint. Not a label. A living, navigable map.
+            Every pattern, every relational dynamic, every recurring echo — synthesized into a single architectural blueprint. Not a label. A living, navigable map of how you actually work.
           </motion.p>
 
           {/* Visual accent — system node cluster */}
@@ -585,12 +586,12 @@ export const LandingPage = () => {
         <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, margin: '-80px' }} variants={stagger} className="max-w-5xl mx-auto">
           <motion.div variants={fadeUp} custom={0} className="text-center mb-16">
             <span className="text-[10px] font-semibold uppercase tracking-[0.25em] text-neutral-500">Access</span>
-            <h2 className="text-3xl md:text-[2.75rem] font-bold mt-4 tracking-tight">Choose your resolution.</h2>
-            <p className="text-neutral-500 mt-4 text-sm max-w-lg mx-auto">One blueprint, or continuous system monitoring. No trials. No data harvesting.</p>
+            <h2 className="text-3xl md:text-[2.75rem] font-bold mt-4 tracking-tight">Choose your depth.</h2>
+            <p className="text-neutral-500 mt-4 text-sm max-w-lg mx-auto">One blueprint, or continuous clarity. No trials. No data harvesting.</p>
           </motion.div>
           <motion.div variants={stagger} className="grid md:grid-cols-3 gap-5">
-            <PricingTier tier={tiers.SINGLE} label="One-Time" onSelect={() => initiateCheckout('BLUEPRINT')} />
-            <PricingTier tier={tiers.BASIC} label="Monthly" onSelect={() => {}} featured />
+            <PricingTier tier={tiers.SINGLE} label="Free" onSelect={() => navigate('/onboarding')} />
+            <PricingTier tier={tiers.BASIC} label="Monthly" onSelect={() => initiateCheckout('BLUEPRINT')} featured />
             <PricingTier tier={tiers.PRO} label="Full Access" onSelect={() => initiateCheckout('ORBIT')} />
           </motion.div>
           <motion.p variants={fadeUp} custom={4} className="text-center text-[11px] text-neutral-600 mt-10">Zero-knowledge architecture. Cancel anytime.</motion.p>
@@ -606,7 +607,7 @@ export const LandingPage = () => {
             <span className="text-white">Coherence is what remains.</span>
           </p>
           <p className="text-sm text-neutral-500 mt-4">
-            DEFRAG — The Operating System of the Self.
+            DEFRAG — The manual you wish came with the people you love.
           </p>
         </div>
         <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6 pt-8 border-t border-white/[0.03]">
