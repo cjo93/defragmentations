@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { motion, useScroll, useTransform, useInView, animate } from 'framer-motion';
+import { motion, useScroll, useTransform, useInView, animate, AnimatePresence } from 'framer-motion';
 import { DEFRAG_MANIFEST } from '../constants/manifest';
 import LivingBackground from '../components/visuals/LivingBackground';
 import { initiateCheckout } from '../services/payment';
@@ -17,6 +17,33 @@ const fadeUp = {
   }),
 };
 const stagger = { visible: { transition: { staggerChildren: 0.12 } } };
+
+/* ─── Scroll Progress Bar ───────────────────────────────────── */
+const ScrollProgress: React.FC = () => {
+  const { scrollYProgress } = useScroll();
+  return (
+    <motion.div
+      className="fixed top-0 left-0 right-0 h-[2px] z-[60] origin-left"
+      style={{
+        scaleX: scrollYProgress,
+        background: 'linear-gradient(90deg, rgba(255,255,255,0.05), rgba(255,255,255,0.4), rgba(255,255,255,0.05))',
+      }}
+    />
+  );
+};
+
+/* ─── Animated Gradient Divider ─────────────────────────────── */
+const GlowDivider: React.FC = () => (
+  <div className="relative z-10 h-px max-w-4xl mx-auto overflow-hidden">
+    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/[0.08] to-transparent animate-pulse-line" />
+    <motion.div
+      className="absolute inset-0 bg-gradient-to-r from-transparent via-white/[0.15] to-transparent"
+      animate={{ x: ['-100%', '100%'] }}
+      transition={{ repeat: Infinity, duration: 4, ease: 'easeInOut' }}
+      style={{ width: '50%' }}
+    />
+  </div>
+);
 
 /* ─── Animated Counter ──────────────────────────────────────── */
 const Counter: React.FC<{ target: number; suffix?: string; label: string; duration?: number }> = ({ target, suffix = '', label, duration = 2.2 }) => {
@@ -58,10 +85,10 @@ const TestimonialMarquee: React.FC = () => (
       className="flex gap-6 w-max"
     >
       {[...TESTIMONIALS, ...TESTIMONIALS].map((t, i) => (
-        <div key={i} className="flex-none w-[380px] border border-white/[0.06] rounded-2xl bg-white/[0.02] backdrop-blur-md px-8 py-7 flex flex-col justify-between">
+        <div key={i} className="flex-none w-[380px] border border-white/[0.06] rounded-2xl bg-white/[0.02] backdrop-blur-md px-8 py-7 flex flex-col justify-between group hover:border-white/[0.12] transition-all duration-500">
           <p className="text-[14px] text-neutral-300 leading-relaxed italic mb-6">&ldquo;{t.text}&rdquo;</p>
           <div className="flex items-center gap-3">
-            <div className="w-7 h-7 rounded-full bg-white/[0.06] border border-white/[0.1] flex items-center justify-center text-[10px] font-bold text-neutral-400">{t.who}</div>
+            <div className="w-7 h-7 rounded-full bg-white/[0.06] border border-white/[0.1] flex items-center justify-center text-[10px] font-bold text-neutral-400 group-hover:bg-white/[0.1] transition-all">{t.who}</div>
             <div className="h-px flex-1 bg-gradient-to-r from-white/[0.06] to-transparent" />
           </div>
         </div>
@@ -69,6 +96,78 @@ const TestimonialMarquee: React.FC = () => (
     </motion.div>
   </div>
 );
+
+/* ─── Persona Card ──────────────────────────────────────────── */
+const PERSONAS = [
+  {
+    icon: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-white/50"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20z"/><path d="M12 6v6l4 2"/></svg>,
+    tag: 'The Overthinker',
+    headline: '"I can\'t stop replaying every conversation."',
+    body: 'Your mind isn\'t broken — it\'s running without a filter. DEFRAG shows you which signals matter and which are just noise your design amplifies.',
+  },
+  {
+    icon: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-white/50"><path d="M17 18a5 5 0 0 0-10 0"/><circle cx="12" cy="7" r="4"/><path d="M3.5 21h17"/></svg>,
+    tag: 'The People Pleaser',
+    headline: '"I always end up carrying everyone else\'s weight."',
+    body: 'That\'s not a character flaw — it\'s a structural tendency in your wiring. See exactly where you absorb other people\'s tension, and where your boundaries naturally exist.',
+  },
+  {
+    icon: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-white/50"><path d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 0 1-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>,
+    tag: 'The Conflict Avoider',
+    headline: '"Every argument feels like it\'s going to break us."',
+    body: 'Conflict isn\'t the problem — it\'s the mismatch between how you process it and how they do. DEFRAG maps both sides so you can finally see why it escalates.',
+  },
+  {
+    icon: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-white/50"><path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>,
+    tag: 'The Purpose Seeker',
+    headline: '"I feel like I\'m supposed to be doing something different."',
+    body: 'You probably are. Your design has a specific strategy for making decisions. Most people have never been told theirs. DEFRAG shows you what you\'ve been overriding.',
+  },
+];
+
+/* ─── Comparison Row ────────────────────────────────────────── */
+const COMPARISONS = [
+  { label: 'Therapy', desc: 'Explores feelings', defrag: 'Maps your structure' },
+  { label: 'Astrology', desc: 'Describes tendencies', defrag: 'Calculates mechanics' },
+  { label: 'Personality tests', desc: 'Labels you', defrag: 'Shows how you operate' },
+  { label: 'Self-help', desc: 'Lists techniques', defrag: 'Identifies your specific friction' },
+];
+
+/* ─── FAQ Accordion ─────────────────────────────────────────── */
+const FAQS = [
+  { q: 'How is this different from a personality test?', a: 'Personality tests ask you questions about yourself — then label the answers. DEFRAG calculates your behavioral architecture from objective astronomical data. No self-reporting bias. No vague categories. A precise map of how you actually process, decide, and connect.' },
+  { q: 'What data do you use?', a: 'Your birth date, time, and location. From this, we calculate the exact planetary positions at the moment you were born and map them to your energy centers, gates, and channels — the same way an engineer reads a circuit diagram.' },
+  { q: 'Is this scientifically validated?', a: 'DEFRAG draws from Human Design (synthesis of I Ching, Kabbalah, chakra system, and quantum mechanics), Gene Keys, and Bowen Family Systems Theory. It\'s a behavioral mapping framework — not a medical diagnostic. Think of it as architectural analysis for people.' },
+  { q: 'What happens to my data?', a: 'Nothing leaves your device. Zero cloud storage. Zero third-party analytics. All blueprints, echo logs, and system maps persist in your browser\'s local storage — encrypted on your machine, accessible only to you.' },
+  { q: 'Can I map my relationships?', a: 'Yes. The Orbit engine analyzes the dynamics between two or three people at a time — showing who absorbs tension, who initiates, and where the structural friction lives. Most relationship problems aren\'t personal. They\'re geometric.' },
+  { q: 'What if I\'m in crisis?', a: 'DEFRAG includes a real-time stability meter (SEDA). If emotional distress is detected, analysis stops automatically. The system shifts to grounding exercises or connects you with professional support resources. Architecture comes after safety.' },
+];
+const FaqItem: React.FC<{ q: string; a: string; index: number }> = ({ q, a, index }) => {
+  const [open, setOpen] = useState(false);
+  return (
+    <motion.div variants={fadeUp} custom={index} className="border-b border-white/[0.05] last:border-0">
+      <button onClick={() => setOpen(!open)} className="w-full flex items-center justify-between gap-4 py-6 text-left group">
+        <span className="text-[15px] font-medium text-white group-hover:text-white/90 transition pr-4">{q}</span>
+        <motion.div animate={{ rotate: open ? 45 : 0 }} transition={{ duration: 0.3 }} className="w-6 h-6 rounded-full border border-white/[0.1] bg-white/[0.03] flex items-center justify-center flex-shrink-0 group-hover:border-white/[0.2] transition">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-neutral-400"><path d="M12 5v14M5 12h14"/></svg>
+        </motion.div>
+      </button>
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+            className="overflow-hidden"
+          >
+            <p className="text-sm text-neutral-400 leading-relaxed pb-6 pr-12">{a}</p>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.div>
+  );
+};
 
 /* ─── Pricing ───────────────────────────────────────────────── */
 const PricingTier: React.FC<{ tier: { name: string; price: string; desc: string }; label: string; onSelect: () => void; featured?: boolean }> = ({ tier, label, onSelect, featured }) => (
@@ -262,6 +361,7 @@ export const LandingPage = () => {
   return (
     <div className="relative min-h-screen bg-[#050505] text-white overflow-x-hidden font-sans selection:bg-white/20 selection:text-white">
       <LivingBackground mode="calm" />
+      <ScrollProgress />
 
       {/* ─── NAV ──────────────────────────────────────────── */}
       <nav className="fixed top-0 w-full z-50 flex justify-between items-center px-6 md:px-16 py-5 bg-[#050505]/60 backdrop-blur-2xl border-b border-white/[0.03]">
@@ -279,6 +379,10 @@ export const LandingPage = () => {
 
       {/* ─── 01 // HERO ──────────────────────────────────── */}
       <motion.section style={{ opacity: heroOpacity, scale: heroScale }} className="relative z-10 flex flex-col items-center justify-center min-h-screen text-center px-6 pt-24">
+        {/* Floating accent orbs */}
+        <div className="absolute top-1/4 left-1/4 w-64 h-64 rounded-full bg-white/[0.008] blur-[100px] animate-breathe-slow pointer-events-none" />
+        <div className="absolute bottom-1/3 right-1/4 w-48 h-48 rounded-full bg-white/[0.006] blur-[80px] animate-breathe pointer-events-none" />
+
         <motion.div initial="hidden" animate="visible" variants={stagger} className="max-w-3xl">
           <motion.div variants={fadeUp} custom={0} className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-white/[0.08] bg-white/[0.02] mb-10">
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-breathe" />
@@ -293,6 +397,7 @@ export const LandingPage = () => {
           <motion.div variants={fadeUp} custom={3} className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link to="/login" className="group relative inline-flex items-center justify-center px-9 py-4 rounded-2xl bg-white text-black font-semibold text-sm overflow-hidden transition-all duration-500 hover:shadow-[0_0_60px_-5px_rgba(255,255,255,0.2)] hover:-translate-y-0.5">
               <span className="relative z-10">Get Your Free Blueprint</span>
+              <div className="absolute inset-0 bg-gradient-to-r from-white via-neutral-200 to-white bg-[length:200%_100%] opacity-0 group-hover:opacity-100 group-hover:animate-gradient-shift transition-opacity" />
             </Link>
             <a href="#how-it-works" className="inline-flex items-center justify-center px-9 py-4 rounded-2xl border border-white/[0.08] text-neutral-400 font-medium text-sm hover:bg-white/[0.03] hover:border-white/[0.15] transition-all duration-500">See How It Works</a>
           </motion.div>
@@ -323,7 +428,7 @@ export const LandingPage = () => {
         >
           <motion.span variants={fadeUp} custom={0} className="text-[10px] font-semibold uppercase tracking-[0.25em] text-neutral-500">The Architecture</motion.span>
           <motion.h2 variants={fadeUp} custom={1} className="text-3xl md:text-[2.75rem] font-bold mt-5 tracking-tight leading-tight">
-            You're not broken.<br />You're fragmented.
+            You're not broken.<br />You're <span className="bg-gradient-to-r from-white via-neutral-400 to-neutral-300 bg-clip-text text-transparent">fragmented.</span>
           </motion.h2>
           <motion.p variants={fadeUp} custom={2} className="text-neutral-400 mt-8 text-base md:text-lg leading-relaxed max-w-2xl mx-auto">
             The same arguments. The same shutdowns. The same invisible friction you can't name — not to your partner, not to your therapist, not even to yourself.
@@ -337,8 +442,48 @@ export const LandingPage = () => {
         </motion.div>
       </section>
 
-      {/* ─── GRADIENT DIVIDER ─────────────────────────────── */}
-      <div className="relative z-10 h-px max-w-3xl mx-auto bg-gradient-to-r from-transparent via-white/[0.08] to-transparent" />
+      <GlowDivider />
+
+      {/* ─── WHO IS THIS FOR ─────────────────────────────── */}
+      <section className="relative z-10 py-28 md:py-40 px-6">
+        <motion.div
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: '-80px' }}
+          variants={stagger}
+          className="max-w-5xl mx-auto"
+        >
+          <motion.div variants={fadeUp} custom={0} className="text-center mb-20">
+            <span className="text-[10px] font-semibold uppercase tracking-[0.25em] text-neutral-500">Recognition</span>
+            <h2 className="text-3xl md:text-[2.75rem] font-bold mt-5 tracking-tight">Sound familiar?</h2>
+          </motion.div>
+
+          <div className="grid md:grid-cols-2 gap-5">
+            {PERSONAS.map((p, i) => (
+              <motion.div
+                key={p.tag}
+                variants={fadeUp}
+                custom={i}
+                className="group rounded-3xl border border-white/[0.06] bg-white/[0.015] backdrop-blur-2xl p-8 md:p-10 hover:border-white/[0.14] hover:bg-white/[0.035] transition-all duration-700 relative overflow-hidden"
+              >
+                <div className="absolute inset-0 animate-shimmer-sweep opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
+                <div className="relative z-10">
+                  <div className="flex items-center gap-4 mb-5">
+                    <div className="w-11 h-11 rounded-2xl bg-white/[0.04] border border-white/[0.08] flex items-center justify-center group-hover:bg-white/[0.08] transition-all">
+                      {p.icon}
+                    </div>
+                    <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-neutral-500">{p.tag}</span>
+                  </div>
+                  <h3 className="text-[17px] font-bold text-white/90 mb-3 leading-snug">{p.headline}</h3>
+                  <p className="text-sm text-neutral-400 leading-relaxed">{p.body}</p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </motion.div>
+      </section>
+
+      <GlowDivider />
 
       {/* ─── 03 // THREE PILLARS ──────────────────────────── */}
       <section id="pillars" className="relative z-10 py-28 md:py-40 px-6">
@@ -383,10 +528,9 @@ export const LandingPage = () => {
         </motion.div>
       </section>
 
-      {/* ─── GRADIENT DIVIDER ─────────────────────────────── */}
-      <div className="relative z-10 h-px max-w-3xl mx-auto bg-gradient-to-r from-transparent via-white/[0.08] to-transparent" />
+      <GlowDivider />
 
-      {/* ─── 03.5 // HOW IT WORKS — Universal Language ──── */}
+      {/* ─── 03.5 // HOW IT WORKS — Bento Grid ─────────── */}
       <section id="how-it-works" className="relative z-10 py-28 md:py-40 px-6">
         <motion.div
           initial="hidden"
@@ -403,41 +547,101 @@ export const LandingPage = () => {
             </p>
           </motion.div>
 
-          <div className="grid md:grid-cols-2 gap-6">
-            {[
-              { num: '01', name: 'The Map', sub: 'Personal Profile', body: 'A detailed picture of how you naturally think, decide, and respond — generated from your birth data. See your strengths, blind spots, and the patterns that shape your daily life.', icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-white/50"><path d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l5.447 2.724A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/></svg> },
-              { num: '02', name: 'The Field', sub: 'Relationship Dynamics', body: 'See how your close relationships actually work — who steadies things, who absorbs the tension, and where the friction comes from. Maps the dynamics between any three people.', icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-white/50"><circle cx="12" cy="5" r="3"/><circle cx="5" cy="19" r="3"/><circle cx="19" cy="19" r="3"/><path d="M12 8v4M8.5 16.5l-1 .5M15.5 16.5l1 .5"/></svg> },
-              { num: '03', name: 'The Shift', sub: 'Strength Mapping', body: 'Your biggest frustrations often point to your biggest strengths — used in the wrong situation. DEFRAG identifies the pattern and shows you where that trait works instead.', icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-white/50"><path d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"/></svg> },
-              { num: '04', name: 'The Memory', sub: 'Pattern Tracking', body: 'Tracks your recurring patterns over 30 days — the reactions, habits, and conflicts that keep showing up. Once you can see a loop, you can break it.', icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-white/50"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg> },
-            ].map((item, i) => (
-              <motion.div
-                key={item.num}
-                variants={fadeUp}
-                custom={i}
-                className="group rounded-3xl border border-white/[0.06] bg-white/[0.02] backdrop-blur-2xl p-8 md:p-10 hover:border-white/[0.12] hover:bg-white/[0.04] transition-all duration-700 relative overflow-hidden"
-              >
-                <div className="absolute inset-0 animate-shimmer opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
-                <div className="relative z-10 flex gap-6">
-                  <div className="flex flex-col items-center gap-3 shrink-0">
-                    <div className="w-12 h-12 rounded-2xl bg-white/[0.04] border border-white/[0.08] flex items-center justify-center">
-                      {item.icon}
-                    </div>
-                    <span className="text-[10px] font-bold text-neutral-600 tracking-wider">{item.num}</span>
+          {/* Bento Grid — 1 featured large + 3 compact */}
+          <div className="grid md:grid-cols-3 gap-5">
+            {/* Featured: The Map — spans 2 cols on desktop */}
+            <motion.div
+              variants={fadeUp}
+              custom={0}
+              className="group md:col-span-2 rounded-3xl border border-white/[0.06] bg-white/[0.02] backdrop-blur-2xl p-10 md:p-12 hover:border-white/[0.14] hover:bg-white/[0.04] transition-all duration-700 relative overflow-hidden"
+            >
+              <div className="absolute inset-0 animate-shimmer-sweep opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
+              <div className="relative z-10 flex flex-col md:flex-row gap-8 items-start">
+                <div className="flex flex-col items-center gap-3 shrink-0">
+                  <div className="w-14 h-14 rounded-2xl bg-white/[0.04] border border-white/[0.08] flex items-center justify-center group-hover:bg-white/[0.08] group-hover:border-white/[0.15] transition-all">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-white/60"><path d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l5.447 2.724A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/></svg>
                   </div>
-                  <div>
-                    <h3 className="text-xl font-bold text-white mb-1">{item.name}</h3>
-                    <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-neutral-500 block mb-3">{item.sub}</span>
-                    <p className="text-sm text-neutral-400 leading-relaxed">{item.body}</p>
+                  <span className="text-[10px] font-bold text-neutral-600 tracking-wider">01</span>
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-2xl font-bold text-white mb-2">The Map</h3>
+                  <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-neutral-500 block mb-4">Personal Profile</span>
+                  <p className="text-[15px] text-neutral-400 leading-relaxed mb-6">A detailed picture of how you naturally think, decide, and respond — generated from your birth data. See your strengths, blind spots, and the patterns that shape your daily life.</p>
+                  <div className="flex flex-wrap gap-2">
+                    {['Energy type', 'Decision strategy', 'Stress patterns', 'Active gates'].map(tag => (
+                      <span key={tag} className="px-3 py-1 rounded-full text-[10px] font-medium text-neutral-500 border border-white/[0.06] bg-white/[0.02]">{tag}</span>
+                    ))}
                   </div>
                 </div>
-              </motion.div>
-            ))}
+              </div>
+            </motion.div>
+
+            {/* The Field — single col */}
+            <motion.div
+              variants={fadeUp}
+              custom={1}
+              className="group rounded-3xl border border-white/[0.06] bg-white/[0.02] backdrop-blur-2xl p-8 md:p-10 hover:border-white/[0.14] hover:bg-white/[0.04] transition-all duration-700 relative overflow-hidden"
+            >
+              <div className="absolute inset-0 animate-shimmer-sweep opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
+              <div className="relative z-10">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="w-12 h-12 rounded-2xl bg-white/[0.04] border border-white/[0.08] flex items-center justify-center group-hover:bg-white/[0.08] transition-all">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-white/50"><circle cx="12" cy="5" r="3"/><circle cx="5" cy="19" r="3"/><circle cx="19" cy="19" r="3"/><path d="M12 8v4M8.5 16.5l-1 .5M15.5 16.5l1 .5"/></svg>
+                  </div>
+                  <span className="text-[10px] font-bold text-neutral-600 tracking-wider">02</span>
+                </div>
+                <h3 className="text-xl font-bold text-white mb-1">The Field</h3>
+                <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-neutral-500 block mb-3">Relationship Dynamics</span>
+                <p className="text-sm text-neutral-400 leading-relaxed">See how your close relationships work — who steadies things, who absorbs the tension, and where friction comes from.</p>
+              </div>
+            </motion.div>
+
+            {/* The Shift — single col */}
+            <motion.div
+              variants={fadeUp}
+              custom={2}
+              className="group rounded-3xl border border-white/[0.06] bg-white/[0.02] backdrop-blur-2xl p-8 md:p-10 hover:border-white/[0.14] hover:bg-white/[0.04] transition-all duration-700 relative overflow-hidden"
+            >
+              <div className="absolute inset-0 animate-shimmer-sweep opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
+              <div className="relative z-10">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="w-12 h-12 rounded-2xl bg-white/[0.04] border border-white/[0.08] flex items-center justify-center group-hover:bg-white/[0.08] transition-all">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-white/50"><path d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"/></svg>
+                  </div>
+                  <span className="text-[10px] font-bold text-neutral-600 tracking-wider">03</span>
+                </div>
+                <h3 className="text-xl font-bold text-white mb-1">The Shift</h3>
+                <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-neutral-500 block mb-3">Strength Mapping</span>
+                <p className="text-sm text-neutral-400 leading-relaxed">Your biggest frustrations often point to your biggest strengths — used wrong. DEFRAG shows you where that trait actually works.</p>
+              </div>
+            </motion.div>
+
+            {/* The Memory — spans 2 cols on desktop */}
+            <motion.div
+              variants={fadeUp}
+              custom={3}
+              className="group md:col-span-2 rounded-3xl border border-white/[0.06] bg-white/[0.02] backdrop-blur-2xl p-8 md:p-10 hover:border-white/[0.14] hover:bg-white/[0.04] transition-all duration-700 relative overflow-hidden"
+            >
+              <div className="absolute inset-0 animate-shimmer-sweep opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
+              <div className="relative z-10 flex flex-col md:flex-row gap-8 items-start">
+                <div className="flex items-center gap-3 shrink-0">
+                  <div className="w-12 h-12 rounded-2xl bg-white/[0.04] border border-white/[0.08] flex items-center justify-center group-hover:bg-white/[0.08] transition-all">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-white/50"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                  </div>
+                  <span className="text-[10px] font-bold text-neutral-600 tracking-wider">04</span>
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-xl font-bold text-white mb-1">The Memory</h3>
+                  <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-neutral-500 block mb-3">Pattern Tracking</span>
+                  <p className="text-[15px] text-neutral-400 leading-relaxed">Tracks your recurring patterns over 30 days — the reactions, habits, and conflicts that keep showing up. Once you can see a loop, you can break it.</p>
+                </div>
+              </div>
+            </motion.div>
           </div>
         </motion.div>
       </section>
 
-      {/* ─── GRADIENT DIVIDER ─────────────────────────────── */}
-      <div className="relative z-10 h-px max-w-3xl mx-auto bg-gradient-to-r from-transparent via-white/[0.08] to-transparent" />
+      <GlowDivider />
 
       {/* ─── 04 // SEDA GAUGE SHOWCASE ───────────────────── */}
       <section className="relative z-10 py-28 md:py-40 px-6">
@@ -459,12 +663,12 @@ export const LandingPage = () => {
               </p>
               <div className="mt-8 space-y-4">
                 {[
-                  { mode: 'LOGIC MODE', desc: 'Clear, direct answers. Standard conversation.' },
-                  { mode: 'HOLDING SPACE', desc: 'Emotional weight detected. Pace slows. Your feelings come first.' },
-                  { mode: 'CRISIS MODE', desc: 'Analysis stops. Breathing exercises and support resources only.' },
+                  { mode: 'LOGIC MODE', desc: 'Clear, direct answers. Standard conversation.', color: 'bg-emerald-400/30' },
+                  { mode: 'HOLDING SPACE', desc: 'Emotional weight detected. Pace slows. Your feelings come first.', color: 'bg-amber-400/30' },
+                  { mode: 'CRISIS MODE', desc: 'Analysis stops. Breathing exercises and support resources only.', color: 'bg-red-400/30' },
                 ].map((m) => (
                   <div key={m.mode} className="flex items-start gap-3">
-                    <div className="w-1.5 h-1.5 rounded-full bg-white/20 mt-2 flex-shrink-0" />
+                    <div className={`w-2 h-2 rounded-full ${m.color} mt-2 flex-shrink-0 ring-2 ring-white/[0.04]`} />
                     <div>
                       <span className="text-xs font-semibold text-white/70 tracking-wide">{m.mode}</span>
                       <p className="text-sm text-neutral-500 leading-relaxed">{m.desc}</p>
@@ -480,10 +684,9 @@ export const LandingPage = () => {
         </motion.div>
       </section>
 
-      {/* ─── GRADIENT DIVIDER ─────────────────────────────── */}
-      <div className="relative z-10 h-px max-w-3xl mx-auto bg-gradient-to-r from-transparent via-white/[0.08] to-transparent" />
+      <GlowDivider />
 
-      {/* ─── 05 // SYSTEM MAP ────────────────────────────── */}
+      {/* ─── 05 // SYSTEM MAP — Enhanced ──────────────────── */}
       <section className="relative z-10 py-28 md:py-40 px-6">
         <motion.div
           initial="hidden"
@@ -494,41 +697,96 @@ export const LandingPage = () => {
         >
           <motion.span variants={fadeUp} custom={0} className="text-[10px] font-semibold uppercase tracking-[0.25em] text-neutral-500">The Output</motion.span>
           <motion.h2 variants={fadeUp} custom={1} className="text-3xl md:text-[2.75rem] font-bold mt-5 tracking-tight leading-tight">
-            Your complete<br />system map.
+            Your complete<br /><span className="bg-gradient-to-r from-white via-neutral-400 to-neutral-300 bg-clip-text text-transparent">system map.</span>
           </motion.h2>
           <motion.p variants={fadeUp} custom={2} className="text-neutral-400 mt-8 text-base md:text-lg leading-relaxed max-w-2xl mx-auto">
             Your personality, your relationships, and your recurring patterns — combined into one clear picture. Not a label. A detailed, living map of how you actually work.
           </motion.p>
 
-          {/* Visual accent — system node cluster */}
+          {/* Enhanced orbiting visual */}
           <motion.div variants={fadeUp} custom={3} className="mt-16 flex justify-center">
             <div className="relative">
-              <div className="w-32 h-32 rounded-full bg-white/[0.02] border border-white/[0.06] flex items-center justify-center animate-breathe">
-                <div className="w-14 h-14 rounded-full bg-white/[0.04] border border-white/[0.08] flex items-center justify-center">
-                  <div className="w-4 h-4 rounded-full bg-white/20 shadow-[0_0_24px_rgba(255,255,255,0.2)]" />
+              {/* Outer ring glow */}
+              <div className="absolute -inset-8 rounded-full bg-gradient-to-br from-white/[0.02] to-transparent blur-[40px] animate-breathe-slow pointer-events-none" />
+              {/* Outer orbit ring */}
+              <div className="absolute inset-[-20px] rounded-full border border-white/[0.03] border-dashed" />
+              <div className="w-36 h-36 rounded-full bg-white/[0.02] border border-white/[0.06] flex items-center justify-center animate-breathe">
+                <div className="w-16 h-16 rounded-full bg-white/[0.04] border border-white/[0.08] flex items-center justify-center">
+                  <div className="w-5 h-5 rounded-full bg-white/20 shadow-[0_0_30px_rgba(255,255,255,0.25)]" />
                 </div>
               </div>
-              {/* Orbiting nodes */}
-              {[0, 60, 120, 180, 240, 300].map((deg) => (
+              {/* Orbiting labeled nodes */}
+              {[
+                { deg: 0, label: 'Signal' },
+                { deg: 72, label: 'Structure' },
+                { deg: 144, label: 'Pattern' },
+                { deg: 216, label: 'Memory' },
+                { deg: 288, label: 'Field' },
+              ].map((node) => (
                 <motion.div
-                  key={deg}
-                  className="absolute w-2 h-2 rounded-full bg-white/10 border border-white/[0.15]"
+                  key={node.deg}
+                  className="absolute flex items-center gap-2"
                   style={{ top: '50%', left: '50%' }}
                   animate={{
-                    x: [Math.cos((deg * Math.PI) / 180) * 72, Math.cos(((deg + 360) * Math.PI) / 180) * 72],
-                    y: [Math.sin((deg * Math.PI) / 180) * 72, Math.sin(((deg + 360) * Math.PI) / 180) * 72],
+                    x: [Math.cos((node.deg * Math.PI) / 180) * 85, Math.cos(((node.deg + 360) * Math.PI) / 180) * 85],
+                    y: [Math.sin((node.deg * Math.PI) / 180) * 85, Math.sin(((node.deg + 360) * Math.PI) / 180) * 85],
                   }}
-                  transition={{ repeat: Infinity, duration: 20, ease: 'linear' }}
-                />
+                  transition={{ repeat: Infinity, duration: 25, ease: 'linear' }}
+                >
+                  <div className="w-2.5 h-2.5 rounded-full bg-white/15 border border-white/[0.2] shadow-[0_0_8px_rgba(255,255,255,0.1)]" />
+                </motion.div>
               ))}
               <div className="absolute inset-0 rounded-full bg-white/[0.02] blur-[50px] animate-glow-ring pointer-events-none" />
             </div>
           </motion.div>
+
+          {/* Layer labels */}
+          <motion.div variants={fadeUp} custom={4} className="mt-16 flex flex-wrap justify-center gap-3">
+            {['Signal', 'Structure', 'Pattern', 'Memory', 'Field'].map(l => (
+              <span key={l} className="px-4 py-1.5 rounded-full text-[10px] font-semibold uppercase tracking-[0.15em] text-neutral-500 border border-white/[0.06] bg-white/[0.02]">{l}</span>
+            ))}
+          </motion.div>
         </motion.div>
       </section>
 
+      <GlowDivider />
+
+      {/* ─── NOT LIKE THE OTHERS — Comparison ────────────── */}
+      <section className="relative z-10 py-28 md:py-36 px-6">
+        <motion.div
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: '-80px' }}
+          variants={stagger}
+          className="max-w-4xl mx-auto"
+        >
+          <motion.div variants={fadeUp} custom={0} className="text-center mb-16">
+            <span className="text-[10px] font-semibold uppercase tracking-[0.25em] text-neutral-500">Different By Design</span>
+            <h2 className="text-3xl md:text-[2.75rem] font-bold mt-5 tracking-tight">Not therapy. Not astrology.<br /><span className="text-neutral-400">Architecture.</span></h2>
+          </motion.div>
+
+          <motion.div variants={fadeUp} custom={1} className="rounded-3xl border border-white/[0.06] bg-white/[0.015] backdrop-blur-2xl overflow-hidden">
+            {/* Header */}
+            <div className="grid grid-cols-3 gap-4 px-8 py-5 border-b border-white/[0.05]">
+              <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-neutral-600">Tool</span>
+              <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-neutral-600">Approach</span>
+              <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-white/60">DEFRAG</span>
+            </div>
+            {COMPARISONS.map((c, i) => (
+              <div key={c.label} className={`grid grid-cols-3 gap-4 px-8 py-5 ${i < COMPARISONS.length - 1 ? 'border-b border-white/[0.03]' : ''} hover:bg-white/[0.02] transition-colors`}>
+                <span className="text-sm text-neutral-400 font-medium">{c.label}</span>
+                <span className="text-sm text-neutral-500">{c.desc}</span>
+                <span className="text-sm text-white font-medium">{c.defrag}</span>
+              </div>
+            ))}
+          </motion.div>
+        </motion.div>
+      </section>
+
+      <GlowDivider />
+
       {/* ─── 06 // ZERO-KNOWLEDGE ────────────────────────── */}
-      <section className="relative z-10 py-20 md:py-28 px-6">
+      <section className="relative z-10 py-24 md:py-32 px-6">
         <motion.div
           initial="hidden"
           whileInView="visible"
@@ -546,8 +804,23 @@ export const LandingPage = () => {
           <motion.p variants={fadeUp} custom={2} className="text-neutral-500 mt-4 text-sm leading-relaxed max-w-lg mx-auto">
             No cloud storage. No third-party analytics. All blueprints, echo logs, and system maps persist in your browser's local storage — encrypted on your machine, accessible only to you.
           </motion.p>
+          {/* Trust indicators */}
+          <motion.div variants={fadeUp} custom={3} className="mt-10 flex flex-wrap justify-center gap-6">
+            {[
+              { icon: '🔒', label: 'End-to-end encrypted' },
+              { icon: '🚫', label: 'No cloud storage' },
+              { icon: '👁️‍🗨️', label: 'Zero third-party access' },
+            ].map(t => (
+              <div key={t.label} className="flex items-center gap-2 text-[12px] text-neutral-500">
+                <span>{t.icon}</span>
+                <span>{t.label}</span>
+              </div>
+            ))}
+          </motion.div>
         </motion.div>
       </section>
+
+      <GlowDivider />
 
       {/* ─── TESTIMONIALS — Horizontal marquee ────────────── */}
       <section className="relative z-10 py-20 md:py-28 px-6 overflow-hidden">
@@ -581,6 +854,31 @@ export const LandingPage = () => {
         </motion.div>
       </section>
 
+      <GlowDivider />
+
+      {/* ─── FAQ ──────────────────────────────────────────── */}
+      <section className="relative z-10 py-28 md:py-36 px-6">
+        <motion.div
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: '-80px' }}
+          variants={stagger}
+          className="max-w-3xl mx-auto"
+        >
+          <motion.div variants={fadeUp} custom={0} className="text-center mb-16">
+            <span className="text-[10px] font-semibold uppercase tracking-[0.25em] text-neutral-500">Common Questions</span>
+            <h2 className="text-3xl md:text-[2.75rem] font-bold mt-5 tracking-tight">Before you begin.</h2>
+          </motion.div>
+          <div className="rounded-3xl border border-white/[0.06] bg-white/[0.015] backdrop-blur-2xl px-8 md:px-10">
+            {FAQS.map((faq, i) => (
+              <FaqItem key={i} q={faq.q} a={faq.a} index={i} />
+            ))}
+          </div>
+        </motion.div>
+      </section>
+
+      <GlowDivider />
+
       {/* ─── PLANS ────────────────────────────────────────── */}
       <section id="plans" className="relative z-10 py-28 md:py-36 px-6">
         <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, margin: '-80px' }} variants={stagger} className="max-w-5xl mx-auto">
@@ -595,6 +893,30 @@ export const LandingPage = () => {
             <PricingTier tier={tiers.PRO} label="Full Access" onSelect={() => initiateCheckout('ORBIT')} />
           </motion.div>
           <motion.p variants={fadeUp} custom={4} className="text-center text-[11px] text-neutral-600 mt-10">Zero-knowledge architecture. Cancel anytime.</motion.p>
+        </motion.div>
+      </section>
+
+      {/* ─── CLOSING CTA ──────────────────────────────────── */}
+      <section className="relative z-10 py-28 md:py-36 px-6">
+        <motion.div
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: '-80px' }}
+          variants={stagger}
+          className="max-w-3xl mx-auto text-center"
+        >
+          <motion.h2 variants={fadeUp} custom={0} className="text-3xl md:text-[2.75rem] font-bold tracking-tight leading-tight">
+            Stop guessing.<br /><span className="bg-gradient-to-r from-white via-neutral-400 to-neutral-300 bg-clip-text text-transparent">Start seeing.</span>
+          </motion.h2>
+          <motion.p variants={fadeUp} custom={1} className="text-neutral-400 mt-6 text-base md:text-lg leading-relaxed max-w-xl mx-auto">
+            Your free blueprint takes 30 seconds to generate. No sign-up wall. No credit card. Just clarity.
+          </motion.p>
+          <motion.div variants={fadeUp} custom={2} className="mt-10">
+            <Link to="/login" className="group relative inline-flex items-center justify-center px-12 py-5 rounded-2xl bg-white text-black font-semibold text-[15px] overflow-hidden transition-all duration-500 hover:shadow-[0_0_80px_-5px_rgba(255,255,255,0.25)] hover:-translate-y-0.5">
+              <span className="relative z-10">Get Your Free Blueprint</span>
+              <div className="absolute inset-0 bg-gradient-to-r from-white via-neutral-200 to-white bg-[length:200%_100%] opacity-0 group-hover:opacity-100 group-hover:animate-gradient-shift transition-opacity" />
+            </Link>
+          </motion.div>
         </motion.div>
       </section>
 
