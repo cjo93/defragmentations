@@ -66,7 +66,8 @@ export const Onboarding = () => {
           ))}
         </div>
 
-        <div className="backdrop-blur-2xl bg-white/[0.03] border border-white/[0.06] rounded-3xl p-8 md:p-12 shadow-2xl">
+        <div className="backdrop-blur-2xl bg-white/[0.03] border border-white/[0.06] rounded-3xl p-8 md:p-12 shadow-[0_8px_60px_-12px_rgba(0,0,0,0.5)] relative overflow-hidden">
+          <div className="absolute -bottom-24 -left-24 w-48 h-48 rounded-full bg-white/[0.01] blur-[60px] animate-breathe-slow pointer-events-none" />
           <AnimatePresence mode="wait">
             {step === 1 && (
               <motion.div
@@ -82,7 +83,7 @@ export const Onboarding = () => {
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l5.447 2.724A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/>
                     </svg>
                   </div>
-                  <h2 className="text-3xl font-bold tracking-tight mb-3">Welcome to DEFRAG</h2>
+                  <h2 className="text-3xl font-bold tracking-tight mb-3">Welcome to <span className="bg-gradient-to-r from-white via-neutral-400 to-white bg-clip-text text-transparent">DEFRAG</span></h2>
                   <p className="text-neutral-400 text-base leading-relaxed max-w-md mx-auto">
                     From fragmentation to flow. We'll map your internal architecture in three steps.
                   </p>
@@ -198,7 +199,7 @@ export const Onboarding = () => {
                   </div>
                 </div>
 
-                <h2 className="text-2xl font-bold tracking-tight mb-3">Calibrating Architecture</h2>
+                <h2 className="text-2xl font-bold tracking-tight mb-3">Calibrating <span className="bg-gradient-to-r from-white via-neutral-400 to-neutral-300 bg-clip-text text-transparent">Architecture</span></h2>
                 <p className="text-neutral-400 text-sm mb-8 max-w-md mx-auto">
                   Processing {blueprint?.personality?.gates?.length || 0} activation points across 9 centers...
                 </p>

@@ -37,7 +37,7 @@ const NavItem: React.FC<{ item: typeof NAV_ITEMS[0]; active: boolean; onClick: (
     {active && (
       <motion.div
         layoutId="activeTab"
-        className="absolute inset-0 bg-white/[0.06] rounded-xl border border-white/[0.06] shadow-[0_0_20px_-4px_rgba(226,226,232,0.1)]"
+        className="absolute inset-0 bg-white/[0.06] rounded-xl border border-white/[0.08] shadow-[0_0_24px_-6px_rgba(226,226,232,0.08)]"
         transition={{ type: "spring", stiffness: 300, damping: 30 }}
       />
     )}
@@ -59,13 +59,13 @@ const NavItem: React.FC<{ item: typeof NAV_ITEMS[0]; active: boolean; onClick: (
 
 export const Sidebar: React.FC<SidebarProps> = ({ currentView, onNavigate, onLogout }) => {
   return (
-    <aside className="w-20 md:w-60 h-full flex flex-col items-center md:items-stretch py-6 px-2 md:px-3 border-r border-white/[0.04] bg-[#050505]/60 backdrop-blur-2xl transition-all">
+    <aside className="w-20 md:w-60 h-full flex flex-col items-center md:items-stretch py-6 px-2 md:px-3 border-r border-white/[0.04] bg-[#050505]/80 backdrop-blur-2xl transition-all">
 
       {/* Brand Mark */}
       <div className="mb-8 px-2 flex justify-center md:justify-start md:px-5">
         <div className="flex items-center gap-3">
-          <div className="w-2 h-2 rounded-full bg-[#E2E2E8] shadow-[0_0_12px_rgba(226,226,232,0.5)] animate-breathe" />
-          <span className="hidden md:block text-sm font-semibold tracking-tight text-white">DEFRAG</span>
+          <div className="w-2.5 h-2.5 rounded-full bg-[#E2E2E8] shadow-[0_0_16px_rgba(226,226,232,0.5)] animate-breathe" />
+          <span className="hidden md:block text-sm font-bold tracking-tight text-white">DEFRAG</span>
         </div>
       </div>
 

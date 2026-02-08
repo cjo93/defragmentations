@@ -1,6 +1,7 @@
 
 import React, { Suspense, lazy } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import { ToastProvider } from './components/visuals/Toast';
 import { ErrorBoundary } from './components/visuals/ErrorBoundary';
 import { AuthGuard } from './components/auth/AuthGuard';
@@ -33,13 +34,18 @@ const Echo = lazy(() => import('./components/Echo').then(m => ({ default: m.Echo
 
 // Suspense fallback
 const LoadingFallback = () => (
-  <div className="flex flex-col items-center justify-center h-full bg-transparent gap-4">
-    <div className="relative w-10 h-10">
-      <div className="absolute inset-0 rounded-full border border-white/[0.06] animate-ping" />
-      <div className="absolute inset-2 rounded-full bg-white/[0.06] animate-pulse" />
-      <div className="absolute inset-[14px] rounded-full bg-white animate-breathe" />
+  <div className="flex flex-col items-center justify-center h-full bg-transparent gap-5">
+    <div className="relative w-12 h-12">
+      <div className="absolute inset-0 rounded-full border border-white/[0.04]" />
+      <motion.div 
+        className="absolute inset-0 rounded-full border border-white/[0.15] border-t-white/40"
+        animate={{ rotate: 360 }}
+        transition={{ duration: 1.5, repeat: Infinity, ease: 'linear' }}
+      />
+      <div className="absolute inset-3 rounded-full bg-white/[0.04]" />
+      <div className="absolute inset-[18px] rounded-full bg-white/20 animate-breathe" />
     </div>
-    <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-neutral-600 animate-pulse">Loading...</span>
+    <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-neutral-600">Loading...</span>
   </div>
 );
 

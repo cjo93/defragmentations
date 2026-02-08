@@ -152,7 +152,7 @@ export const Dashboard = () => {
         transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
         className="relative z-10 flex justify-between items-center p-6 border-b border-white/[0.04] bg-[#050505]/60 backdrop-blur-2xl"
       >
-        <div className="font-bold text-lg tracking-tight">{DEFRAG_MANIFEST.BRAND.NAME}</div>
+        <div className="font-bold text-lg tracking-tight"><span className="bg-gradient-to-r from-white via-neutral-300 to-white bg-clip-text text-transparent">{DEFRAG_MANIFEST.BRAND.NAME}</span></div>
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2 text-xs text-neutral-400">
             <span className={`w-1.5 h-1.5 rounded-full ${isDemo ? 'bg-amber-400' : 'bg-emerald-400'} animate-breathe`} />
@@ -235,8 +235,9 @@ export const Dashboard = () => {
             initial={{ opacity: 0, scale: 0.98 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.4, duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-            className="h-[320px] bg-white/[0.02] border border-white/[0.06] rounded-3xl p-2 relative backdrop-blur-sm overflow-hidden animate-glow-ring"
+            className="h-[320px] bg-white/[0.02] border border-white/[0.06] rounded-3xl p-2 relative backdrop-blur-sm overflow-hidden group hover:border-white/[0.1] transition-all duration-700"
           >
+            <div className="absolute inset-0 rounded-3xl bg-white/[0.01] blur-[30px] animate-breathe-slow pointer-events-none" />
             <SystemMap dynamics={userData.relationalDynamics} />
             <div className="absolute bottom-3 left-3 right-3 flex justify-between items-end">
               <div className="flex items-center gap-2">
@@ -292,7 +293,7 @@ export const Dashboard = () => {
           <SystemStatus />
 
           {/* Architecture Summary */}
-          <div className="rounded-3xl border border-white/[0.06] bg-white/[0.02] backdrop-blur-2xl overflow-hidden">
+          <div className="rounded-3xl border border-white/[0.06] bg-white/[0.02] backdrop-blur-2xl overflow-hidden group hover:border-white/[0.1] transition-all duration-500">
             <div className="px-6 py-4 border-b border-white/[0.04] flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-neutral-500">Your Blueprint</span>
@@ -392,9 +393,9 @@ export const Dashboard = () => {
               <motion.button
                 key={i}
                 onClick={() => navigate(action.path)}
-                whileHover={{ scale: 1.02 }}
+                whileHover={{ scale: 1.02, y: -1 }}
                 whileTap={{ scale: 0.98 }}
-                className="flex items-center gap-2.5 px-5 py-3 rounded-2xl border border-white/[0.06] bg-white/[0.02] hover:bg-white/[0.04] hover:border-white/[0.12] transition-all duration-300 text-sm text-neutral-300 cursor-pointer"
+                className="group flex items-center gap-2.5 px-5 py-3.5 rounded-2xl border border-white/[0.06] bg-white/[0.02] hover:bg-white/[0.05] hover:border-white/[0.14] hover:shadow-[0_4px_20px_-4px_rgba(255,255,255,0.05)] transition-all duration-500 text-sm text-neutral-300 cursor-pointer relative overflow-hidden"
               >
                 <span className="text-neutral-500">{action.icon}</span>
                 {action.label}
