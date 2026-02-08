@@ -146,6 +146,8 @@ ${topAspects}`);
 
 // ── UI Command Detection ────────────────────────────────────
 
+import { CanvasBlock, CanvasType } from '../types';
+
 export type UICommand = 
   | { type: 'SHOW_TRANSITS' }
   | { type: 'SHOW_ECHO' }
@@ -154,21 +156,40 @@ export type UICommand =
   | { type: 'SHOW_SEDA' }
   | { type: 'NAVIGATE'; target: string };
 
+const VALID_CANVAS_TYPES: CanvasType[] = ['BLUEPRINT', 'BREATHING', 'ORBIT', 'PATTERN', 'EXPLAIN'];
+
 /**
- * Parses AI response text for embedded UI commands.
- * Format: CMD:COMMAND_NAME or CMD:COMMAND_NAME:payload
+ * Parses AI response text for embedded UI commands and canvas triggers.
  * 
- * The AI can embed these in its response to trigger UI changes
- * without the user leaving the Forge.
+ * Formats:
+ *   CMD:COMMAND_NAME or CMD:COMMAND_NAME:payload     — legacy route navigation
+ *   [CANVAS:TYPE] or [CANVAS:TYPE:title text]        — inline canvas rendering
+ * 
+ * Canvas commands render features inline in the chat thread.
  */
-export const parseUICommands = (text: string): { cleanText: string; commands: UICommand[] } => {
+export const parseUICommands = (text: string): { cleanText: string; commands: UICommand[]; canvas?: CanvasBlock } => {
   const commands: UICommand[] = [];
-  const cmdPattern = /CMD:(SHOW_TRANSITS|SHOW_ECHO|SHOW_SIGNAL|SHOW_TRIANGULATION|SHOW_SEDA|NAVIGATE)(?::([^\s]+))?/g;
-  
+  let canvas: CanvasBlock | undefined;
+
+  // ── Parse CANVAS commands first ──────────────────────────
+  const canvasPattern = /\[CANVAS:(BLUEPRINT|BREATHING|ORBIT|PATTERN|EXPLAIN)(?::([^\]]*))?\]/gi;
   let cleanText = text;
+  let canvasMatch;
+
+  while ((canvasMatch = canvasPattern.exec(text)) !== null) {
+    const [fullMatch, rawType, title] = canvasMatch;
+    const type = rawType.toUpperCase() as CanvasType;
+    if (VALID_CANVAS_TYPES.includes(type)) {
+      canvas = { type, title: title?.trim() || undefined };
+    }
+    cleanText = cleanText.replace(fullMatch, '').trim();
+  }
+
+  // ── Parse legacy CMD commands ────────────────────────────
+  const cmdPattern = /CMD:(SHOW_TRANSITS|SHOW_ECHO|SHOW_SIGNAL|SHOW_TRIANGULATION|SHOW_SEDA|NAVIGATE)(?::([^\s]+))?/g;
   let match;
   
-  while ((match = cmdPattern.exec(text)) !== null) {
+  while ((match = cmdPattern.exec(cleanText)) !== null) {
     const [fullMatch, cmd, payload] = match;
     switch (cmd) {
       case 'SHOW_TRANSITS': commands.push({ type: 'SHOW_TRANSITS' }); break;
@@ -181,5 +202,5 @@ export const parseUICommands = (text: string): { cleanText: string; commands: UI
     cleanText = cleanText.replace(fullMatch, '').trim();
   }
 
-  return { cleanText, commands };
+  return { cleanText, commands, canvas };
 };

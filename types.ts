@@ -17,6 +17,15 @@ export enum View {
 
 export type UserProfile = 'PILLAR_USER';
 
+// Canvas types for inline feature rendering in chat
+export type CanvasType = 'BLUEPRINT' | 'BREATHING' | 'ORBIT' | 'PATTERN' | 'EXPLAIN';
+
+export interface CanvasBlock {
+  type: CanvasType;
+  title?: string;
+  data?: Record<string, any>;
+}
+
 // Update GroundingChunk properties to be optional to align with @google/genai SDK response types
 export interface GroundingChunk {
   web?: {
@@ -34,4 +43,5 @@ export interface Message {
   content: string;
   grounding?: GroundingChunk[];
   isThinking?: boolean;
+  canvas?: CanvasBlock;
 }

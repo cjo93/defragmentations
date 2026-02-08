@@ -86,7 +86,7 @@ export const Manual: React.FC<ManualProps> = ({ data: initialData }) => {
         <div className="bg-white/5 p-4 rounded-xl border border-white/5 backdrop-blur-sm">
           <div className="flex items-center gap-2 mb-2">
              <ShieldCheck className="w-3 h-3 text-neutral-500" />
-             <span className="text-[10px] font-bold uppercase tracking-widest text-neutral-500">Perimeter</span>
+             <span className="text-[10px] font-bold uppercase tracking-widest text-neutral-500">Boundaries</span>
           </div>
           <div className="text-xl font-mono text-white">
             {differentiationScore > 70 ? "Intact" : differentiationScore > 50 ? "Porous" : "Fused"}
@@ -95,7 +95,7 @@ export const Manual: React.FC<ManualProps> = ({ data: initialData }) => {
         <div className="bg-white/5 p-4 rounded-xl border border-white/5 backdrop-blur-sm">
           <div className="flex items-center gap-2 mb-2">
              <Activity className="w-3 h-3 text-neutral-500" />
-             <span className="text-[10px] font-bold uppercase tracking-widest text-neutral-500">System Tension</span>
+             <span className="text-[10px] font-bold uppercase tracking-widest text-neutral-500">Tension Level</span>
           </div>
           <div className="text-xl font-mono text-white">
             {differentiationScore > 70 ? "Low" : differentiationScore > 50 ? "Moderate" : "Elevated"}
@@ -105,11 +105,11 @@ export const Manual: React.FC<ManualProps> = ({ data: initialData }) => {
       
       {/* ANALYST NOTE */}
       <div className="p-5 bg-neutral-800/10 rounded-xl border border-neutral-300/10 relative">
-        <div className="text-[10px] font-bold text-neutral-300 uppercase tracking-widest mb-2">System Note</div>
+        <div className="text-[10px] font-bold text-neutral-300 uppercase tracking-widest mb-2">Insight</div>
         <p className="text-xs text-neutral-100/70 leading-relaxed font-medium">
-          Your system map indicates {dynamics.filter((d: any) => d.type === 'FUSION').length > 0 ? "overlapping boundaries" : "relative stability"} in the primary nodes. 
-          To increase clarity, focus on defining where you end and others begin. 
-          Respond to facts, not the emotional weather of the room.
+          Your map shows {dynamics.filter((d: any) => d.type === 'FUSION').length > 0 ? "some blurred boundaries" : "relative stability"} in your closest relationships. 
+          To build clarity, focus on where your responsibility ends and theirs begins. 
+          Respond to what's actually happening — not the emotional temperature of the room.
         </p>
       </div>
 

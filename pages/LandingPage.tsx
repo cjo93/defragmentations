@@ -282,19 +282,19 @@ export const LandingPage = () => {
         <motion.div initial="hidden" animate="visible" variants={stagger} className="max-w-3xl">
           <motion.div variants={fadeUp} custom={0} className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-white/[0.08] bg-white/[0.02] mb-10">
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-breathe" />
-            <span className="text-[11px] text-neutral-400 font-medium">The Operating System of the Self — now live</span>
+            <span className="text-[11px] text-neutral-400 font-medium">Finally understand yourself — and the people you love</span>
           </motion.div>
           <motion.h1 variants={fadeUp} custom={1} className="text-[clamp(2.5rem,6.5vw,5rem)] font-extrabold leading-[1.05] tracking-[-0.03em] mb-8">
-            From fragmentation<br />to <span className="bg-gradient-to-r from-white via-neutral-400 to-white bg-clip-text text-transparent">flow.</span>
+            The manual you<br />never <span className="bg-gradient-to-r from-white via-neutral-400 to-white bg-clip-text text-transparent">received.</span>
           </motion.h1>
           <motion.p variants={fadeUp} custom={2} className="max-w-xl mx-auto text-base md:text-lg text-neutral-400 leading-relaxed mb-12">
-            DEFRAG maps your internal architecture — how you process, decide, and connect. Then it shows you where the friction lives, and how to remove it. The manual you never received.
+            Why do you keep having the same arguments? Why does everything feel harder than it should? DEFRAG shows you how you're wired — where friction builds, and exactly how to fix it.
           </motion.p>
           <motion.div variants={fadeUp} custom={3} className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link to="/login" className="group relative inline-flex items-center justify-center px-9 py-4 rounded-2xl bg-white text-black font-semibold text-sm overflow-hidden transition-all duration-500 hover:shadow-[0_0_60px_-5px_rgba(255,255,255,0.2)] hover:-translate-y-0.5">
-              <span className="relative z-10">Initialize System Map</span>
+              <span className="relative z-10">Get Your Free Blueprint</span>
             </Link>
-            <a href="#architecture" className="inline-flex items-center justify-center px-9 py-4 rounded-2xl border border-white/[0.08] text-neutral-400 font-medium text-sm hover:bg-white/[0.03] hover:border-white/[0.15] transition-all duration-500">Run Diagnostic</a>
+            <a href="#how-it-works" className="inline-flex items-center justify-center px-9 py-4 rounded-2xl border border-white/[0.08] text-neutral-400 font-medium text-sm hover:bg-white/[0.03] hover:border-white/[0.15] transition-all duration-500">See How It Works</a>
           </motion.div>
         </motion.div>
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 2.5, duration: 1.5 }} className="absolute bottom-14 flex flex-col items-center gap-3">

@@ -17,16 +17,22 @@ import { calculateSEDA } from './sedaCalculator';
 import { getFrequency } from './frequencies';
 
 // ── HF Inference API ────────────────────────────────────────
-const HF_API = 'https://api-inference.huggingface.co';
+const HF_ROUTER = 'https://router.huggingface.co';
 
 const MODELS = {
-  CHAT:  'mistralai/Mixtral-8x7B-Instruct-v0.1',
+  CHAT:  'Qwen/Qwen2.5-7B-Instruct',
   TTS:   'facebook/mms-tts-eng',
   STT:   'openai/whisper-large-v3-turbo',
   IMAGE: 'black-forest-labs/FLUX.1-schnell',
 };
 
-const getToken = (): string => (typeof process !== 'undefined' && process.env?.HF_TOKEN) || '';
+const getToken = (): string => {
+  // Vite exposes env vars via import.meta.env
+  if (typeof import.meta !== 'undefined' && (import.meta as any).env?.VITE_HF_TOKEN) {
+    return (import.meta as any).env.VITE_HF_TOKEN;
+  }
+  return '';
+};
 
 function hfHeaders(contentType?: string): Record<string, string> {
   const headers: Record<string, string> = {};
@@ -105,7 +111,7 @@ export async function chatWithModel(options: {
   const { systemPrompt, userMessage, maxTokens = 2048, temperature = 0.7 } = options;
 
   const res = await hfFetch(
-    `${HF_API}/models/${MODELS.CHAT}/v1/chat/completions`,
+    `${HF_ROUTER}/v1/chat/completions`,
     {
       method: 'POST',
       headers: hfHeaders('application/json'),
@@ -117,6 +123,7 @@ export async function chatWithModel(options: {
         ],
         max_tokens: maxTokens,
         temperature,
+        stream: false,
       }),
     }
   );
@@ -183,7 +190,7 @@ export const scanForShadows = (text: string, gates: number[]) => {
 export const generateImage = async (prompt: string, aspectRatio: string = "1:1"): Promise<string | null> => {
   try {
     const res = await hfFetch(
-      `${HF_API}/models/${MODELS.IMAGE}`,
+      `${HF_ROUTER}/hf-inference/models/${MODELS.IMAGE}`,
       {
         method: 'POST',
         headers: hfHeaders('application/json'),
@@ -213,7 +220,7 @@ export const editImage = async (_base64Image: string, prompt: string): Promise<s
 export const generateSpeech = async (text: string, _voice?: string): Promise<Blob | null> => {
   try {
     const res = await hfFetch(
-      `${HF_API}/models/${MODELS.TTS}`,
+      `${HF_ROUTER}/hf-inference/models/${MODELS.TTS}`,
       {
         method: 'POST',
         headers: hfHeaders('application/json'),
@@ -239,7 +246,7 @@ export const transcribeAudio = async (base64Audio: string): Promise<string> => {
     const blob = new Blob([bytes], { type: 'audio/wav' });
 
     const res = await hfFetch(
-      `${HF_API}/models/${MODELS.STT}`,
+      `${HF_ROUTER}/hf-inference/models/${MODELS.STT}`,
       {
         method: 'POST',
         headers: hfHeaders(),
@@ -259,7 +266,7 @@ export const transcribeAudio = async (base64Audio: string): Promise<string> => {
 export const transcribeAudioBlob = async (audioBlob: Blob): Promise<string> => {
   try {
     const res = await hfFetch(
-      `${HF_API}/models/${MODELS.STT}`,
+      `${HF_ROUTER}/hf-inference/models/${MODELS.STT}`,
       {
         method: 'POST',
         headers: { ...hfHeaders(), },

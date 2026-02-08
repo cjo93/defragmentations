@@ -6,6 +6,7 @@ import { chatWithModel, getSystemInstruction } from '../services/aiService';
 import { calculateSEDA } from '../services/sedaCalculator';
 import { assembleGlobalContext, contextToPromptBlock, parseUICommands, UICommand } from '../services/globalContext';
 import { Message, UserProfile } from '../types';
+import { ChatCanvas } from './ChatCanvas';
 
 interface ChatbotProps {
   user: UserProfile;
@@ -15,6 +16,8 @@ interface ChatbotProps {
 const RELATIONAL_KEYWORDS = ['partner', 'mother', 'father', 'parent', 'sibling', 'friend', 'boss', 'colleague', 'relationship', 'argument', 'conflict', 'triangul', 'blame', 'scapegoat', 'mediator', 'stuck between', 'taking sides'];
 const PATTERN_KEYWORDS = ['always', 'keep doing', 'every time', 'same thing', 'repeating', 'loop', 'cycle', 'pattern', 'habit', 'again and again'];
 const TRANSIT_KEYWORDS = ['right now', 'today', 'this week', 'currently', 'lately', 'energy today', 'weather', 'transit', 'what\'s happening'];
+const DISTRESS_KEYWORDS = ['anxious', 'panic', 'can\'t breathe', 'overwhelmed', 'spiraling', 'falling apart', 'can\'t cope', 'help me', 'scared', 'numb'];
+const BLUEPRINT_KEYWORDS = ['my design', 'my type', 'my blueprint', 'how am i built', 'my architecture', 'my centers', 'my profile', 'my chart', 'who am i'];
 
 const detectIntent = (text: string): string[] => {
   const lower = text.toLowerCase();
@@ -22,15 +25,34 @@ const detectIntent = (text: string): string[] => {
   if (RELATIONAL_KEYWORDS.some(k => lower.includes(k))) intents.push('RELATIONAL');
   if (PATTERN_KEYWORDS.some(k => lower.includes(k))) intents.push('PATTERN');
   if (TRANSIT_KEYWORDS.some(k => lower.includes(k))) intents.push('TRANSIT');
+  if (DISTRESS_KEYWORDS.some(k => lower.includes(k))) intents.push('DISTRESS');
+  if (BLUEPRINT_KEYWORDS.some(k => lower.includes(k))) intents.push('BLUEPRINT');
   return intents;
 };
+
+/* ─── Canvas Instructions for System Prompt ─────────────────── */
+const CANVAS_INSTRUCTIONS = `
+[CANVAS SYSTEM — Inline Feature Rendering]
+You can trigger visual canvases that render inline in the chat. Use these when appropriate:
+
+[CANVAS:BLUEPRINT] — Shows the user's full blueprint (type, strategy, authority, centers). Use when they ask about their design, profile, or how they're built.
+[CANVAS:BREATHING] — Opens a guided breathing exercise. Use when the user is distressed, overwhelmed, or asks for grounding.
+[CANVAS:PATTERN] — Shows their recurring patterns from journal entries. Use when discussing loops, habits, or repeating themes.
+[CANVAS:EXPLAIN:Topic Name] — Creates a concept explainer card for a topic you just explained. Use when teaching complex ideas like Bowen triangulation, gate frequencies, shadow/gift dynamics, etc.
+
+Rules:
+- Place the canvas tag at the END of your response, after your text explanation.
+- Only use ONE canvas per response.
+- Always provide helpful text context BEFORE triggering a canvas.
+- If the user is in crisis, ALWAYS use [CANVAS:BREATHING] before analysis.
+- For concept explanations, include the topic name: [CANVAS:EXPLAIN:Bowen Triangulation]
+`;
 
 export const Chatbot: React.FC<ChatbotProps> = ({ user }) => {
   const navigate = useNavigate();
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
-  const [riskAssessment, setRiskAssessment] = useState({ score: 50, status: 'SAFE' });
   const [contextActive, setContextActive] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -41,7 +63,7 @@ export const Chatbot: React.FC<ChatbotProps> = ({ user }) => {
     if (saved) {
       try {
         setMessages(JSON.parse(saved));
-      } catch (e) {
+      } catch {
         setMessages([]);
       }
     } else {
@@ -52,20 +74,13 @@ export const Chatbot: React.FC<ChatbotProps> = ({ user }) => {
   useEffect(() => {
     localStorage.setItem(`defrag_chat_v2_${user}`, JSON.stringify(messages));
     scrollRef.current?.scrollTo(0, scrollRef.current.scrollHeight);
-    
-    // Recalculate SEDA Score based on recent conversation context
-    if (messages.length > 0) {
-      const recentContext = messages.slice(-5).map(m => m.content).join(' ');
-      const seda = calculateSEDA(recentContext);
-      setRiskAssessment({ score: seda.score, status: seda.status });
-    }
 
     // Check if unified memory is active
     const ctx = assembleGlobalContext();
     setContextActive(!!(ctx.blueprint || (ctx.echo && ctx.echo.loops.length > 0) || ctx.transits));
   }, [messages, user]);
 
-  /* ─── UI Bridge — handle CMD responses from AI ──────────── */
+  /* ─── Legacy UI Bridge (kept for backward compat) ────────── */
   const handleUICommands = useCallback((commands: UICommand[]) => {
     const viewRoutes: Record<string, string> = {
       SHOW_TRANSITS: '/dashboard',
@@ -74,15 +89,8 @@ export const Chatbot: React.FC<ChatbotProps> = ({ user }) => {
       SHOW_SIGNAL: '/signal',
       SHOW_SEDA: '/safe-place',
     };
-    const namedRoutes: Record<string, string> = {
-      lab: '/dashboard', forge: '/chatbot', archive: '/echo',
-      orbit: '/orbit', signal: '/signal', blueprint: '/manual',
-    };
     commands.forEach(cmd => {
-      if (cmd.type === 'NAVIGATE') {
-        const route = namedRoutes[cmd.target.toLowerCase()];
-        if (route) navigate(route);
-      } else {
+      if (cmd.type !== 'NAVIGATE' && cmd.type !== 'SHOW_SIGNAL') {
         const route = viewRoutes[cmd.type];
         if (route) navigate(route);
       }
@@ -103,23 +111,29 @@ export const Chatbot: React.FC<ChatbotProps> = ({ user }) => {
       const globalCtx = assembleGlobalContext();
       const contextBlock = contextToPromptBlock(globalCtx);
 
-      // Detect user intent for context-aware engine calling
+      // Detect user intent for context-aware enrichment
       const intents = detectIntent(msgContent);
       let contextEnrichment = '';
 
+      if (intents.includes('DISTRESS')) {
+        contextEnrichment += `\n[DISTRESS DETECTED]\nUser sounds overwhelmed. Validate first. Offer grounding. Use [CANVAS:BREATHING] to provide an immediate breathing exercise.\n`;
+      }
+      if (intents.includes('BLUEPRINT')) {
+        contextEnrichment += `\n[BLUEPRINT REQUEST]\nUser is asking about their personal design. Explain their architecture clearly, then use [CANVAS:BLUEPRINT] to show their full map.\n`;
+      }
       if (intents.includes('RELATIONAL')) {
-        contextEnrichment += `\n[TRIANGULATION ALERT]\nUser is describing a relational dynamic. Analyze for stabilizer/scapegoat/relief-valve patterns. Suggest they run a full Orbit analysis with the people involved. If appropriate, use CMD:SHOW_TRIANGULATION.\n`;
+        contextEnrichment += `\n[TRIANGULATION ALERT]\nUser is describing a relational dynamic. Analyze for structural friction patterns. Explain the dynamic clearly.\n`;
       }
       if (intents.includes('PATTERN')) {
-        contextEnrichment += `\n[PATTERN ALERT]\nUser describes a recurring loop. Reference their Echo patterns from Global Context. Help them see the pattern structurally.\n`;
+        contextEnrichment += `\n[PATTERN ALERT]\nUser describes a recurring loop. Reference their patterns from Global Context. Use [CANVAS:PATTERN] to show tracked patterns.\n`;
       }
       if (intents.includes('TRANSIT')) {
         contextEnrichment += `\n[TRANSIT REQUEST]\nUser asking about current energy. Reference Current Weather from Global Context.\n`;
       }
 
-      // Build system prompt: Puck persona + global context + intent enrichment + UI bridge
+      // Build system prompt with canvas instructions
       const baseInstruction = getSystemInstruction(user, 'PUCK');
-      const fullPrompt = `${baseInstruction}${contextBlock}${contextEnrichment}\n\n[UI BRIDGE]\nYou can embed commands to trigger panels: CMD:SHOW_TRANSITS, CMD:SHOW_ECHO, CMD:SHOW_TRIANGULATION, CMD:SHOW_SIGNAL, CMD:SHOW_SEDA. Use sparingly, at end of response.`;
+      const fullPrompt = `${baseInstruction}${contextBlock}${contextEnrichment}${CANVAS_INSTRUCTIONS}`;
 
       const responseText = await chatWithModel({
         systemPrompt: fullPrompt,
@@ -128,11 +142,17 @@ export const Chatbot: React.FC<ChatbotProps> = ({ user }) => {
         temperature: 0.7,
       });
 
-      // Parse UI commands from response
-      const { cleanText, commands } = parseUICommands(responseText || '');
-      setMessages(prev => [...prev, { role: 'model', content: cleanText || "Signal lost. Try sending that again." }]);
+      // Parse canvas + legacy commands from response
+      const { cleanText, commands, canvas } = parseUICommands(responseText || '');
+
+      const aiMsg: Message = {
+        role: 'model',
+        content: cleanText || "Signal lost. Try sending that again.",
+        canvas: canvas,
+      };
+      setMessages(prev => [...prev, aiMsg]);
       
-      // Execute any UI Bridge commands
+      // Execute any legacy UI Bridge commands
       if (commands.length > 0) {
         setTimeout(() => handleUICommands(commands), 800);
       }
@@ -145,20 +165,11 @@ export const Chatbot: React.FC<ChatbotProps> = ({ user }) => {
   };
 
   const handleRecalibrate = () => {
-    const recalibrateMsg = "That last response didn't feel right. Can you try a different angle on what I shared?";
-    handleSend(recalibrateMsg);
+    handleSend("That last response didn't feel right. Can you try a different angle?");
   };
 
   const handleConfirm = () => {
     setMessages(prev => [...prev, { role: 'user', content: "That resonated. Thank you." }]);
-  };
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'DANGER': return 'text-red-500 border-red-500 bg-red-500/10';
-      case 'CAUTION': return 'text-neutral-300 border-neutral-300 bg-neutral-300/10';
-      default: return 'text-emerald-500 border-emerald-500 bg-emerald-500/10';
-    }
   };
 
   return (
@@ -172,7 +183,7 @@ export const Chatbot: React.FC<ChatbotProps> = ({ user }) => {
         <div>
           <h2 className="text-2xl md:text-3xl font-bold tracking-tight leading-none">The Forge</h2>
           <div className="flex items-center gap-4 mt-2">
-            <p className="text-neutral-500 text-[10px] font-medium uppercase tracking-[0.15em]">Your singular intelligence</p>
+            <p className="text-neutral-500 text-[10px] font-medium uppercase tracking-[0.15em]">Your personal intelligence</p>
             {contextActive && (
               <motion.div
                 initial={{ opacity: 0, scale: 0.9 }}
@@ -184,7 +195,7 @@ export const Chatbot: React.FC<ChatbotProps> = ({ user }) => {
                   animate={{ scale: [1, 1.2, 1] }}
                   transition={{ duration: 2, repeat: Infinity }}
                 />
-                <span className="text-[9px] font-semibold uppercase tracking-wider text-emerald-400">Context Active</span>
+                <span className="text-[9px] font-semibold uppercase tracking-wider text-emerald-400">Memory Active</span>
               </motion.div>
             )}
           </div>
@@ -192,6 +203,7 @@ export const Chatbot: React.FC<ChatbotProps> = ({ user }) => {
         <button 
           onClick={() => { if(confirm("Clear conversation?")) setMessages([]); }}
           className="p-2 text-neutral-600 hover:text-red-400 transition-colors"
+          aria-label="Clear conversation"
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
         </button>
@@ -211,16 +223,16 @@ export const Chatbot: React.FC<ChatbotProps> = ({ user }) => {
                  <div className="absolute -inset-4 bg-white/[0.02] blur-2xl rounded-full -z-10 animate-breathe" />
                </div>
                <div className="max-w-md">
-                 <h3 className="text-lg font-bold text-white mb-2">The Forge is ready</h3>
+                 <h3 className="text-lg font-bold text-white mb-2">Ask me anything</h3>
                  <p className="text-sm text-neutral-500 leading-relaxed mb-6">
-                   This is your singular intelligence — the place where your blueprint, patterns, transits, and stability data converge. Ask anything about your architecture.
+                   I have your blueprint, patterns, and current influences loaded. Ask about yourself, your relationships, or what's happening in your life right now.
                  </p>
                  <div className="grid grid-cols-1 gap-2 text-left">
                    {[
-                     'Why do I keep repeating this pattern?',
-                     "What's happening with my energy today?",
-                     "How do I work with someone who's a [Type]?",
-                     'Show me my relational geometry',
+                     'Show me my blueprint',
+                     'Why do I keep having the same argument?',
+                     "What's influencing my energy today?",
+                     'I\'m feeling overwhelmed right now',
                    ].map((prompt, i) => (
                      <motion.button
                        key={i}
@@ -246,27 +258,30 @@ export const Chatbot: React.FC<ChatbotProps> = ({ user }) => {
               transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
               className={`flex flex-col ${m.role === 'user' ? 'items-end' : 'items-start'}`}
             >
-              <div className={`max-w-[90%] md:max-w-[75%] space-y-2`}>
+              <div className="max-w-[90%] md:max-w-[75%] space-y-2">
                 <div className={`p-6 rounded-[32px] text-xs leading-relaxed shadow-sm transition-all ${
                   m.role === 'user' ? 'bg-white text-black font-medium' : 'bg-neutral-800/50 text-neutral-200 border border-neutral-700/50'
                 }`}>
                   {m.content}
                 </div>
+
+                {/* Inline Canvas Rendering */}
+                {m.canvas && <ChatCanvas canvas={m.canvas} />}
               </div>
               
-              {/* Reality Check / Calibration UI - Show only for the latest message if it is from the model */}
+              {/* Feedback UI — latest model message only */}
               {m.role === 'model' && i === messages.length - 1 && !loading && (
                 <div className="flex gap-3 mt-2 ml-4 text-[9px] uppercase tracking-wider font-medium text-neutral-500 animate-in fade-in duration-500">
                   <span>Did this land?</span>
                   <button 
                     onClick={handleConfirm}
-                    className="hover:text-emerald-400 transition-colors flex items-center gap-1"
+                    className="hover:text-emerald-400 transition-colors"
                   >
                     This resonates
                   </button>
                   <button 
                     onClick={handleRecalibrate}
-                    className="hover:text-neutral-300 transition-colors flex items-center gap-1"
+                    className="hover:text-neutral-300 transition-colors"
                   >
                     Not quite
                   </button>
@@ -294,7 +309,7 @@ export const Chatbot: React.FC<ChatbotProps> = ({ user }) => {
                     />
                   ))}
                 </div>
-                <span className="text-[9px] font-medium text-neutral-500 uppercase tracking-[0.2em]">Processing…</span>
+                <span className="text-[9px] font-medium text-neutral-500 uppercase tracking-[0.2em]">Processing...</span>
               </motion.div>
             )}
           </AnimatePresence>
@@ -307,13 +322,15 @@ export const Chatbot: React.FC<ChatbotProps> = ({ user }) => {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleSend()}
-              placeholder="What's on your mind…"
+              placeholder="What's on your mind..."
               className="flex-1 bg-neutral-800/50 border border-neutral-700/50 rounded-[28px] px-8 py-5 text-xs focus:border-white/40 focus:bg-neutral-800 outline-none transition-all placeholder:text-neutral-600"
+              aria-label="Message input"
             />
             <button 
               onClick={() => handleSend()}
               disabled={loading || !input.trim()}
               className="w-16 h-16 bg-white text-black flex items-center justify-center rounded-full hover:bg-neutral-200 active:scale-90 transition-all shadow-xl disabled:opacity-30 disabled:pointer-events-none"
+              aria-label="Send message"
             >
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
             </button>
