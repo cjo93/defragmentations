@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { DEFRAG_MANIFEST } from '../constants/manifest';
 import { processBirthData, calculateTransits, TransitReport } from '../services/engine';
@@ -10,7 +11,7 @@ import { SystemStatus } from './visuals/SystemStatus';
 import { HelpIcon } from './visuals/HelpTooltips';
 import { FamilyManager } from './FamilyManager';
 import { GenerationalOverlay } from './GenerationalOverlay';
-import { loadFamilyMembers, loadActivityLog, logActivity, ActivityEntry } from '../services/familyService';
+import { loadActivityLog, logActivity, ActivityEntry } from '../services/familyService';
 
 /* ─── SVG Progress Ring ─────────────────────────────────────── */
 const ProgressRing: React.FC<{ value: number; size?: number; label: string; sub?: string }> = ({ value, size = 100, label, sub }) => {
@@ -38,14 +39,7 @@ const ProgressRing: React.FC<{ value: number; size?: number; label: string; sub?
   );
 };
 
-/* ─── Stat Pill ─────────────────────────────────────────────── */
-const StatPill: React.FC<{ value: string; label: string }> = ({ value, label }) => (
-  <div className="group flex items-center gap-3 px-4 py-3 rounded-2xl bg-white/[0.02] border border-white/[0.06] hover:border-white/[0.12] hover:bg-white/[0.04] transition-all duration-500 cursor-default relative overflow-hidden">
-    <div className="absolute inset-0 animate-shimmer opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-    <span className="text-lg font-bold text-white relative z-10">{value}</span>
-    <span className="text-[11px] text-neutral-500 leading-tight relative z-10">{label}</span>
-  </div>
-);
+
 
 /* ─── Activity Item ─────────────────────────────────────────── */
 const ActivityItem: React.FC<{ icon: string; text: string; time: string; accent?: string }> = ({ icon, text, time, accent }) => (
@@ -61,6 +55,7 @@ const ActivityItem: React.FC<{ icon: string; text: string; time: string; accent?
 
 /* ═══════════════════════════════════════════════════════════════ */
 export const Dashboard = () => {
+  const navigate = useNavigate();
   const [userData, setUserData] = useState<any>(null);
   const [transits, setTransits] = useState<TransitReport | null>(null);
   const [clarityScore, setClarityScore] = useState(0);
@@ -87,8 +82,13 @@ export const Dashboard = () => {
         const legacy = localStorage.getItem('defrag_user_data');
         if (legacy) {
           setUserData(JSON.parse(legacy));
+          return;
         }
       } catch {}
+      // No data at all — process with a demo set so page isn't stuck, but flag it
+      const demo = processBirthData('1993-07-26', '20:00');
+      (demo as any)._isDemo = true;
+      setUserData(demo);
     }
   }, []);
 
@@ -140,7 +140,7 @@ export const Dashboard = () => {
 
   const definedCenters = Object.values(userData.centers || {}).filter(Boolean).length;
   const totalCenters = 9;
-  const familyMembers = loadFamilyMembers();
+  const isDemo = !!(userData as any)?._isDemo;
 
   return (
     <div className="relative text-slate-200 font-sans overflow-y-auto h-full">
@@ -155,13 +155,19 @@ export const Dashboard = () => {
         <div className="font-bold text-lg tracking-tight">{DEFRAG_MANIFEST.BRAND.NAME}</div>
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2 text-xs text-neutral-400">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-breathe" />
-            Live Data
+            <span className={`w-1.5 h-1.5 rounded-full ${isDemo ? 'bg-amber-400' : 'bg-emerald-400'} animate-breathe`} />
+            {isDemo ? 'Demo Mode' : 'Live Data'}
           </div>
           <div className="h-4 w-px bg-white/[0.06]" />
-          <span className="text-xs text-neutral-600">
-            {userData.meta?.birthDate || 'No birth data'}
-          </span>
+          {isDemo ? (
+            <button onClick={() => navigate('/onboarding')} className="text-xs text-amber-400/80 hover:text-amber-300 transition-colors underline underline-offset-2">
+              Enter your birth data
+            </button>
+          ) : (
+            <span className="text-xs text-neutral-600">
+              {userData.meta?.birthDate || ''}
+            </span>
+          )}
         </div>
       </motion.header>
 
@@ -188,6 +194,30 @@ export const Dashboard = () => {
           </motion.div>
         ))}
       </motion.div>
+
+      {/* ─── DEMO BANNER ─────────────────────────────────── */}
+      {isDemo && (
+        <motion.div
+          initial={{ opacity: 0, y: -4 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.25, duration: 0.5 }}
+          className="relative z-10 mx-6 mt-4 p-4 rounded-2xl bg-amber-500/5 border border-amber-500/15 flex items-center gap-4"
+        >
+          <div className="w-8 h-8 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center shrink-0">
+            <svg className="w-4 h-4 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd"/></svg>
+          </div>
+          <div className="flex-1">
+            <p className="text-xs font-semibold text-amber-300/90">You're viewing demo data</p>
+            <p className="text-[10px] text-amber-400/50 mt-0.5">Complete onboarding to generate your real blueprint from your actual birth data.</p>
+          </div>
+          <button
+            onClick={() => navigate('/onboarding')}
+            className="px-4 py-2 rounded-xl bg-amber-400/10 border border-amber-400/20 text-[11px] font-semibold text-amber-300 hover:bg-amber-400/20 transition-all shrink-0"
+          >
+            Set Up Now
+          </button>
+        </motion.div>
+      )}
 
       {/* ─── MAIN GRID ────────────────────────────────────── */}
       <motion.main
@@ -354,16 +384,17 @@ export const Dashboard = () => {
           {/* Quick-launch */}
           <div className="flex flex-wrap gap-3">
             {[
-              { label: 'Start Session', icon: '◉' },
-              { label: 'Orbit Analysis', icon: '⬡' },
-              { label: 'Voice Mode', icon: '◈' },
-              { label: 'Signal Filter', icon: '▣' },
+              { label: 'Start Session', icon: '◉', path: '/chatbot' },
+              { label: 'Orbit Analysis', icon: '⬡', path: '/orbit' },
+              { label: 'Voice Mode', icon: '◈', path: '/live' },
+              { label: 'Signal Filter', icon: '▣', path: '/signal' },
             ].map((action, i) => (
               <motion.button
                 key={i}
+                onClick={() => navigate(action.path)}
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
-                className="flex items-center gap-2.5 px-5 py-3 rounded-2xl border border-white/[0.06] bg-white/[0.02] hover:bg-white/[0.04] hover:border-white/[0.12] transition-all duration-300 text-sm text-neutral-300"
+                className="flex items-center gap-2.5 px-5 py-3 rounded-2xl border border-white/[0.06] bg-white/[0.02] hover:bg-white/[0.04] hover:border-white/[0.12] transition-all duration-300 text-sm text-neutral-300 cursor-pointer"
               >
                 <span className="text-neutral-500">{action.icon}</span>
                 {action.label}

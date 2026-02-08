@@ -155,7 +155,7 @@ export const HelpIcon: React.FC<{ tooltip: string; className?: string }> = ({ to
         onMouseLeave={() => setIsVisible(false)}
         className={`text-neutral-500 hover:text-neutral-300 transition-colors ${className}`}
       >
-        <HelpCircle className="w-4 h-4" />
+        <HelpCircle className="w-3.5 h-3.5" />
       </button>
       
       <AnimatePresence>
@@ -167,8 +167,8 @@ export const HelpIcon: React.FC<{ tooltip: string; className?: string }> = ({ to
             transition={{ duration: 0.15 }}
             className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 z-50"
           >
-            <div className="backdrop-blur-2xl bg-neutral-900/95 border border-white/[0.08] rounded-xl p-3 shadow-2xl max-w-[200px]">
-              <p className="text-xs text-neutral-300 leading-relaxed">{tooltip}</p>
+            <div className="backdrop-blur-2xl bg-neutral-900/95 border border-white/[0.08] rounded-xl p-3 shadow-2xl min-w-[160px] max-w-[280px]">
+              <p className="text-[11px] text-neutral-300 leading-relaxed">{tooltip}</p>
             </div>
             <div className="absolute top-full left-1/2 -translate-x-1/2 -mt-1 border-t-white/[0.08] border-t-8 border-x-transparent border-x-8 border-b-0" />
           </motion.div>

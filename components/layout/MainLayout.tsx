@@ -57,7 +57,10 @@ export const MainLayout = () => {
           currentView={getCurrentView()}
           onNavigate={handleNavigate}
           user="PILLAR_USER"
-          onLogout={() => navigate('/')}
+          onLogout={() => {
+            localStorage.removeItem('defrag_auth_token');
+            navigate('/');
+          }}
         />
       </div>
 

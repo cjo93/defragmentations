@@ -201,9 +201,10 @@ export const Chatbot: React.FC<ChatbotProps> = ({ user }) => {
           </div>
         </div>
         <button 
-          onClick={() => { if(confirm("Clear conversation?")) setMessages([]); }}
-          className="p-2 text-neutral-600 hover:text-red-400 transition-colors"
+          onClick={() => { if(window.confirm("Clear conversation history?")) { setMessages([]); localStorage.removeItem(`defrag_chat_v2_${user}`); } }}
+          className="p-2.5 rounded-xl text-neutral-600 hover:text-red-400 hover:bg-white/[0.04] transition-all"
           aria-label="Clear conversation"
+          title="Clear conversation"
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
         </button>
@@ -239,8 +240,8 @@ export const Chatbot: React.FC<ChatbotProps> = ({ user }) => {
                        initial={{ opacity: 0, y: 8 }}
                        animate={{ opacity: 1, y: 0 }}
                        transition={{ delay: 0.1 * i }}
-                       onClick={() => { setInput(prompt); }}
-                       className="text-xs text-left px-4 py-3 rounded-xl bg-white/[0.02] border border-white/[0.04] hover:bg-white/[0.04] hover:border-white/[0.08] transition-all text-neutral-400 hover:text-white"
+                       onClick={() => handleSend(prompt)}
+                       className="text-xs text-left px-4 py-3 rounded-xl bg-white/[0.02] border border-white/[0.04] hover:bg-white/[0.04] hover:border-white/[0.08] transition-all text-neutral-400 hover:text-white cursor-pointer"
                      >
                        {prompt}
                      </motion.button>
@@ -259,7 +260,7 @@ export const Chatbot: React.FC<ChatbotProps> = ({ user }) => {
               className={`flex flex-col ${m.role === 'user' ? 'items-end' : 'items-start'}`}
             >
               <div className="max-w-[90%] md:max-w-[75%] space-y-2">
-                <div className={`p-6 rounded-[32px] text-xs leading-relaxed shadow-sm transition-all ${
+                <div className={`p-6 rounded-[28px] text-[13px] leading-relaxed shadow-sm transition-all ${
                   m.role === 'user' ? 'bg-white text-black font-medium' : 'bg-neutral-800/50 text-neutral-200 border border-neutral-700/50'
                 }`}>
                   {m.content}
@@ -271,21 +272,26 @@ export const Chatbot: React.FC<ChatbotProps> = ({ user }) => {
               
               {/* Feedback UI — latest model message only */}
               {m.role === 'model' && i === messages.length - 1 && !loading && (
-                <div className="flex gap-3 mt-2 ml-4 text-[9px] uppercase tracking-wider font-medium text-neutral-500 animate-in fade-in duration-500">
-                  <span>Did this land?</span>
+                <motion.div
+                  initial={{ opacity: 0, y: 4 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.3, duration: 0.4 }}
+                  className="flex items-center gap-2 mt-3 ml-4"
+                >
+                  <span className="text-[9px] uppercase tracking-wider font-medium text-neutral-600">Did this land?</span>
                   <button 
                     onClick={handleConfirm}
-                    className="hover:text-emerald-400 transition-colors"
+                    className="px-3 py-1.5 rounded-full text-[9px] uppercase tracking-wider font-semibold border border-emerald-500/20 bg-emerald-500/5 text-emerald-400/80 hover:bg-emerald-500/10 hover:text-emerald-400 transition-all"
                   >
-                    This resonates
+                    Resonates
                   </button>
                   <button 
                     onClick={handleRecalibrate}
-                    className="hover:text-neutral-300 transition-colors"
+                    className="px-3 py-1.5 rounded-full text-[9px] uppercase tracking-wider font-semibold border border-white/[0.06] bg-white/[0.02] text-neutral-500 hover:bg-white/[0.04] hover:text-neutral-300 transition-all"
                   >
-                    Not quite
+                    Try again
                   </button>
-                </div>
+                </motion.div>
               )}
             </motion.div>
           ))}
@@ -323,16 +329,16 @@ export const Chatbot: React.FC<ChatbotProps> = ({ user }) => {
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleSend()}
               placeholder="What's on your mind..."
-              className="flex-1 bg-neutral-800/50 border border-neutral-700/50 rounded-[28px] px-8 py-5 text-xs focus:border-white/40 focus:bg-neutral-800 outline-none transition-all placeholder:text-neutral-600"
+              className="flex-1 bg-neutral-800/50 border border-neutral-700/50 rounded-[28px] px-8 py-5 text-[13px] focus:border-white/40 focus:bg-neutral-800 outline-none transition-all placeholder:text-neutral-600"
               aria-label="Message input"
             />
             <button 
               onClick={() => handleSend()}
               disabled={loading || !input.trim()}
-              className="w-16 h-16 bg-white text-black flex items-center justify-center rounded-full hover:bg-neutral-200 active:scale-90 transition-all shadow-xl disabled:opacity-30 disabled:pointer-events-none"
+              className="w-14 h-14 bg-white text-black flex items-center justify-center rounded-full hover:bg-neutral-200 active:scale-95 transition-all shadow-lg disabled:opacity-20 disabled:pointer-events-none"
               aria-label="Send message"
             >
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
             </button>
           </div>
         </div>
