@@ -367,7 +367,7 @@ export const Dashboard = () => {
             </div>
             <div className="px-6 py-2">
               {activityLog.length > 0 ? (
-                activityLog.slice(0, 8).map((entry, i) => (
+                activityLog.slice(0, 8).map((entry) => (
                   <ActivityItem key={entry.id} icon={entry.icon} text={entry.text} time={entry.time} accent={entry.accent} />
                 ))
               ) : (

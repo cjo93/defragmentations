@@ -1,6 +1,6 @@
 import React, { useState, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Upload, UserPlus, X, ChevronDown, FileText, Users, AlertCircle } from 'lucide-react';
+import { Upload, UserPlus, X, FileText, Users, AlertCircle } from 'lucide-react';
 import {
   FamilyMember,
   addFamilyMember,

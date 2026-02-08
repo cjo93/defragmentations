@@ -32,7 +32,7 @@ export interface GlobalContext {
 // ── Storage Keys ────────────────────────────────────────────
 
 const BIRTH_DATA_KEY = 'defrag_birth_data';
-const _CONTEXT_KEY = 'defrag_global_context';
+// const _CONTEXT_KEY = 'defrag_global_context';
 
 // ── Birth Data Persistence ──────────────────────────────────
 
