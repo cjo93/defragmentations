@@ -1,17 +1,40 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { DEFRAG_MANIFEST } from '../constants/manifest';
 import { processBirthData, calculateTransits, TransitReport } from '../services/engine';
 import { loadBirthData } from '../services/globalContext';
 import { loadEntries, analyzeEcho } from '../services/echoEngine';
 import { calculateSEDA } from '../services/sedaCalculator';
 import { SystemMap } from './visuals/SystemMap';
-import { SystemStatus } from './visuals/SystemStatus';
 import { HelpIcon } from './visuals/HelpTooltips';
 import { FamilyManager } from './FamilyManager';
 import { GenerationalOverlay } from './GenerationalOverlay';
 import { loadActivityLog, logActivity, ActivityEntry } from '../services/familyService';
+
+/* ─── Type Descriptions (new-user friendly) ─────────────────── */
+const TYPE_INTROS: Record<string, { line: string; action: string }> = {
+  'Generator': {
+    line: 'You have consistent life-force energy. You\'re built to respond to what lights you up — not to initiate from scratch.',
+    action: 'Your strategy is to wait for something to respond to. When it excites you, go all in.',
+  },
+  'Manifesting Generator': {
+    line: 'You have the energy of a Generator with the speed of a Manifestor. Multi-passionate, fast-moving, non-linear.',
+    action: 'Wait to respond, then move fast. Skip what bores you — that\'s your design working correctly.',
+  },
+  'Projector': {
+    line: 'You see systems and people more clearly than anyone. You\'re built to guide — not to grind.',
+    action: 'Wait to be recognized and invited. Your efficiency comes from wisdom, not force.',
+  },
+  'Manifestor': {
+    line: 'You\'re built to initiate and set things in motion. You need freedom — and people need a heads-up before you move.',
+    action: 'Inform the people around you, then act. Resistance drops when others aren\'t blindsided.',
+  },
+  'Reflector': {
+    line: 'You mirror everything around you. Your openness is your superpower — you feel the health of every room you enter.',
+    action: 'Wait a full lunar cycle before major decisions. Your clarity comes from patience, not pressure.',
+  },
+};
 
 /* ─── SVG Progress Ring ─────────────────────────────────────── */
 const ProgressRing: React.FC<{ value: number; size?: number; label: string; sub?: string }> = ({ value, size = 100, label, sub }) => {
@@ -39,7 +62,71 @@ const ProgressRing: React.FC<{ value: number; size?: number; label: string; sub?
   );
 };
 
+/* ─── Action Card ───────────────────────────────────────────── */
+const ActionCard: React.FC<{ icon: React.ReactNode; title: string; desc: string; onClick: () => void; primary?: boolean }> = ({ icon, title, desc, onClick, primary }) => (
+  <motion.button
+    onClick={onClick}
+    whileHover={{ scale: 1.02, y: -2 }}
+    whileTap={{ scale: 0.98 }}
+    className={`group text-left rounded-2xl border p-5 transition-all duration-500 relative overflow-hidden w-full ${
+      primary
+        ? 'bg-white/[0.06] border-white/[0.12] hover:bg-white/[0.09] hover:border-white/[0.2] shadow-[0_0_40px_-10px_rgba(255,255,255,0.05)]'
+        : 'bg-white/[0.02] border-white/[0.06] hover:bg-white/[0.05] hover:border-white/[0.14]'
+    }`}
+  >
+    <div className="card-inner-glow" />
+    <div className="relative z-10 flex items-start gap-4">
+      <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${primary ? 'bg-white/[0.08] border border-white/[0.15]' : 'bg-white/[0.04] border border-white/[0.08]'}`}>
+        {icon}
+      </div>
+      <div className="min-w-0">
+        <h4 className="text-[13px] font-semibold text-white mb-0.5">{title}</h4>
+        <p className="text-[11px] text-neutral-500 leading-relaxed">{desc}</p>
+      </div>
+    </div>
+  </motion.button>
+);
 
+/* ─── Collapsible Section ───────────────────────────────────── */
+const CollapsibleSection: React.FC<{ title: string; badge?: string; children: React.ReactNode; defaultOpen?: boolean }> = ({ title, badge, children, defaultOpen = false }) => {
+  const [open, setOpen] = useState(defaultOpen);
+  return (
+    <div className="rounded-3xl border border-white/[0.06] bg-white/[0.02] backdrop-blur-2xl overflow-hidden">
+      <button
+        onClick={() => setOpen(!open)}
+        className="w-full px-6 py-4 flex items-center justify-between hover:bg-white/[0.02] transition-colors"
+      >
+        <div className="flex items-center gap-3">
+          <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-neutral-500">{title}</span>
+          {badge && <span className="text-[9px] px-2 py-0.5 rounded-full bg-white/[0.04] border border-white/[0.06] text-neutral-500">{badge}</span>}
+        </div>
+        <motion.svg
+          width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
+          className="text-neutral-600"
+          animate={{ rotate: open ? 180 : 0 }}
+          transition={{ duration: 0.3 }}
+        >
+          <path d="M6 9l6 6 6-6" />
+        </motion.svg>
+      </button>
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+            className="overflow-hidden"
+          >
+            <div className="border-t border-white/[0.04]">
+              {children}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+};
 
 /* ─── Activity Item ─────────────────────────────────────────── */
 const ActivityItem: React.FC<{ icon: string; text: string; time: string; accent?: string }> = ({ icon, text, time, accent }) => (
@@ -63,69 +150,46 @@ export const Dashboard = () => {
   const [activityLog, setActivityLog] = useState<ActivityEntry[]>([]);
   const [familyRefreshKey, setFamilyRefreshKey] = useState(0);
 
-  // Load real user data from localStorage (set during onboarding)
   useEffect(() => {
     const birthData = loadBirthData();
     if (birthData) {
       const bp = processBirthData(birthData.date, birthData.time);
       setUserData(bp);
-
-      // Compute live transits against the user's natal chart
       const tr = calculateTransits(bp);
       setTransits(tr);
-
-      // Log dashboard visit
       logActivity('◉', 'Dashboard loaded with live data', 'System');
     } else {
-      // Fallback: check if legacy data exists
       try {
         const legacy = localStorage.getItem('defrag_user_data');
-        if (legacy) {
-          setUserData(JSON.parse(legacy));
-          return;
-        }
+        if (legacy) { setUserData(JSON.parse(legacy)); return; }
       } catch {}
-      // No data at all — process with a demo set so page isn't stuck, but flag it
       const demo = processBirthData('1993-07-26', '20:00');
       (demo as any)._isDemo = true;
       setUserData(demo);
     }
   }, []);
 
-  // Compute real Clarity and Stability scores
   useEffect(() => {
-    // Clarity: derived from echo pattern analysis — fewer active loops = more clarity
     const entries = loadEntries();
     if (entries.length > 0) {
       const userType = userData?.type || 'Generator';
       const echo = analyzeEcho(entries, userType, 30);
-      // Invert drag: high drag = low clarity
-      const clarity = Math.max(0, 100 - echo.overallDrag);
-      setClarityScore(Math.round(clarity));
+      setClarityScore(Math.round(Math.max(0, 100 - echo.overallDrag)));
     } else {
-      // No echo entries yet — neutral clarity
       setClarityScore(50);
     }
-
-    // Stability: from SEDA score based on recent entries
     const recentText = entries.slice(-5).map(e => e.text).join(' ');
     if (recentText) {
       const seda = calculateSEDA(recentText);
-      // SEDA is risk 0-100 (100=danger), invert for stability (100=stable)
       setStabilityScore(100 - seda.score);
     } else {
       setStabilityScore(50);
     }
   }, [userData]);
 
-  // Load activity log
-  useEffect(() => {
-    setActivityLog(loadActivityLog());
-  }, [familyRefreshKey]);
+  useEffect(() => { setActivityLog(loadActivityLog()); }, [familyRefreshKey]);
 
-  const handleFamilyUpdate = useCallback(() => {
-    setFamilyRefreshKey(k => k + 1);
-  }, []);
+  const handleFamilyUpdate = useCallback(() => { setFamilyRefreshKey(k => k + 1); }, []);
 
   if (!userData) return (
     <div className="flex flex-col items-center justify-center h-full bg-transparent gap-4">
@@ -141,66 +205,16 @@ export const Dashboard = () => {
   const definedCenters = Object.values(userData.centers || {}).filter(Boolean).length;
   const totalCenters = 9;
   const isDemo = !!(userData as any)?._isDemo;
+  const typeInfo = TYPE_INTROS[userData.type] || TYPE_INTROS['Generator'];
 
   return (
     <div className="relative text-slate-200 font-sans overflow-y-auto h-full">
-
-      {/* ─── TOP BAR ──────────────────────────────────────── */}
-      <motion.header
-        initial={{ opacity: 0, y: -10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-        className="relative z-10 flex justify-between items-center p-6 border-b border-white/[0.04] bg-[#050505]/60 backdrop-blur-2xl"
-      >
-        <div className="font-bold text-lg tracking-tight"><span className="bg-gradient-to-r from-white via-neutral-300 to-white bg-clip-text text-transparent">{DEFRAG_MANIFEST.BRAND.NAME}</span></div>
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2 text-xs text-neutral-400">
-            <span className={`w-1.5 h-1.5 rounded-full ${isDemo ? 'bg-amber-400' : 'bg-emerald-400'} animate-breathe`} />
-            {isDemo ? 'Demo Mode' : 'Live Data'}
-          </div>
-          <div className="h-4 w-px bg-white/[0.06]" />
-          {isDemo ? (
-            <button onClick={() => navigate('/onboarding')} className="text-xs text-amber-400/80 hover:text-amber-300 transition-colors underline underline-offset-2">
-              Enter your birth data
-            </button>
-          ) : (
-            <span className="text-xs text-neutral-600">
-              {userData.meta?.birthDate || ''}
-            </span>
-          )}
-        </div>
-      </motion.header>
-
-      {/* ─── STAT STRIP — horizontal metrics bar ──────────── */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.15, duration: 0.6 }}
-        className="relative z-10 px-6 py-5 border-b border-white/[0.04] flex flex-wrap gap-3"
-      >
-        {[
-          { v: userData.type, l: 'Type', tip: 'Your energy type determines how you best interact with the world — whether you initiate, respond, wait, or reflect.' },
-          { v: userData.strategy, l: 'Strategy', tip: 'Your strategy is the most reliable way for you to make decisions that lead to satisfaction instead of friction.' },
-          { v: userData.authority, l: 'Authority', tip: 'Your inner authority is your body\'s built-in decision-making tool — it tells you what\'s correct for you.' },
-          { v: `${definedCenters}/${totalCenters}`, l: 'Defined', tip: 'Defined centers are your consistent personality traits. Open centers are where you absorb and amplify other people\'s energy.' },
-        ].map((s, i) => (
-          <motion.div key={i} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 + i * 0.08, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}>
-            <div className="group flex items-center gap-3 px-4 py-3 rounded-2xl bg-white/[0.02] border border-white/[0.06] hover:border-white/[0.12] hover:bg-white/[0.04] transition-all duration-500 cursor-default relative overflow-hidden">
-              <div className="card-inner-glow" />
-              <span className="text-lg font-bold text-white relative z-10">{s.v}</span>
-              <span className="text-[11px] text-neutral-500 leading-tight relative z-10">{s.l}</span>
-              <HelpIcon tooltip={s.tip} />
-            </div>
-          </motion.div>
-        ))}
-      </motion.div>
 
       {/* ─── DEMO BANNER ─────────────────────────────────── */}
       {isDemo && (
         <motion.div
           initial={{ opacity: 0, y: -4 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.25, duration: 0.5 }}
           className="relative z-10 mx-6 mt-4 p-4 rounded-2xl bg-amber-500/5 border border-amber-500/15 flex items-center gap-4"
         >
           <div className="w-8 h-8 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center shrink-0">
@@ -208,69 +222,200 @@ export const Dashboard = () => {
           </div>
           <div className="flex-1">
             <p className="text-xs font-semibold text-amber-300/90">You're viewing demo data</p>
-            <p className="text-[10px] text-amber-400/50 mt-0.5">Complete onboarding to generate your real blueprint from your actual birth data.</p>
+            <p className="text-[10px] text-amber-400/50 mt-0.5">Complete onboarding to generate your real blueprint.</p>
           </div>
-          <button
-            onClick={() => navigate('/onboarding')}
-            className="px-4 py-2 rounded-xl bg-amber-400/10 border border-amber-400/20 text-[11px] font-semibold text-amber-300 hover:bg-amber-400/20 transition-all shrink-0"
-          >
+          <button onClick={() => navigate('/onboarding')} className="px-4 py-2 rounded-xl bg-amber-400/10 border border-amber-400/20 text-[11px] font-semibold text-amber-300 hover:bg-amber-400/20 transition-all shrink-0">
             Set Up Now
           </button>
         </motion.div>
       )}
 
-      {/* ─── MAIN GRID ────────────────────────────────────── */}
       <motion.main
-        initial={{ opacity: 0, y: 16 }}
+        initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.3, duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-        className="relative z-10 p-6 max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-6"
+        transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+        className="relative z-10 p-6 max-w-6xl mx-auto space-y-6"
       >
 
-        {/* ── LEFT COLUMN: Visual + Rings ──────────────────── */}
-        <div className="md:col-span-5 space-y-6">
+        {/* ═══ 1. WELCOME + IDENTITY ═════════════════════════ */}
+        <section className="grid grid-cols-1 md:grid-cols-12 gap-6">
+          {/* Welcome Card */}
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1, duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+            className="md:col-span-7 rounded-3xl border border-white/[0.08] bg-white/[0.03] backdrop-blur-2xl p-8 md:p-10 relative overflow-hidden"
+          >
+            <div className="absolute -top-20 -right-20 w-48 h-48 rounded-full bg-white/[0.015] blur-[80px] animate-breathe-slow pointer-events-none" />
+            <div className="relative z-10">
+              <div className="flex items-center gap-3 mb-6">
+                <div className={`w-2 h-2 rounded-full ${isDemo ? 'bg-amber-400' : 'bg-emerald-400'} animate-breathe`} />
+                <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-neutral-500">
+                  {isDemo ? 'Demo Blueprint' : 'Your Blueprint'}
+                </span>
+              </div>
+
+              <h1 className="text-[28px] md:text-[34px] font-bold tracking-[-0.03em] leading-[1.15] mb-4">
+                You're a{/^[aeiouAEIOU]/.test(userData.type) ? 'n' : ''}{' '}
+                <span className="bg-gradient-to-r from-white via-neutral-300 to-neutral-400 bg-clip-text text-transparent">{userData.type}.</span>
+              </h1>
+              <p className="text-[15px] text-neutral-400 leading-[1.7] mb-2">{typeInfo.line}</p>
+              <p className="text-[13px] text-neutral-500 leading-[1.7] italic">{typeInfo.action}</p>
+
+              {/* Key stats — single instance, horizontal */}
+              <div className="flex flex-wrap gap-3 mt-8 pt-6 border-t border-white/[0.05]">
+                {[
+                  { v: userData.strategy, l: 'Strategy' },
+                  { v: userData.authority, l: 'Authority' },
+                  { v: userData.profile || '—', l: 'Profile' },
+                  { v: `${definedCenters}/9`, l: 'Defined' },
+                ].map((s, i) => (
+                  <div key={i} className="flex items-center gap-2 px-3 py-2 rounded-xl bg-white/[0.03] border border-white/[0.05]">
+                    <span className="text-[13px] font-semibold text-white">{s.v}</span>
+                    <span className="text-[10px] text-neutral-600">{s.l}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </motion.div>
 
           {/* System Map */}
           <motion.div
             initial={{ opacity: 0, scale: 0.98 }}
             animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.4, duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-            className="h-[320px] bg-white/[0.02] border border-white/[0.06] rounded-3xl p-2 relative backdrop-blur-sm overflow-hidden group hover:border-white/[0.1] transition-all duration-700"
+            transition={{ delay: 0.2, duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+            className="md:col-span-5 h-[320px] bg-white/[0.02] border border-white/[0.06] rounded-3xl p-2 relative backdrop-blur-sm overflow-hidden group hover:border-white/[0.1] transition-all duration-700"
           >
             <div className="absolute inset-0 rounded-3xl bg-white/[0.01] blur-[30px] animate-breathe-slow pointer-events-none" />
             <SystemMap dynamics={userData.relationalDynamics} />
             <div className="absolute bottom-3 left-3 right-3 flex justify-between items-end">
               <div className="flex items-center gap-2">
                 <span className="text-[10px] font-semibold uppercase tracking-[0.15em] text-neutral-600">Your Map</span>
-                <HelpIcon tooltip="Your personal map — colored areas are your consistent traits. Uncolored areas are where you absorb other people's energy, which can create friction if you don't recognize it." />
+                <HelpIcon tooltip="Colored areas are your consistent traits. Open areas absorb others' energy — knowing which is which is the key to less friction." />
               </div>
-              <span className="text-[10px] text-neutral-700">Live</span>
+              <span className="text-[10px] text-neutral-700">{isDemo ? 'Demo' : 'Live'}</span>
             </div>
           </motion.div>
+        </section>
 
-          {/* Progress Rings Row — REAL DATA */}
-          <div className="grid grid-cols-3 gap-4">
-            <div className="bg-white/[0.02] border border-white/[0.06] rounded-2xl p-5 flex flex-col items-center">
-              <ProgressRing value={Math.round((definedCenters / totalCenters) * 100)} size={80} label="Defined" sub={`${definedCenters} of 9 areas`} />
-              <HelpIcon tooltip="How many of your 9 personality centers operate consistently. More defined = more fixed traits. More open = more adaptive." className="mt-1" />
+        {/* ═══ 2. WHAT TO DO ═════════════════════════════════ */}
+        <section>
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.3, duration: 0.6 }}
+          >
+            <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-neutral-600 block mb-4 ml-1">Start Here</span>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
+              <ActionCard
+                primary
+                icon={<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-white/60"><path d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" /></svg>}
+                title="Start Session"
+                desc="Chat with your blueprint. Ask it anything about your patterns."
+                onClick={() => navigate('/chatbot')}
+              />
+              <ActionCard
+                icon={<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-white/50"><path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" /></svg>}
+                title="Map a Relationship"
+                desc="See the structural dynamics between you and someone else."
+                onClick={() => navigate('/orbit')}
+              />
+              <ActionCard
+                icon={<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-white/50"><path d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>}
+                title="Signal Filter"
+                desc="Separate real signals from noise in your thinking patterns."
+                onClick={() => navigate('/signal')}
+              />
+              <ActionCard
+                icon={<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-white/50"><path d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m-4-8a3 3 0 016 0v1" /></svg>}
+                title="Voice Mode"
+                desc="Talk through what's on your mind. Hands-free, real-time."
+                onClick={() => navigate('/live')}
+              />
             </div>
-            <div className="bg-white/[0.02] border border-white/[0.06] rounded-2xl p-5 flex flex-col items-center">
-              <ProgressRing value={clarityScore} size={80} label="Clarity" sub={clarityScore > 70 ? 'Clear' : clarityScore > 40 ? 'Moderate' : 'Noisy'} />
-              <HelpIcon tooltip="Clarity measures how free you are from recurring negative patterns. Based on your journal entries — fewer loops = more clarity." className="mt-1" />
-            </div>
-            <div className="bg-white/[0.02] border border-white/[0.06] rounded-2xl p-5 flex flex-col items-center">
-              <ProgressRing value={stabilityScore} size={80} label="Stability" sub={stabilityScore > 70 ? 'Grounded' : stabilityScore > 40 ? 'Managing' : 'Under load'} />
-              <HelpIcon tooltip="Stability tracks your emotional baseline from recent conversations. Higher = calmer and more grounded. Lower = more stress detected." className="mt-1" />
+          </motion.div>
+        </section>
+
+        {/* ═══ 3. PROGRESS — Rings + Activity ════════════════ */}
+        <section className="grid grid-cols-1 md:grid-cols-12 gap-6">
+          {/* Progress Rings */}
+          <div className="md:col-span-4">
+            <div className="rounded-3xl border border-white/[0.06] bg-white/[0.02] backdrop-blur-2xl p-6">
+              <div className="flex items-center gap-2 mb-5">
+                <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-neutral-500">Your Readings</span>
+                <HelpIcon tooltip="These update as you use DEFRAG. Start a chat session or journal to see your scores change." />
+              </div>
+              <div className="grid grid-cols-3 gap-3">
+                <div className="flex flex-col items-center p-3 rounded-2xl bg-white/[0.02] border border-white/[0.04]">
+                  <ProgressRing value={Math.round((definedCenters / totalCenters) * 100)} size={72} label="Defined" sub={`${definedCenters} of 9`} />
+                </div>
+                <div className="flex flex-col items-center p-3 rounded-2xl bg-white/[0.02] border border-white/[0.04]">
+                  <ProgressRing value={clarityScore} size={72} label="Clarity" sub={clarityScore > 70 ? 'Clear' : clarityScore > 40 ? 'Moderate' : 'Noisy'} />
+                </div>
+                <div className="flex flex-col items-center p-3 rounded-2xl bg-white/[0.02] border border-white/[0.04]">
+                  <ProgressRing value={stabilityScore} size={72} label="Stability" sub={stabilityScore > 70 ? 'Grounded' : stabilityScore > 40 ? 'Managing' : 'Under load'} />
+                </div>
+              </div>
+              {clarityScore === 50 && stabilityScore === 50 && (
+                <p className="text-[10px] text-neutral-600 text-center mt-4 italic">Start a session to see your scores update in real time.</p>
+              )}
             </div>
           </div>
 
-          {/* Planetary Data — LIVE from astronomy-engine */}
-          {userData.astrology && (
-            <div className="bg-white/[0.02] border border-white/[0.06] rounded-3xl backdrop-blur-2xl overflow-hidden">
-              <div className="px-6 py-4 border-b border-white/[0.04] flex items-center gap-2">
-                <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-neutral-500">Your Natal Positions</span>
-                <HelpIcon tooltip="These are the exact positions of planets at your birth, calculated from astronomical data. They determine your personality blueprint." />
+          {/* Activity + Transit Preview */}
+          <div className="md:col-span-8 space-y-6">
+            {/* Today's Weather — compact preview */}
+            {transits && transits.aspects.length > 0 && (
+              <div className="rounded-3xl border border-white/[0.06] bg-white/[0.02] backdrop-blur-2xl overflow-hidden">
+                <div className="px-6 py-4 border-b border-white/[0.04] flex items-center gap-2">
+                  <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-neutral-500">Today's Weather</span>
+                  <HelpIcon tooltip="Current planetary positions compared to your birth chart. When they align, specific patterns get activated." />
+                  <span className="ml-auto text-[10px] text-neutral-700">Live</span>
+                </div>
+                <div className="px-6 py-4">
+                  <p className="text-xs text-neutral-300 leading-relaxed mb-3">{transits.weatherSummary}</p>
+                  <div className="flex flex-wrap gap-2">
+                    {transits.aspects.slice(0, 4).map((a, i) => (
+                      <span key={i} className={`text-[10px] px-2.5 py-1 rounded-full border ${
+                        a.aspect === 'Conjunction' ? 'bg-white/10 text-white/70 border-white/20' :
+                        a.aspect === 'Square' || a.aspect === 'Opposition' ? 'bg-red-500/10 text-red-400/70 border-red-500/20' :
+                        'bg-emerald-500/10 text-emerald-400/70 border-emerald-500/20'
+                      }`}>{a.transitPlanet} {a.aspect} {a.natalPlanet}</span>
+                    ))}
+                  </div>
+                </div>
               </div>
+            )}
+
+            {/* Activity Stream */}
+            <div className="rounded-3xl border border-white/[0.06] bg-white/[0.02] backdrop-blur-2xl overflow-hidden">
+              <div className="px-6 py-4 border-b border-white/[0.04]">
+                <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-neutral-500">Activity</span>
+              </div>
+              <div className="px-6 py-2">
+                {activityLog.length > 0 ? (
+                  activityLog.slice(0, 6).map((entry) => (
+                    <ActivityItem key={entry.id} icon={entry.icon} text={entry.text} time={entry.time} accent={entry.accent} />
+                  ))
+                ) : (
+                  <>
+                    <ActivityItem icon="◉" text="Blueprint generated from your birth data" time="System" accent="Blueprint" />
+                    <ActivityItem icon="⬡" text={`${definedCenters} personality areas mapped`} time="System" accent="Design" />
+                    <ActivityItem icon="▹" text="Start a session in The Forge to begin tracking patterns" time="Next step" />
+                  </>
+                )}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ═══ 4. ADVANCED — Collapsible ═════════════════════ */}
+        <section className="space-y-4">
+          <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-neutral-600 block ml-1">Go Deeper</span>
+
+          {/* Planetary Data */}
+          {userData.astrology && (
+            <CollapsibleSection title="Natal Positions" badge={`${Object.keys(userData.astrology).length} planets`}>
               <table className="w-full text-sm">
                 <tbody>
                   {Object.entries(userData.astrology).map(([planet, data]: [string, any], i) => (
@@ -282,127 +427,40 @@ export const Dashboard = () => {
                   ))}
                 </tbody>
               </table>
-            </div>
+            </CollapsibleSection>
           )}
-        </div>
 
-        {/* ── RIGHT COLUMN: Activity + Architecture + Family ── */}
-        <div className="md:col-span-7 space-y-6">
-
-          {/* System Status — Unified Memory Indicator */}
-          <SystemStatus />
-
-          {/* Architecture Summary */}
-          <div className="rounded-3xl border border-white/[0.06] bg-white/[0.02] backdrop-blur-2xl overflow-hidden group hover:border-white/[0.1] transition-all duration-500">
-            <div className="px-6 py-4 border-b border-white/[0.04] flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-neutral-500">Your Blueprint</span>
-                <HelpIcon tooltip="A summary of your personal architecture derived from your birth data. These traits are consistent — they don't change." />
-              </div>
-              <span className="text-[10px] text-neutral-700">
-                Born {userData.meta?.birthDate || 'unknown'}
-                {userData.meta?.birthTime ? ` at ${userData.meta.birthTime}` : ''}
-              </span>
-            </div>
-            <div className="p-6 grid grid-cols-2 md:grid-cols-3 gap-6">
-              {[
-                { label: 'Type', value: userData.type, tip: 'Your energy type — how you best engage with the world.' },
-                { label: 'Strategy', value: userData.strategy, tip: 'Your most effective decision-making approach.' },
-                { label: 'Authority', value: userData.authority, tip: 'Your body\'s internal compass for making correct choices.' },
-                { label: 'Profile', value: userData.profile || '—', tip: 'Your life role — the costume you wear in the world.' },
-                { label: 'Definition', value: userData.definition || '—', tip: 'How your defined centers connect. Single = self-contained. Split = needs others to bridge energy.' },
-                { label: 'Life Theme', value: userData.cross || '—', tip: 'Your incarnation purpose — the overarching theme of what you\'re here to experience.' },
-              ].map((item, i) => (
-                <div key={i}>
-                  <div className="flex items-center gap-1 mb-1">
-                    <span className="text-[10px] text-neutral-600 uppercase tracking-wider">{item.label}</span>
-                    <HelpIcon tooltip={item.tip} />
-                  </div>
-                  <span className="text-sm text-white font-medium">{item.value}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Today's Transit Weather — LIVE */}
+          {/* Full Transit Details */}
           {transits && transits.aspects.length > 0 && (
-            <div className="rounded-3xl border border-white/[0.06] bg-white/[0.02] backdrop-blur-2xl overflow-hidden">
-              <div className="px-6 py-4 border-b border-white/[0.04] flex items-center gap-2">
-                <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-neutral-500">Today's Influences</span>
-                <HelpIcon tooltip="These are real planetary positions right now compared to your birth chart. When today's planets align with your natal positions, specific traits get activated." />
-                <span className="ml-auto text-[10px] text-neutral-700">Live · {new Date().toLocaleDateString()}</span>
-              </div>
-              <div className="p-5">
-                <p className="text-xs text-neutral-300 leading-relaxed mb-4">{transits.weatherSummary}</p>
-                <div className="space-y-2">
-                  {transits.aspects.slice(0, 5).map((a, i) => (
-                    <div key={i} className="flex items-start gap-3 py-2 border-b border-white/[0.03] last:border-0">
-                      <span className={`text-[10px] px-2 py-0.5 rounded-full border shrink-0 mt-0.5 ${
-                        a.aspect === 'Conjunction' ? 'bg-white/10 text-white border-white/20' :
-                        a.aspect === 'Square' || a.aspect === 'Opposition' ? 'bg-red-500/10 text-red-400 border-red-500/20' :
-                        'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
-                      }`}>{a.aspect}</span>
-                      <div className="flex-1">
-                        <span className="text-xs text-white">{a.transitPlanet} → {a.natalPlanet}</span>
-                        <span className="text-[10px] text-neutral-600 ml-2">orb {a.orb}°</span>
-                        <p className="text-[10px] text-neutral-500 mt-0.5 leading-relaxed">{a.description}</p>
-                      </div>
+            <CollapsibleSection title="Transit Details" badge={`${transits.aspects.length} aspects`}>
+              <div className="p-5 space-y-2">
+                {transits.aspects.map((a, i) => (
+                  <div key={i} className="flex items-start gap-3 py-2 border-b border-white/[0.03] last:border-0">
+                    <span className={`text-[10px] px-2 py-0.5 rounded-full border shrink-0 mt-0.5 ${
+                      a.aspect === 'Conjunction' ? 'bg-white/10 text-white border-white/20' :
+                      a.aspect === 'Square' || a.aspect === 'Opposition' ? 'bg-red-500/10 text-red-400 border-red-500/20' :
+                      'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
+                    }`}>{a.aspect}</span>
+                    <div className="flex-1">
+                      <span className="text-xs text-white">{a.transitPlanet} → {a.natalPlanet}</span>
+                      <span className="text-[10px] text-neutral-600 ml-2">orb {a.orb}°</span>
+                      <p className="text-[10px] text-neutral-500 mt-0.5 leading-relaxed">{a.description}</p>
                     </div>
-                  ))}
-                </div>
+                  </div>
+                ))}
               </div>
-            </div>
+            </CollapsibleSection>
           )}
 
-          {/* Family Manager — Upload + Add Members */}
-          <FamilyManager onUpdate={handleFamilyUpdate} />
-
-          {/* Generational Overlay — Shows family dynamics */}
-          <GenerationalOverlay key={familyRefreshKey} />
-
-          {/* Activity Stream — REAL from localStorage */}
-          <div className="rounded-3xl border border-white/[0.06] bg-white/[0.02] backdrop-blur-2xl overflow-hidden">
-            <div className="px-6 py-4 border-b border-white/[0.04] flex items-center justify-between">
-              <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-neutral-500">Activity</span>
-              <span className="text-[10px] text-neutral-700">Recent</span>
+          {/* Family System */}
+          <CollapsibleSection title="Family System" badge="Relationship mapping">
+            <div className="p-5 space-y-5">
+              <FamilyManager onUpdate={handleFamilyUpdate} />
+              <GenerationalOverlay key={familyRefreshKey} />
             </div>
-            <div className="px-6 py-2">
-              {activityLog.length > 0 ? (
-                activityLog.slice(0, 8).map((entry) => (
-                  <ActivityItem key={entry.id} icon={entry.icon} text={entry.text} time={entry.time} accent={entry.accent} />
-                ))
-              ) : (
-                <>
-                  <ActivityItem icon="◉" text="Blueprint generated from your birth data" time="System" accent="Blueprint" />
-                  <ActivityItem icon="⬡" text={`${definedCenters} personality areas mapped`} time="System" accent="Design" />
-                  {transits && <ActivityItem icon="◈" text={`${transits.aspects.length} active transit aspects today`} time="Live" accent="Transits" />}
-                  <ActivityItem icon="▹" text="Start a chat session in The Forge to begin" time="Next step" />
-                </>
-              )}
-            </div>
-          </div>
+          </CollapsibleSection>
+        </section>
 
-          {/* Quick-launch */}
-          <div className="flex flex-wrap gap-3">
-            {[
-              { label: 'Start Session', icon: '◉', path: '/chatbot' },
-              { label: 'Orbit Analysis', icon: '⬡', path: '/orbit' },
-              { label: 'Voice Mode', icon: '◈', path: '/live' },
-              { label: 'Signal Filter', icon: '▣', path: '/signal' },
-            ].map((action, i) => (
-              <motion.button
-                key={i}
-                onClick={() => navigate(action.path)}
-                whileHover={{ scale: 1.02, y: -1 }}
-                whileTap={{ scale: 0.98 }}
-                className="group flex items-center gap-2.5 px-5 py-3.5 rounded-2xl border border-white/[0.06] bg-white/[0.02] hover:bg-white/[0.05] hover:border-white/[0.14] hover:shadow-[0_4px_20px_-4px_rgba(255,255,255,0.05)] transition-all duration-500 text-sm text-neutral-300 cursor-pointer relative overflow-hidden"
-              >
-                <span className="text-neutral-500">{action.icon}</span>
-                {action.label}
-              </motion.button>
-            ))}
-          </div>
-        </div>
       </motion.main>
     </div>
   );
