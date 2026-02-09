@@ -382,41 +382,76 @@ export const LandingPage = () => {
 
       {/* ─── 01 // HERO ──────────────────────────────────── */}
       <motion.section style={{ opacity: heroOpacity, scale: heroScale }} className="snap-section relative z-10 flex flex-col items-center justify-center min-h-[100svh] text-center px-5 pt-20 md:pt-24">
-        {/* Floating accent orbs */}
-        <div className="absolute top-1/4 left-1/4 w-64 h-64 rounded-full bg-white/[0.008] blur-[100px] animate-breathe-slow pointer-events-none" />
-        <div className="absolute bottom-1/3 right-1/4 w-48 h-48 rounded-full bg-white/[0.006] blur-[80px] animate-breathe pointer-events-none" />
+        {/* Atmospheric orbs */}
+        <div className="absolute top-1/4 left-1/4 w-80 h-80 rounded-full bg-white/[0.01] blur-[120px] animate-breathe-slow pointer-events-none" />
+        <div className="absolute bottom-1/3 right-1/5 w-56 h-56 rounded-full bg-white/[0.008] blur-[90px] animate-breathe pointer-events-none" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-white/[0.003] blur-[150px] animate-breathe-slow pointer-events-none" />
 
-        <motion.div initial="hidden" animate="visible" variants={stagger} className="max-w-3xl">
-          <motion.div variants={fadeUp} custom={0} className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-white/[0.08] bg-white/[0.02] mb-10">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-breathe" />
-            <span className="text-[11px] text-neutral-400 font-medium">Finally understand yourself — and the people you love</span>
+        <motion.div initial="hidden" animate="visible" variants={stagger} className="max-w-4xl">
+          {/* Provocative opening line */}
+          <motion.div variants={fadeUp} custom={0} className="mb-14">
+            <span className="text-[11px] md:text-[12px] font-medium tracking-[0.3em] uppercase text-neutral-600">
+              You already know something is off.
+            </span>
           </motion.div>
-          <motion.h1 variants={fadeUp} custom={1} className="text-[clamp(2.5rem,6.5vw,5rem)] font-extrabold leading-[1.05] tracking-[-0.03em] mb-8">
-            The manual you<br />never <span className="bg-gradient-to-r from-white via-neutral-400 to-white bg-clip-text text-transparent">received.</span>
+
+          {/* Main headline — confrontational, specific, visceral */}
+          <motion.h1 variants={fadeUp} custom={1} className="text-[clamp(2.8rem,7vw,5.5rem)] font-extrabold leading-[1] tracking-[-0.04em] mb-10">
+            <motion.span variants={lineReveal} custom={0} className="block text-white">
+              You keep having
+            </motion.span>
+            <motion.span variants={lineReveal} custom={1} className="block bg-gradient-to-r from-white via-neutral-300 to-neutral-500 bg-clip-text text-transparent">
+              the same fight.
+            </motion.span>
           </motion.h1>
-          <motion.div variants={fadeUp} custom={2} className="max-w-xl mx-auto mb-12">
-            <motion.p variants={lineReveal} custom={0} className="text-[15px] md:text-lg text-neutral-500 leading-[2]">
-              Why do you keep having the <em className="text-neutral-400 italic">same arguments?</em>
+
+          {/* Subtext — escalating provocation → resolution */}
+          <motion.div variants={fadeUp} custom={2} className="max-w-2xl mx-auto mb-14 space-y-5">
+            <motion.p variants={lineReveal} custom={0} className="text-[16px] md:text-[19px] text-neutral-500 leading-[1.7]">
+              The same shutdown. The same spiral. The same feeling<br className="hidden md:block" /> that 
+              <em className="text-neutral-400 not-italic font-medium"> something about you just doesn't work right.</em>
             </motion.p>
-            <motion.p variants={lineReveal} custom={1} className="text-[15px] md:text-lg text-neutral-500 leading-[2] mt-1">
-              Why does everything feel <em className="text-neutral-400 italic">harder than it should?</em>
-            </motion.p>
-            <motion.p variants={dramaPause} custom={1} className="text-[15px] md:text-lg text-neutral-300 font-medium leading-[2] mt-4">
-              DEFRAG shows you how you're wired.
-            </motion.p>
-            <motion.p variants={dramaPause} custom={2} className="text-sm text-neutral-500 font-normal italic leading-[2] mt-1">
-              Where friction builds, and exactly how to fix it.
+            <motion.div variants={dramaPause} custom={1} className="relative">
+              <div className="absolute left-1/2 -translate-x-1/2 -top-1 w-8 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+              <p className="text-[18px] md:text-[22px] text-white/90 font-semibold tracking-[-0.01em] pt-4">
+                It's not you. It's your wiring.
+              </p>
+            </motion.div>
+            <motion.p variants={dramaPause} custom={2} className="text-[14px] md:text-[15px] text-neutral-500 leading-[1.8]">
+              DEFRAG calculates your behavioral architecture from birth data —<br className="hidden md:block" />
+              <span className="text-neutral-400">the patterns, the friction points, the reason every relationship</span><br className="hidden md:block" />
+              <span className="text-neutral-400">hits the same wall.</span>
+              <span className="block mt-2 text-neutral-600 italic text-[13px]">Then it shows you exactly what to do about it.</span>
             </motion.p>
           </motion.div>
-          <motion.div variants={fadeUp} custom={3} className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link to="/login" className="group relative inline-flex items-center justify-center px-9 py-4 rounded-2xl bg-white text-black font-semibold text-sm overflow-hidden transition-all duration-500 hover:shadow-[0_0_60px_-5px_rgba(255,255,255,0.2)] hover:-translate-y-0.5">
-              <span className="relative z-10">Get Your Free Blueprint</span>
-              <div className="absolute inset-0 bg-gradient-to-r from-white via-neutral-200 to-white bg-[length:200%_100%] opacity-0 group-hover:opacity-100 group-hover:animate-gradient-shift transition-opacity" />
-            </Link>
-            <a href="#how-it-works" className="inline-flex items-center justify-center px-9 py-4 rounded-2xl border border-white/[0.08] text-neutral-400 font-medium text-sm hover:bg-white/[0.03] hover:border-white/[0.15] transition-all duration-500">See How It Works</a>
+
+          {/* CTA cluster — primary action + proof */}
+          <motion.div variants={fadeUp} custom={3} className="flex flex-col items-center gap-8">
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Link to="/login" className="group relative inline-flex items-center justify-center px-10 py-5 rounded-2xl bg-white text-black font-semibold text-[15px] overflow-hidden transition-all duration-500 hover:shadow-[0_0_80px_-5px_rgba(255,255,255,0.25)] hover:-translate-y-0.5">
+                <span className="relative z-10">See Your Blueprint — Free</span>
+                <div className="absolute inset-0 bg-gradient-to-r from-white via-neutral-200 to-white bg-[length:200%_100%] opacity-0 group-hover:opacity-100 group-hover:animate-gradient-shift transition-opacity" />
+              </Link>
+              <a href="#how-it-works" className="inline-flex items-center justify-center px-9 py-5 rounded-2xl border border-white/[0.08] text-neutral-400 font-medium text-sm hover:bg-white/[0.03] hover:border-white/[0.15] transition-all duration-500 gap-2">
+                <span>How it works</span>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-neutral-500"><path d="M6 9l6 6 6-6" /></svg>
+              </a>
+            </div>
+            {/* Proof bar — tight, under CTAs */}
+            <motion.div
+              variants={dramaPause}
+              custom={3}
+              className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-[11px] text-neutral-600"
+            >
+              <span className="flex items-center gap-1.5"><span className="w-1 h-1 rounded-full bg-emerald-500/50" /> 30-second blueprint</span>
+              <span className="flex items-center gap-1.5"><span className="w-1 h-1 rounded-full bg-emerald-500/50" /> No sign-up wall</span>
+              <span className="flex items-center gap-1.5"><span className="w-1 h-1 rounded-full bg-emerald-500/50" /> Zero data leaves your device</span>
+            </motion.div>
           </motion.div>
         </motion.div>
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 2.5, duration: 1.5 }} className="absolute bottom-14 flex flex-col items-center gap-3">
+
+        {/* Scroll indicator */}
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 3, duration: 1.5 }} className="absolute bottom-14 flex flex-col items-center gap-3">
           <motion.div animate={{ y: [0, 8, 0] }} transition={{ repeat: Infinity, duration: 2.5, ease: 'easeInOut' }} className="w-px h-10 bg-gradient-to-b from-white/20 to-transparent" />
         </motion.div>
       </motion.section>
@@ -427,14 +462,14 @@ export const LandingPage = () => {
         whileInView="visible"
         viewport={{ once: true, margin: '-40px' }}
         variants={stagger}
-        className="snap-section relative z-10 py-12 md:py-14 border-y border-white/[0.04]"
+        className="snap-section relative z-10 py-14 md:py-16 border-y border-white/[0.04]"
       >
-        <div className="max-w-5xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-0 px-6">
+        <div className="max-w-5xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-0 px-6">
           {[
-            { hook: '"Why do I keep doing this?"', answer: 'Answered.' },
-            { hook: 'Relationships mapped.', answer: 'Not guessed.' },
-            { hook: 'Your patterns —', answer: 'finally visible.' },
-            { hook: '30 seconds.', answer: 'Your first blueprint.' },
+            { hook: '"Why do I keep', hook2: 'doing this?"', answer: 'Finally answered.' },
+            { hook: 'Relationships', hook2: 'mapped.', answer: 'Not guessed.' },
+            { hook: 'Your patterns —', hook2: '', answer: 'finally visible.' },
+            { hook: '30 seconds.', hook2: '', answer: 'Your first blueprint.' },
           ].map((item, i) => (
             <motion.div
               key={i}
@@ -442,11 +477,11 @@ export const LandingPage = () => {
               custom={i}
               className={`text-center px-4 ${i > 0 ? 'md:border-l md:border-white/[0.04]' : ''}`}
             >
-              <p className="text-[13px] md:text-[14px] text-neutral-500 italic leading-snug">{item.hook}</p>
+              <p className="text-[13px] md:text-[14px] text-neutral-500 italic leading-snug">{item.hook}{item.hook2 && <br />}{item.hook2}</p>
               <motion.p
                 variants={dramaPause}
                 custom={i}
-                className="text-[13px] md:text-[14px] text-white/80 font-semibold mt-1.5"
+                className="text-[13px] md:text-[14px] text-white/80 font-semibold mt-2"
               >{item.answer}</motion.p>
             </motion.div>
           ))}
