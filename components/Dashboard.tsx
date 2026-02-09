@@ -186,7 +186,7 @@ export const Dashboard = () => {
         ].map((s, i) => (
           <motion.div key={i} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 + i * 0.08, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}>
             <div className="group flex items-center gap-3 px-4 py-3 rounded-2xl bg-white/[0.02] border border-white/[0.06] hover:border-white/[0.12] hover:bg-white/[0.04] transition-all duration-500 cursor-default relative overflow-hidden">
-              <div className="absolute inset-0 animate-shimmer opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+              <div className="card-inner-glow" />
               <span className="text-lg font-bold text-white relative z-10">{s.v}</span>
               <span className="text-[11px] text-neutral-500 leading-tight relative z-10">{s.l}</span>
               <HelpIcon tooltip={s.tip} />

@@ -99,24 +99,28 @@ const PERSONAS = [
     tag: 'The Overthinker',
     headline: '"I can\'t stop replaying every conversation."',
     body: 'Your mind isn\'t broken — it\'s running without a filter. DEFRAG shows you which signals matter and which are just noise your design amplifies.',
+    detail: 'The Signal Filter identifies your specific mental loops — which thoughts are productive analysis and which are just your system running at idle. Once mapped, the noise drops.',
   },
   {
     icon: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-white/50"><path d="M17 18a5 5 0 0 0-10 0"/><circle cx="12" cy="7" r="4"/><path d="M3.5 21h17"/></svg>,
     tag: 'The People Pleaser',
     headline: '"I always end up carrying everyone else\'s weight."',
     body: 'That\'s not a character flaw — it\'s a structural tendency in your wiring. See exactly where you absorb other people\'s tension, and where your boundaries naturally exist.',
+    detail: 'Your open centers absorb and amplify energy from others. DEFRAG maps exactly which centers are open — so you know what emotions are yours and what you\'re carrying for someone else.',
   },
   {
     icon: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-white/50"><path d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 0 1-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>,
     tag: 'The Conflict Avoider',
     headline: '"Every argument feels like it\'s going to break us."',
     body: 'Conflict isn\'t the problem — it\'s the mismatch between how you process it and how they do. DEFRAG maps both sides so you can finally see why it escalates.',
+    detail: 'The Triangulation Engine shows the structural dynamics between you and the other person. You\'ll see who initiates, who absorbs, and where the tension actually lives — mechanically, not emotionally.',
   },
   {
     icon: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-white/50"><path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>,
     tag: 'The Purpose Seeker',
     headline: '"I feel like I\'m supposed to be doing something different."',
     body: 'You probably are. Your design has a specific strategy for making decisions. Most people have never been told theirs. DEFRAG shows you what you\'ve been overriding.',
+    detail: 'Your authority — your body\'s built-in decision-making tool — has been ignored in favor of logic, social pressure, or fear. Once you see it mapped, you stop second-guessing.',
   },
 ];
 
@@ -182,8 +186,10 @@ const PillarCard: React.FC<{ icon: React.ReactNode; label: string; title: string
     variants={fadeUp}
     custom={index}
     className="group rounded-3xl border border-white/[0.06] bg-white/[0.02] backdrop-blur-2xl p-8 md:p-10 hover:border-white/[0.12] hover:bg-white/[0.04] transition-all duration-700 relative overflow-hidden"
+    whileHover={{ scale: 1.015, transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] } }}
   >
-    <div className="absolute inset-0 animate-shimmer opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
+    <div className="card-inner-glow" />
+    <div className="card-edge-light" />
     <div className="relative z-10">
       <div className="w-12 h-12 rounded-2xl bg-white/[0.04] border border-white/[0.08] flex items-center justify-center mb-6">
         {icon}
@@ -352,9 +358,11 @@ export const LandingPage = () => {
   const heroScale = useTransform(scrollYProgress, [0, 0.15], [1, 0.97]);
   const navigate = useNavigate();
   const tiers = DEFRAG_MANIFEST.LANDING.TIERS;
+  const [expandedPersona, setExpandedPersona] = useState<number | null>(null);
+  const [expandedBento, setExpandedBento] = useState<number | null>(null);
 
   return (
-    <div className="relative min-h-screen bg-[#050505] text-white overflow-x-hidden font-sans selection:bg-white/20 selection:text-white">
+    <div className="relative min-h-screen bg-[#050505] text-white overflow-x-hidden font-sans selection:bg-white/20 selection:text-white snap-container">
       <LivingBackground mode="calm" />
       <ScrollProgress />
 
@@ -373,7 +381,7 @@ export const LandingPage = () => {
       </nav>
 
       {/* ─── 01 // HERO ──────────────────────────────────── */}
-      <motion.section style={{ opacity: heroOpacity, scale: heroScale }} className="relative z-10 flex flex-col items-center justify-center min-h-[100svh] text-center px-5 pt-20 md:pt-24">
+      <motion.section style={{ opacity: heroOpacity, scale: heroScale }} className="snap-section relative z-10 flex flex-col items-center justify-center min-h-[100svh] text-center px-5 pt-20 md:pt-24">
         {/* Floating accent orbs */}
         <div className="absolute top-1/4 left-1/4 w-64 h-64 rounded-full bg-white/[0.008] blur-[100px] animate-breathe-slow pointer-events-none" />
         <div className="absolute bottom-1/3 right-1/4 w-48 h-48 rounded-full bg-white/[0.006] blur-[80px] animate-breathe pointer-events-none" />
@@ -387,13 +395,17 @@ export const LandingPage = () => {
             The manual you<br />never <span className="bg-gradient-to-r from-white via-neutral-400 to-white bg-clip-text text-transparent">received.</span>
           </motion.h1>
           <motion.div variants={fadeUp} custom={2} className="max-w-xl mx-auto mb-12">
-            <p className="text-[15px] md:text-lg text-neutral-500 leading-[1.8]">
-              Why do you keep having the <em className="text-neutral-400 italic">same arguments?</em><br />
+            <motion.p variants={lineReveal} custom={0} className="text-[15px] md:text-lg text-neutral-500 leading-[2]">
+              Why do you keep having the <em className="text-neutral-400 italic">same arguments?</em>
+            </motion.p>
+            <motion.p variants={lineReveal} custom={1} className="text-[15px] md:text-lg text-neutral-500 leading-[2] mt-1">
               Why does everything feel <em className="text-neutral-400 italic">harder than it should?</em>
-            </p>
-            <motion.p variants={dramaPause} custom={0} className="text-[15px] md:text-lg text-neutral-300 font-medium leading-[1.8] mt-3">
-              DEFRAG shows you how you're wired —<br />
-              <span className="text-neutral-500 text-sm font-normal italic">where friction builds, and exactly how to fix it.</span>
+            </motion.p>
+            <motion.p variants={dramaPause} custom={1} className="text-[15px] md:text-lg text-neutral-300 font-medium leading-[2] mt-4">
+              DEFRAG shows you how you're wired.
+            </motion.p>
+            <motion.p variants={dramaPause} custom={2} className="text-sm text-neutral-500 font-normal italic leading-[2] mt-1">
+              Where friction builds, and exactly how to fix it.
             </motion.p>
           </motion.div>
           <motion.div variants={fadeUp} custom={3} className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -415,7 +427,7 @@ export const LandingPage = () => {
         whileInView="visible"
         viewport={{ once: true, margin: '-40px' }}
         variants={stagger}
-        className="relative z-10 py-12 md:py-14 border-y border-white/[0.04]"
+        className="snap-section relative z-10 py-12 md:py-14 border-y border-white/[0.04]"
       >
         <div className="max-w-5xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-0 px-6">
           {[
@@ -442,7 +454,7 @@ export const LandingPage = () => {
       </motion.section>
 
       {/* ─── 02 // THE ARCHITECTURE ──────────────────────── */}
-      <section id="architecture" className="relative z-10 py-20 md:py-40 px-5 md:px-6">
+      <section id="architecture" className="snap-section relative z-10 py-20 md:py-40 px-5 md:px-6">
         <motion.div
           initial="hidden"
           whileInView="visible"
@@ -478,7 +490,7 @@ export const LandingPage = () => {
       <GlowDivider />
 
       {/* ─── WHO IS THIS FOR ─────────────────────────────── */}
-      <section className="relative z-10 py-20 md:py-40 px-5 md:px-6">
+      <section className="snap-section relative z-10 py-20 md:py-40 px-5 md:px-6">
         <motion.div
           initial="hidden"
           whileInView="visible"
@@ -488,7 +500,8 @@ export const LandingPage = () => {
         >
           <motion.div variants={fadeUp} custom={0} className="text-center mb-20">
             <span className="text-[10px] font-semibold uppercase tracking-[0.25em] text-neutral-500">Recognition</span>
-            <h2 className="text-3xl md:text-[2.75rem] font-bold mt-5 tracking-tight">Sound familiar?</h2>
+            <h2 className="text-3xl md:text-[2.75rem] font-bold mt-5 tracking-tight leading-tight">Sound familiar?</h2>
+            <motion.p variants={dramaPause} custom={1} className="text-neutral-500 mt-4 text-sm italic">Tap any card to see how DEFRAG helps.</motion.p>
           </motion.div>
 
           <div className="grid md:grid-cols-2 gap-5">
@@ -497,18 +510,48 @@ export const LandingPage = () => {
                 key={p.tag}
                 variants={fadeUp}
                 custom={i}
-                className="group rounded-3xl border border-white/[0.06] bg-white/[0.015] backdrop-blur-2xl p-8 md:p-10 hover:border-white/[0.14] hover:bg-white/[0.035] transition-all duration-700 relative overflow-hidden"
+                onClick={() => setExpandedPersona(expandedPersona === i ? null : i)}
+                className="group rounded-3xl border border-white/[0.06] bg-white/[0.015] backdrop-blur-2xl p-8 md:p-10 hover:border-white/[0.14] hover:bg-white/[0.035] transition-all duration-700 relative overflow-hidden cursor-pointer"
+                whileHover={{ scale: 1.015, transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] } }}
+                whileTap={{ scale: 0.995 }}
               >
-                <div className="absolute inset-0 animate-shimmer-sweep opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
+                <div className="card-inner-glow" />
+                <div className="card-edge-light" />
                 <div className="relative z-10">
                   <div className="flex items-center gap-4 mb-5">
                     <div className="w-11 h-11 rounded-2xl bg-white/[0.04] border border-white/[0.08] flex items-center justify-center group-hover:bg-white/[0.08] transition-all">
                       {p.icon}
                     </div>
                     <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-neutral-500">{p.tag}</span>
+                    <motion.svg
+                      width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
+                      className="ml-auto text-neutral-600"
+                      animate={{ rotate: expandedPersona === i ? 180 : 0 }}
+                      transition={{ duration: 0.3 }}
+                    >
+                      <path d="M6 9l6 6 6-6" />
+                    </motion.svg>
                   </div>
                   <h3 className="text-[17px] font-bold text-white/90 mb-3 leading-snug">{p.headline}</h3>
                   <p className="text-sm text-neutral-400 leading-relaxed">{p.body}</p>
+                  <AnimatePresence>
+                    {expandedPersona === i && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: 'auto', opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+                        className="overflow-hidden"
+                      >
+                        <div className="mt-5 pt-5 border-t border-white/[0.06]">
+                          <p className="text-sm text-neutral-300 leading-relaxed italic">{p.detail}</p>
+                          <Link to="/login" className="inline-flex items-center gap-2 mt-4 text-[12px] font-semibold text-white/60 hover:text-white/90 transition-colors">
+                            See your map <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
+                          </Link>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </div>
               </motion.div>
             ))}
@@ -519,7 +562,7 @@ export const LandingPage = () => {
       <GlowDivider />
 
       {/* ─── 03 // THREE PILLARS ──────────────────────────── */}
-      <section id="pillars" className="relative z-10 py-20 md:py-40 px-5 md:px-6">
+      <section id="pillars" className="snap-section relative z-10 py-20 md:py-40 px-5 md:px-6">
         <motion.div
           initial="hidden"
           whileInView="visible"
@@ -566,7 +609,7 @@ export const LandingPage = () => {
       <GlowDivider />
 
       {/* ─── 03.5 // HOW IT WORKS — Bento Grid ─────────── */}
-      <section id="how-it-works" className="relative z-10 py-20 md:py-40 px-5 md:px-6">
+      <section id="how-it-works" className="snap-section relative z-10 py-20 md:py-40 px-5 md:px-6">
         <motion.div
           initial="hidden"
           whileInView="visible"
@@ -590,9 +633,13 @@ export const LandingPage = () => {
             <motion.div
               variants={fadeUp}
               custom={0}
-              className="group md:col-span-2 rounded-3xl border border-white/[0.06] bg-white/[0.02] backdrop-blur-2xl p-10 md:p-12 hover:border-white/[0.14] hover:bg-white/[0.04] transition-all duration-700 relative overflow-hidden"
+              onClick={() => setExpandedBento(expandedBento === 0 ? null : 0)}
+              className="group md:col-span-2 rounded-3xl border border-white/[0.06] bg-white/[0.02] backdrop-blur-2xl p-10 md:p-12 hover:border-white/[0.14] hover:bg-white/[0.04] transition-all duration-700 relative overflow-hidden cursor-pointer"
+              whileHover={{ scale: 1.01, transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] } }}
+              whileTap={{ scale: 0.995 }}
             >
-              <div className="absolute inset-0 animate-shimmer-sweep opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
+              <div className="card-inner-glow" />
+              <div className="card-edge-light" />
               <div className="relative z-10 flex flex-col md:flex-row gap-8 items-start">
                 <div className="flex flex-col items-center gap-3 shrink-0">
                   <div className="w-14 h-14 rounded-2xl bg-white/[0.04] border border-white/[0.08] flex items-center justify-center group-hover:bg-white/[0.08] group-hover:border-white/[0.15] transition-all">
@@ -609,6 +656,13 @@ export const LandingPage = () => {
                       <span key={tag} className="px-3 py-1 rounded-full text-[10px] font-medium text-neutral-500 border border-white/[0.06] bg-white/[0.02]">{tag}</span>
                     ))}
                   </div>
+                  <AnimatePresence>
+                    {expandedBento === 0 && (
+                      <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }} className="overflow-hidden">
+                        <p className="mt-5 pt-5 border-t border-white/[0.06] text-sm text-neutral-300 leading-relaxed italic">Generated once from your birth data — no questionnaires. Your energy type, decision strategy, defined centers, and active gates are calculated astronomically and mapped into a readable blueprint you can reference daily.</p>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </div>
               </div>
             </motion.div>
@@ -617,9 +671,13 @@ export const LandingPage = () => {
             <motion.div
               variants={fadeUp}
               custom={1}
-              className="group rounded-3xl border border-white/[0.06] bg-white/[0.02] backdrop-blur-2xl p-8 md:p-10 hover:border-white/[0.14] hover:bg-white/[0.04] transition-all duration-700 relative overflow-hidden"
+              onClick={() => setExpandedBento(expandedBento === 1 ? null : 1)}
+              className="group rounded-3xl border border-white/[0.06] bg-white/[0.02] backdrop-blur-2xl p-8 md:p-10 hover:border-white/[0.14] hover:bg-white/[0.04] transition-all duration-700 relative overflow-hidden cursor-pointer"
+              whileHover={{ scale: 1.015, transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] } }}
+              whileTap={{ scale: 0.995 }}
             >
-              <div className="absolute inset-0 animate-shimmer-sweep opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
+              <div className="card-inner-glow" />
+              <div className="card-edge-light" />
               <div className="relative z-10">
                 <div className="flex items-center gap-3 mb-6">
                   <div className="w-12 h-12 rounded-2xl bg-white/[0.04] border border-white/[0.08] flex items-center justify-center group-hover:bg-white/[0.08] transition-all">
@@ -630,6 +688,13 @@ export const LandingPage = () => {
                 <h3 className="text-xl font-bold text-white mb-1">The Field</h3>
                 <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-neutral-500 block mb-3">Relationship Dynamics</span>
                 <p className="text-sm text-neutral-400 leading-relaxed">See how your close relationships work — who steadies things, who absorbs the tension, and where friction comes from.</p>
+                <AnimatePresence>
+                  {expandedBento === 1 && (
+                    <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }} className="overflow-hidden">
+                      <p className="mt-4 pt-4 border-t border-white/[0.06] text-sm text-neutral-300 leading-relaxed italic">Analyzes the dynamics between two or three people. Shows who initiates, who absorbs emotional weight, and where the structural friction lives — mechanically, not emotionally.</p>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
             </motion.div>
 
@@ -637,9 +702,13 @@ export const LandingPage = () => {
             <motion.div
               variants={fadeUp}
               custom={2}
-              className="group rounded-3xl border border-white/[0.06] bg-white/[0.02] backdrop-blur-2xl p-8 md:p-10 hover:border-white/[0.14] hover:bg-white/[0.04] transition-all duration-700 relative overflow-hidden"
+              onClick={() => setExpandedBento(expandedBento === 2 ? null : 2)}
+              className="group rounded-3xl border border-white/[0.06] bg-white/[0.02] backdrop-blur-2xl p-8 md:p-10 hover:border-white/[0.14] hover:bg-white/[0.04] transition-all duration-700 relative overflow-hidden cursor-pointer"
+              whileHover={{ scale: 1.015, transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] } }}
+              whileTap={{ scale: 0.995 }}
             >
-              <div className="absolute inset-0 animate-shimmer-sweep opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
+              <div className="card-inner-glow" />
+              <div className="card-edge-light" />
               <div className="relative z-10">
                 <div className="flex items-center gap-3 mb-6">
                   <div className="w-12 h-12 rounded-2xl bg-white/[0.04] border border-white/[0.08] flex items-center justify-center group-hover:bg-white/[0.08] transition-all">
@@ -650,6 +719,13 @@ export const LandingPage = () => {
                 <h3 className="text-xl font-bold text-white mb-1">The Shift</h3>
                 <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-neutral-500 block mb-3">Strength Mapping</span>
                 <p className="text-sm text-neutral-400 leading-relaxed">Your biggest frustrations often point to your biggest strengths — used wrong. DEFRAG shows you where that trait actually works.</p>
+                <AnimatePresence>
+                  {expandedBento === 2 && (
+                    <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }} className="overflow-hidden">
+                      <p className="mt-4 pt-4 border-t border-white/[0.06] text-sm text-neutral-300 leading-relaxed italic">Uses Gene Keys shadow-to-gift mapping. Your most frustrating traits contain your highest potential — DEFRAG identifies the exact reframe so frustration becomes leverage.</p>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
             </motion.div>
 
@@ -657,9 +733,13 @@ export const LandingPage = () => {
             <motion.div
               variants={fadeUp}
               custom={3}
-              className="group md:col-span-2 rounded-3xl border border-white/[0.06] bg-white/[0.02] backdrop-blur-2xl p-8 md:p-10 hover:border-white/[0.14] hover:bg-white/[0.04] transition-all duration-700 relative overflow-hidden"
+              onClick={() => setExpandedBento(expandedBento === 3 ? null : 3)}
+              className="group md:col-span-2 rounded-3xl border border-white/[0.06] bg-white/[0.02] backdrop-blur-2xl p-8 md:p-10 hover:border-white/[0.14] hover:bg-white/[0.04] transition-all duration-700 relative overflow-hidden cursor-pointer"
+              whileHover={{ scale: 1.01, transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] } }}
+              whileTap={{ scale: 0.995 }}
             >
-              <div className="absolute inset-0 animate-shimmer-sweep opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
+              <div className="card-inner-glow" />
+              <div className="card-edge-light" />
               <div className="relative z-10 flex flex-col md:flex-row gap-8 items-start">
                 <div className="flex items-center gap-3 shrink-0">
                   <div className="w-12 h-12 rounded-2xl bg-white/[0.04] border border-white/[0.08] flex items-center justify-center group-hover:bg-white/[0.08] transition-all">
@@ -671,6 +751,13 @@ export const LandingPage = () => {
                   <h3 className="text-xl font-bold text-white mb-1">The Memory</h3>
                   <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-neutral-500 block mb-3">Pattern Tracking</span>
                   <p className="text-[15px] text-neutral-400 leading-relaxed">Tracks your recurring patterns over 30 days — the reactions, habits, and conflicts that keep showing up. Once you can see a loop, you can break it.</p>
+                  <AnimatePresence>
+                    {expandedBento === 3 && (
+                      <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }} className="overflow-hidden">
+                        <p className="mt-4 pt-4 border-t border-white/[0.06] text-sm text-neutral-300 leading-relaxed italic">The Echo Engine logs your conversations and reactions over time. After 30 days, it surfaces the loops — the same arguments, shutdowns, and avoidance patterns — so you can finally see them before they run.</p>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </div>
               </div>
             </motion.div>
@@ -681,7 +768,7 @@ export const LandingPage = () => {
       <GlowDivider />
 
       {/* ─── 04 // SEDA GAUGE SHOWCASE ───────────────────── */}
-      <section className="relative z-10 py-20 md:py-40 px-5 md:px-6">
+      <section className="snap-section relative z-10 py-20 md:py-40 px-5 md:px-6">
         <motion.div
           initial="hidden"
           whileInView="visible"
@@ -726,7 +813,7 @@ export const LandingPage = () => {
       <GlowDivider />
 
       {/* ─── 05 // SYSTEM MAP — Enhanced ──────────────────── */}
-      <section className="relative z-10 py-20 md:py-40 px-5 md:px-6">
+      <section className="snap-section relative z-10 py-20 md:py-40 px-5 md:px-6">
         <motion.div
           initial="hidden"
           whileInView="visible"
@@ -795,7 +882,7 @@ export const LandingPage = () => {
       <GlowDivider />
 
       {/* ─── NOT LIKE THE OTHERS — Comparison ────────────── */}
-      <section className="relative z-10 py-20 md:py-36 px-5 md:px-6">
+      <section className="snap-section relative z-10 py-20 md:py-36 px-5 md:px-6">
         <motion.div
           initial="hidden"
           whileInView="visible"
@@ -805,7 +892,7 @@ export const LandingPage = () => {
         >
           <motion.div variants={fadeUp} custom={0} className="text-center mb-16">
             <span className="text-[10px] font-semibold uppercase tracking-[0.25em] text-neutral-500">Different By Design</span>
-            <h2 className="text-3xl md:text-[2.75rem] font-bold mt-5 tracking-tight">Not therapy. Not astrology.<br /><span className="text-neutral-400">Architecture.</span></h2>
+            <h2 className="text-3xl md:text-[2.75rem] font-bold mt-5 tracking-tight leading-tight">Not therapy.<br />Not astrology.<br /><motion.span variants={dramaPause} custom={1} className="inline-block text-neutral-400">Architecture.</motion.span></h2>
           </motion.div>
 
           <motion.div variants={fadeUp} custom={1} className="rounded-3xl border border-white/[0.06] bg-white/[0.015] backdrop-blur-2xl overflow-hidden">
@@ -829,7 +916,7 @@ export const LandingPage = () => {
       <GlowDivider />
 
       {/* ─── 06 // ZERO-KNOWLEDGE ────────────────────────── */}
-      <section className="relative z-10 py-16 md:py-32 px-5 md:px-6">
+      <section className="snap-section relative z-10 py-16 md:py-32 px-5 md:px-6">
         <motion.div
           initial="hidden"
           whileInView="visible"
@@ -841,8 +928,8 @@ export const LandingPage = () => {
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-white/40"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
             <span className="text-[11px] text-neutral-400 font-medium">Zero-Knowledge Architecture</span>
           </motion.div>
-          <motion.h3 variants={fadeUp} custom={1} className="text-xl md:text-2xl font-bold tracking-tight">
-            Your data never leaves your device.
+          <motion.h3 variants={fadeUp} custom={1} className="text-xl md:text-2xl font-bold tracking-tight leading-tight">
+            Your data never leaves<br /><motion.span variants={dramaPause} custom={2} className="inline-block">your device.</motion.span>
           </motion.h3>
           <motion.div variants={lineReveal} custom={1} className="text-neutral-500 mt-4 text-sm leading-[1.8] max-w-lg mx-auto">
             <p>No cloud storage. No third-party analytics.</p>
@@ -870,18 +957,18 @@ export const LandingPage = () => {
       <GlowDivider />
 
       {/* ─── TESTIMONIALS — Horizontal marquee ────────────── */}
-      <section className="relative z-10 py-16 md:py-28 px-5 md:px-6 overflow-hidden">
+      <section className="snap-section relative z-10 py-16 md:py-28 px-5 md:px-6 overflow-hidden">
         <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={stagger} className="max-w-5xl mx-auto">
           <motion.div variants={fadeUp} custom={0} className="text-center mb-6">
             <span className="text-[10px] font-semibold uppercase tracking-[0.25em] text-neutral-500">Signal Reports</span>
-            <h2 className="text-3xl md:text-[2.75rem] font-bold mt-4 tracking-tight">After running the diagnostic.</h2>
+            <h2 className="text-3xl md:text-[2.75rem] font-bold mt-4 tracking-tight leading-tight">After running<br /><motion.span variants={dramaPause} custom={1} className="inline-block">the diagnostic.</motion.span></h2>
           </motion.div>
         </motion.div>
         <TestimonialMarquee />
       </section>
 
       {/* ─── QUICK-START DIAGNOSTIC ─────────────────────── */}
-      <section className="relative z-10 py-20 md:py-36 px-5 md:px-6">
+      <section className="snap-section relative z-10 py-20 md:py-36 px-5 md:px-6">
         <motion.div
           initial="hidden"
           whileInView="visible"
@@ -905,7 +992,7 @@ export const LandingPage = () => {
       <GlowDivider />
 
       {/* ─── FAQ ──────────────────────────────────────────── */}
-      <section className="relative z-10 py-20 md:py-36 px-5 md:px-6">
+      <section className="snap-section relative z-10 py-20 md:py-36 px-5 md:px-6">
         <motion.div
           initial="hidden"
           whileInView="visible"
@@ -915,7 +1002,8 @@ export const LandingPage = () => {
         >
           <motion.div variants={fadeUp} custom={0} className="text-center mb-16">
             <span className="text-[10px] font-semibold uppercase tracking-[0.25em] text-neutral-500">Common Questions</span>
-            <h2 className="text-3xl md:text-[2.75rem] font-bold mt-5 tracking-tight">Before you begin.</h2>
+            <h2 className="text-3xl md:text-[2.75rem] font-bold mt-5 tracking-tight leading-tight">Before you begin.</h2>
+            <motion.p variants={dramaPause} custom={1} className="text-neutral-500 mt-4 text-sm italic">Everything you need to know — nothing you don't.</motion.p>
           </motion.div>
           <div className="rounded-3xl border border-white/[0.06] bg-white/[0.015] backdrop-blur-2xl px-8 md:px-10">
             {FAQS.map((faq, i) => (
@@ -928,12 +1016,15 @@ export const LandingPage = () => {
       <GlowDivider />
 
       {/* ─── PLANS ────────────────────────────────────────── */}
-      <section id="plans" className="relative z-10 py-20 md:py-36 px-5 md:px-6">
+      <section id="plans" className="snap-section relative z-10 py-20 md:py-36 px-5 md:px-6">
         <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, margin: '-80px' }} variants={stagger} className="max-w-5xl mx-auto">
           <motion.div variants={fadeUp} custom={0} className="text-center mb-16">
             <span className="text-[10px] font-semibold uppercase tracking-[0.25em] text-neutral-500">Access</span>
-            <h2 className="text-3xl md:text-[2.75rem] font-bold mt-4 tracking-tight">Choose your depth.</h2>
-            <p className="text-neutral-500 mt-4 text-sm max-w-lg mx-auto">One blueprint, or <strong className="text-neutral-400 font-semibold">continuous clarity</strong>.<br /><span className="italic">No trials. No data harvesting.</span></p>
+            <h2 className="text-3xl md:text-[2.75rem] font-bold mt-4 tracking-tight leading-tight">Choose your depth.</h2>
+            <motion.p variants={lineReveal} custom={1} className="text-neutral-500 mt-4 text-sm max-w-lg mx-auto">
+              One blueprint, or <strong className="text-neutral-400 font-semibold">continuous clarity</strong>.
+            </motion.p>
+            <motion.p variants={dramaPause} custom={2} className="text-neutral-500 mt-1 text-sm italic">No trials. No data harvesting.</motion.p>
           </motion.div>
           <motion.div variants={stagger} className="grid md:grid-cols-3 gap-5">
             <PricingTier tier={tiers.SINGLE} label="Free" onSelect={() => navigate('/onboarding')} />
@@ -945,7 +1036,7 @@ export const LandingPage = () => {
       </section>
 
       {/* ─── CLOSING CTA ──────────────────────────────────── */}
-      <section className="relative z-10 py-20 md:py-36 px-5 md:px-6">
+      <section className="snap-section relative z-10 py-20 md:py-36 px-5 md:px-6">
         <motion.div
           initial="hidden"
           whileInView="visible"
@@ -954,12 +1045,14 @@ export const LandingPage = () => {
           className="max-w-3xl mx-auto text-center"
         >
           <motion.h2 variants={fadeUp} custom={0} className="text-3xl md:text-[2.75rem] font-bold tracking-tight leading-tight">
-            Stop guessing.<br /><span className="bg-gradient-to-r from-white via-neutral-400 to-neutral-300 bg-clip-text text-transparent">Start seeing.</span>
+            Stop guessing.<br />
+            <motion.span variants={dramaPause} custom={1} className="inline-block bg-gradient-to-r from-white via-neutral-400 to-neutral-300 bg-clip-text text-transparent">Start seeing.</motion.span>
           </motion.h2>
-          <motion.div variants={lineReveal} custom={1} className="text-neutral-400 mt-6 text-[15px] md:text-lg leading-[1.8] max-w-xl mx-auto">
-            <p>Your free blueprint takes <strong className="text-white/70 font-semibold">30 seconds</strong> to generate.</p>
-            <motion.p variants={dramaPause} custom={2} className="mt-2 text-sm text-neutral-500 italic">No sign-up wall. No credit card. Just clarity.</motion.p>
-          </motion.div>
+          <motion.p variants={lineReveal} custom={1} className="text-neutral-400 mt-6 text-[15px] md:text-lg leading-[1.8] max-w-xl mx-auto">
+            Your free blueprint takes <strong className="text-white/70 font-semibold">30 seconds</strong> to generate.
+          </motion.p>
+          <motion.p variants={dramaPause} custom={2} className="text-sm text-neutral-500 italic mt-2">No sign-up wall.</motion.p>
+          <motion.p variants={dramaPause} custom={3} className="text-sm text-neutral-500 italic mt-1">No credit card. Just clarity.</motion.p>
           <motion.div variants={fadeUp} custom={2} className="mt-10">
             <Link to="/login" className="group relative inline-flex items-center justify-center px-12 py-5 rounded-2xl bg-white text-black font-semibold text-[15px] overflow-hidden transition-all duration-500 hover:shadow-[0_0_80px_-5px_rgba(255,255,255,0.25)] hover:-translate-y-0.5">
               <span className="relative z-10">Get Your Free Blueprint</span>

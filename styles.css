@@ -65,10 +65,33 @@ body {
 .no-scrollbar::-webkit-scrollbar { display: none; }
 .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-/* ─── Shimmer Animation ──────────────────────────────────────── */
-.animate-shimmer {
-  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.04) 50%, transparent 100%);
-  background-size: 400px 100%;
+/* ─── Premium Card Glow ──────────────────────────────────────── */
+.card-inner-glow {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(ellipse at 50% 0%, rgba(255,255,255,0.05) 0%, transparent 60%);
+  opacity: 0;
+  transition: opacity 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+  pointer-events: none;
+}
+.group:hover .card-inner-glow {
+  opacity: 1;
+}
+/* Edge highlight — top-edge frost line */
+.card-edge-light {
+  position: absolute;
+  top: 0;
+  left: 10%;
+  right: 10%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+  opacity: 0;
+  transition: opacity 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+  pointer-events: none;
+}
+.group:hover .card-edge-light {
+  opacity: 1;
 }
 
 /* ─── Breathing / Glow Animations ────────────────────────────── */
@@ -109,11 +132,7 @@ body {
   background-size: 200% 200%; 
   animation: gradient-shift 6s ease infinite; 
 }
-.animate-shimmer-sweep {
-  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.03) 50%, transparent 100%);
-  background-size: 400px 100%;
-  animation: shimmer-sweep 3s linear infinite;
-}
+/* shimmer-sweep removed — replaced by card-inner-glow */
 
 /* ─── Focus States ───────────────────────────────────────────── */
 input:focus, textarea:focus {
@@ -126,8 +145,15 @@ button:active:not(:disabled) {
   transition: transform 0.1s ease;
 }
 
-/* ─── Smooth Scroll ──────────────────────────────────────────── */
+/* ─── Smooth Scroll + Snap ───────────────────────────────────── */
 * { scroll-behavior: smooth; }
+.snap-container {
+  scroll-snap-type: y proximity;
+  overflow-y: auto;
+}
+.snap-section {
+  scroll-snap-align: start;
+}
 html { -webkit-overflow-scrolling: touch; }
 
 /* ─── Mobile Viewport Fix (iOS 100vh) ───────────────────────── */
