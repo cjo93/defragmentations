@@ -64,8 +64,17 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentView, onNavigate, onLog
       {/* Brand Mark */}
       <div className="mb-8 px-2 flex justify-center md:justify-start md:px-5">
         <div className="flex items-center gap-3">
-          <div className="w-2.5 h-2.5 rounded-full bg-[#E2E2E8] shadow-[0_0_16px_rgba(226,226,232,0.5)] animate-breathe" />
-          <span className="hidden md:block text-sm font-bold tracking-tight text-white">DEFRAG</span>
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" className="shrink-0">
+            <circle cx="10" cy="10" r="8" stroke="rgba(255,255,255,0.12)" strokeWidth="0.75" />
+            <circle cx="10" cy="10" r="2.5" fill="white" opacity="0.9" />
+            <circle cx="10" cy="2.5" r="1" fill="white" opacity="0.4" />
+            <circle cx="16.5" cy="6.5" r="1" fill="white" opacity="0.3" />
+            <circle cx="16.5" cy="13.5" r="1" fill="white" opacity="0.25" />
+            <circle cx="10" cy="17.5" r="1" fill="white" opacity="0.35" />
+            <circle cx="3.5" cy="13.5" r="1" fill="white" opacity="0.3" />
+            <circle cx="3.5" cy="6.5" r="1" fill="white" opacity="0.4" />
+          </svg>
+          <span className="hidden md:block text-[13px] font-bold tracking-[-0.01em] text-white">DEFRAG</span>
         </div>
       </div>
 

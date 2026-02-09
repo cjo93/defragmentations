@@ -105,21 +105,21 @@ const PERSONAS = [
     icon: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-white/50"><path d="M17 18a5 5 0 0 0-10 0"/><circle cx="12" cy="7" r="4"/><path d="M3.5 21h17"/></svg>,
     tag: 'The People Pleaser',
     headline: '"I always end up carrying everyone else\'s weight."',
-    body: 'That\'s not a character flaw — it\'s a structural tendency in your wiring. See exactly where you absorb other people\'s tension, and where your boundaries naturally exist.',
+    body: 'Not a character flaw — a structural tendency. See where you absorb others\' tension and where your boundaries naturally live.',
     detail: 'Your open centers absorb and amplify energy from others. DEFRAG maps exactly which centers are open — so you know what emotions are yours and what you\'re carrying for someone else.',
   },
   {
     icon: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-white/50"><path d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 0 1-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>,
     tag: 'The Conflict Avoider',
     headline: '"Every argument feels like it\'s going to break us."',
-    body: 'Conflict isn\'t the problem — it\'s the mismatch between how you process it and how they do. DEFRAG maps both sides so you can finally see why it escalates.',
+    body: 'Conflict isn\'t the problem — it\'s the processing mismatch. DEFRAG maps both sides so you can see why it escalates.',
     detail: 'The Triangulation Engine shows the structural dynamics between you and the other person. You\'ll see who initiates, who absorbs, and where the tension actually lives — mechanically, not emotionally.',
   },
   {
     icon: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-white/50"><path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>,
     tag: 'The Purpose Seeker',
     headline: '"I feel like I\'m supposed to be doing something different."',
-    body: 'You probably are. Your design has a specific strategy for making decisions. Most people have never been told theirs. DEFRAG shows you what you\'ve been overriding.',
+    body: 'You probably are. Your design has a built-in decision strategy. Most people have never been told theirs.',
     detail: 'Your authority — your body\'s built-in decision-making tool — has been ignored in favor of logic, social pressure, or fear. Once you see it mapped, you stop second-guessing.',
   },
 ];
@@ -369,8 +369,17 @@ export const LandingPage = () => {
       {/* ─── NAV ──────────────────────────────────────────── */}
       <nav className="fixed top-0 w-full z-50 flex justify-between items-center px-4 md:px-16 py-4 md:py-5 bg-[#050505]/60 backdrop-blur-2xl border-b border-white/[0.03] safe-top">
         <div className="flex items-center gap-2.5">
-          <div className="w-2 h-2 rounded-full bg-white shadow-[0_0_12px_rgba(255,255,255,0.3)]" />
-          <span className="text-[13px] md:text-sm font-semibold tracking-tight">{DEFRAG_MANIFEST.BRAND.NAME}</span>
+          <svg width="18" height="18" viewBox="0 0 20 20" fill="none" className="shrink-0">
+            <circle cx="10" cy="10" r="8" stroke="rgba(255,255,255,0.15)" strokeWidth="0.75" />
+            <circle cx="10" cy="10" r="2.5" fill="white" opacity="0.9" />
+            <circle cx="10" cy="2.5" r="1" fill="white" opacity="0.4" />
+            <circle cx="16.5" cy="6.5" r="1" fill="white" opacity="0.3" />
+            <circle cx="16.5" cy="13.5" r="1" fill="white" opacity="0.25" />
+            <circle cx="10" cy="17.5" r="1" fill="white" opacity="0.35" />
+            <circle cx="3.5" cy="13.5" r="1" fill="white" opacity="0.3" />
+            <circle cx="3.5" cy="6.5" r="1" fill="white" opacity="0.4" />
+          </svg>
+          <span className="text-[13px] md:text-sm font-semibold tracking-[-0.01em]">{DEFRAG_MANIFEST.BRAND.NAME}</span>
         </div>
         <div className="flex items-center gap-4 md:gap-8">
           <a href="#architecture" className="text-[13px] text-neutral-500 hover:text-white transition hidden sm:block">Architecture</a>
@@ -501,23 +510,12 @@ export const LandingPage = () => {
           <motion.h2 variants={fadeUp} custom={1} className="text-3xl md:text-[2.75rem] font-bold mt-5 tracking-tight leading-tight">
             You're not broken.<br />You're <span className="bg-gradient-to-r from-white via-neutral-400 to-neutral-300 bg-clip-text text-transparent">fragmented.</span>
           </motion.h2>
-          <motion.p variants={lineReveal} custom={0} className="text-neutral-500 mt-8 text-[15px] md:text-lg leading-[1.8] max-w-2xl mx-auto">
-            The same arguments. <em className="text-neutral-400 italic">The same shutdowns.</em><br />
-            <motion.span variants={dramaPause} custom={1} className="inline-block mt-1 text-neutral-300 font-medium">The same invisible friction you can't name</motion.span> —<br />
-            <motion.span variants={dramaPause} custom={2} className="inline-block mt-1 text-neutral-500 text-sm md:text-base italic">not to your partner, not to your therapist, not even to yourself.</motion.span>
+          <motion.p variants={lineReveal} custom={0} className="text-neutral-400 mt-8 text-[15px] md:text-lg leading-[1.8] max-w-xl mx-auto">
+            DEFRAG doesn't fix you. It <em className="text-white/80 not-italic font-medium">defragments</em> the noise —<br />
+            so you can finally see <strong className="text-white/70 font-semibold">how you're built.</strong>
           </motion.p>
-          <motion.div variants={lineReveal} custom={2} className="mt-10 max-w-xl mx-auto pl-5 md:pl-10 border-l-2 border-white/[0.06] text-left">
-            <p className="text-neutral-400 text-[15px] md:text-lg leading-[1.8]">
-              DEFRAG doesn't fix you.<br />
-              It <em className="text-white/80 not-italic font-medium">defragments</em> the noise —<br />
-              <span className="text-neutral-500 text-sm">so you can finally see</span> <strong className="text-white/70 font-semibold">how you're built.</strong>
-            </p>
-          </motion.div>
-          <motion.p variants={dramaPause} custom={3} className="text-white/90 font-semibold mt-10 text-lg md:text-xl tracking-tight">
+          <motion.p variants={dramaPause} custom={2} className="text-white/90 font-semibold mt-8 text-lg md:text-xl tracking-tight">
             We don't add features. We remove friction.
-          </motion.p>
-          <motion.p variants={dramaPause} custom={4} className="text-neutral-400 font-normal text-sm md:text-base italic mt-2">
-            Clarity is what remains.
           </motion.p>
         </motion.div>
       </section>
@@ -609,9 +607,8 @@ export const LandingPage = () => {
             <span className="text-[10px] font-semibold uppercase tracking-[0.25em] text-neutral-500">Three Pillars</span>
             <h2 className="text-3xl md:text-[2.75rem] font-bold mt-5 tracking-tight leading-tight">Signal. Structure. Pattern.</h2>
             <motion.p variants={lineReveal} custom={1} className="text-neutral-400 mt-6 text-[15px] md:text-lg leading-[1.8] max-w-2xl mx-auto">
-              Three tools working together.<br />
-              Each reads a <strong className="text-white/70 font-semibold">different part of how you operate</strong> —<br />
-              <motion.span variants={dramaPause} custom={2} className="inline-block mt-1 italic text-white/50">then combines them into one clear picture.</motion.span>
+              Each reads a different layer of <strong className="text-white/70 font-semibold">how you operate</strong> —<br />
+              <motion.span variants={dramaPause} custom={2} className="inline-block mt-1 italic text-white/50">combined into one clear picture.</motion.span>
             </motion.p>
           </motion.div>
 
@@ -621,21 +618,21 @@ export const LandingPage = () => {
               label="Pillar I"
               icon={<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-white/50"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>}
               title="The Signal Filter"
-              body="Your Personal Profile — Maps how you process information, make decisions, and where stress tends to build up. Your baseline — generated once, referenced in everything DEFRAG does."
+              body="Maps how you process, decide, and where stress builds. Generated once — referenced in everything DEFRAG does."
             />
             <PillarCard
               index={2}
               label="Pillar II"
               icon={<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-white/50"><circle cx="12" cy="5" r="3"/><circle cx="5" cy="19" r="3"/><circle cx="19" cy="19" r="3"/><path d="M12 8v4M8.5 16.5l-1 .5M15.5 16.5l1 .5"/></svg>}
               title="The Triangulation Engine"
-              body="Relationship Mapping — Analyzes the dynamics between three people at a time. Shows who carries the emotional weight, who creates tension, and how it moves between you."
+              body="Analyzes dynamics between people. Shows who carries the weight, who creates tension, and how it moves."
             />
             <PillarCard
               index={3}
               label="Pillar III"
               icon={<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-white/50"><path d="M12 20h9M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>}
               title="The Echo Engine"
-              body="Pattern Tracking — Monitors your behavior over 30 days to spot recurring cycles. The arguments, reactions, and shutdown moments you keep repeating — made visible so you can break them."
+              body="Monitors your behavior over 30 days to surface recurring cycles — the arguments and shutdowns you keep repeating, made visible."
             />
           </div>
         </motion.div>
@@ -656,8 +653,7 @@ export const LandingPage = () => {
             <span className="text-[10px] font-semibold uppercase tracking-[0.25em] text-neutral-500">How It Works</span>
             <h2 className="text-3xl md:text-[2.75rem] font-bold mt-5 tracking-tight leading-tight">Four layers. One system.</h2>
             <motion.p variants={lineReveal} custom={1} className="text-neutral-400 mt-6 text-[15px] md:text-lg leading-[1.8] max-w-2xl mx-auto">
-              Four tools that work together to show you<br />
-              <strong className="text-white/70 font-semibold">how you're wired</strong>, where you get stuck,<br />
+              How you're wired, where you get stuck,<br />
               <motion.span variants={dramaPause} custom={2} className="inline-block mt-1 italic text-white/50">and what to do about it.</motion.span>
             </motion.p>
           </motion.div>
@@ -685,7 +681,7 @@ export const LandingPage = () => {
                 <div className="flex-1">
                   <h3 className="text-2xl font-bold text-white mb-2">The Map</h3>
                   <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-neutral-500 block mb-4">Personal Profile</span>
-                  <p className="text-[15px] text-neutral-400 leading-relaxed mb-6">A detailed picture of how you naturally think, decide, and respond — generated from your birth data. See your strengths, blind spots, and the patterns that shape your daily life.</p>
+                  <p className="text-[15px] text-neutral-400 leading-relaxed mb-6">How you naturally think, decide, and respond — generated from your birth data. Your strengths, blind spots, and the patterns shaping your daily life.</p>
                   <div className="flex flex-wrap gap-2">
                     {['Energy type', 'Decision strategy', 'Stress patterns', 'Active gates'].map(tag => (
                       <span key={tag} className="px-3 py-1 rounded-full text-[10px] font-medium text-neutral-500 border border-white/[0.06] bg-white/[0.02]">{tag}</span>
@@ -722,7 +718,7 @@ export const LandingPage = () => {
                 </div>
                 <h3 className="text-xl font-bold text-white mb-1">The Field</h3>
                 <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-neutral-500 block mb-3">Relationship Dynamics</span>
-                <p className="text-sm text-neutral-400 leading-relaxed">See how your close relationships work — who steadies things, who absorbs the tension, and where friction comes from.</p>
+                <p className="text-sm text-neutral-400 leading-relaxed">Who steadies things, who absorbs tension, and where friction comes from.</p>
                 <AnimatePresence>
                   {expandedBento === 1 && (
                     <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }} className="overflow-hidden">
@@ -753,7 +749,7 @@ export const LandingPage = () => {
                 </div>
                 <h3 className="text-xl font-bold text-white mb-1">The Shift</h3>
                 <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-neutral-500 block mb-3">Strength Mapping</span>
-                <p className="text-sm text-neutral-400 leading-relaxed">Your biggest frustrations often point to your biggest strengths — used wrong. DEFRAG shows you where that trait actually works.</p>
+                <p className="text-sm text-neutral-400 leading-relaxed">Your biggest frustrations point to your biggest strengths — used wrong. See where they actually work.</p>
                 <AnimatePresence>
                   {expandedBento === 2 && (
                     <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }} className="overflow-hidden">
@@ -785,7 +781,7 @@ export const LandingPage = () => {
                 <div className="flex-1">
                   <h3 className="text-xl font-bold text-white mb-1">The Memory</h3>
                   <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-neutral-500 block mb-3">Pattern Tracking</span>
-                  <p className="text-[15px] text-neutral-400 leading-relaxed">Tracks your recurring patterns over 30 days — the reactions, habits, and conflicts that keep showing up. Once you can see a loop, you can break it.</p>
+                  <p className="text-[15px] text-neutral-400 leading-relaxed">Tracks your recurring patterns over 30 days. Once you can see a loop, you can break it.</p>
                   <AnimatePresence>
                     {expandedBento === 3 && (
                       <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }} className="overflow-hidden">
@@ -817,8 +813,7 @@ export const LandingPage = () => {
               <h2 className="text-3xl md:text-[2.75rem] font-bold mt-5 tracking-tight leading-tight">
                 The Stability Meter.
               </h2>
-              <motion.p variants={lineReveal} custom={1} className="text-neutral-400 mt-6 text-[15px] leading-[1.8]">
-                <strong className="text-white/70 font-semibold">Real-time emotional safety monitoring.</strong><br />
+          <motion.p variants={lineReveal} custom={1} className="text-neutral-400 mt-6 text-[15px] leading-[1.8]">
                 DEFRAG reads your state and adjusts —<br />
                 <motion.span variants={dramaPause} custom={2} className="inline-block mt-1 italic text-white/50">direct when you're steady, gentle when you're not.</motion.span>
               </motion.p>
@@ -861,10 +856,9 @@ export const LandingPage = () => {
             Your complete<br /><span className="bg-gradient-to-r from-white via-neutral-400 to-neutral-300 bg-clip-text text-transparent">system map.</span>
           </motion.h2>
           <motion.div variants={lineReveal} custom={1} className="text-neutral-400 mt-8 text-[15px] md:text-lg leading-[1.8] max-w-2xl mx-auto">
-            <p>Your personality. Your relationships.<br /><em className="text-neutral-500 italic">Your recurring patterns.</em></p>
-            <motion.p variants={dramaPause} custom={2} className="mt-3">
-              <span className="text-neutral-300 font-medium">Combined into one clear picture.</span><br />
-              <span className="text-sm italic text-neutral-500 mt-2 block">Not a label. A living map of how you actually work.</span>
+            <p>Your personality. Your relationships. Your patterns.</p>
+            <motion.p variants={dramaPause} custom={2} className="mt-2">
+              <span className="text-neutral-300 font-medium">One living map</span> — not a label.
             </motion.p>
           </motion.div>
 
@@ -976,12 +970,12 @@ export const LandingPage = () => {
           {/* Trust indicators */}
           <motion.div variants={fadeUp} custom={3} className="mt-10 flex flex-wrap justify-center gap-6">
             {[
-              { icon: '🔒', label: 'End-to-end encrypted' },
-              { icon: '🚫', label: 'No cloud storage' },
-              { icon: '👁️‍🗨️', label: 'Zero third-party access' },
+              { label: 'End-to-end encrypted' },
+              { label: 'No cloud storage' },
+              { label: 'Zero third-party access' },
             ].map(t => (
               <div key={t.label} className="flex items-center gap-2 text-[12px] text-neutral-500">
-                <span>{t.icon}</span>
+                <span className="w-1 h-1 rounded-full bg-emerald-500/50" />
                 <span>{t.label}</span>
               </div>
             ))}
@@ -996,7 +990,7 @@ export const LandingPage = () => {
         <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={stagger} className="max-w-5xl mx-auto">
           <motion.div variants={fadeUp} custom={0} className="text-center mb-6">
             <span className="text-[10px] font-semibold uppercase tracking-[0.25em] text-neutral-500">Signal Reports</span>
-            <h2 className="text-3xl md:text-[2.75rem] font-bold mt-4 tracking-tight leading-tight">After running<br /><motion.span variants={dramaPause} custom={1} className="inline-block">the diagnostic.</motion.span></h2>
+            <h2 className="text-3xl md:text-[2.75rem] font-bold mt-4 tracking-tight leading-tight">After the diagnostic.</h2>
           </motion.div>
         </motion.div>
         <TestimonialMarquee />
@@ -1015,8 +1009,7 @@ export const LandingPage = () => {
             <span className="text-[10px] font-semibold uppercase tracking-[0.25em] text-neutral-500">Instant Diagnostic</span>
             <h2 className="text-3xl md:text-[2.75rem] font-bold mt-5 tracking-tight leading-tight">See your stability score.<br />Right now.</h2>
             <motion.div variants={lineReveal} custom={1} className="text-neutral-400 mt-6 text-[15px] leading-[1.8] max-w-xl mx-auto">
-              <p>Enter your birth data.<br />Get an <strong className="text-white/70 font-semibold">instant reading</strong> from the engine.</p>
-              <motion.p variants={dramaPause} custom={2} className="mt-2 text-sm italic text-neutral-500">No sign-up required.</motion.p>
+              <p>Enter your birth data. <strong className="text-white/70 font-semibold">Instant reading</strong> from the engine.</p>
             </motion.div>
           </motion.div>
 
@@ -1084,10 +1077,9 @@ export const LandingPage = () => {
             <motion.span variants={dramaPause} custom={1} className="inline-block bg-gradient-to-r from-white via-neutral-400 to-neutral-300 bg-clip-text text-transparent">Start seeing.</motion.span>
           </motion.h2>
           <motion.p variants={lineReveal} custom={1} className="text-neutral-400 mt-6 text-[15px] md:text-lg leading-[1.8] max-w-xl mx-auto">
-            Your free blueprint takes <strong className="text-white/70 font-semibold">30 seconds</strong> to generate.
+            Your free blueprint takes <strong className="text-white/70 font-semibold">30 seconds</strong>.
           </motion.p>
-          <motion.p variants={dramaPause} custom={2} className="text-sm text-neutral-500 italic mt-2">No sign-up wall.</motion.p>
-          <motion.p variants={dramaPause} custom={3} className="text-sm text-neutral-500 italic mt-1">No credit card. Just clarity.</motion.p>
+          <motion.p variants={dramaPause} custom={2} className="text-sm text-neutral-500 italic mt-2">No sign-up. No credit card. Just clarity.</motion.p>
           <motion.div variants={fadeUp} custom={2} className="mt-10">
             <Link to="/login" className="group relative inline-flex items-center justify-center px-12 py-5 rounded-2xl bg-white text-black font-semibold text-[15px] overflow-hidden transition-all duration-500 hover:shadow-[0_0_80px_-5px_rgba(255,255,255,0.25)] hover:-translate-y-0.5">
               <span className="relative z-10">Get Your Free Blueprint</span>
@@ -1101,18 +1093,23 @@ export const LandingPage = () => {
       <footer className="relative z-10 border-t border-white/[0.03] py-14 md:py-20 px-5 md:px-6">
         <div className="max-w-3xl mx-auto text-center mb-14">
           <p className="text-[11px] font-semibold uppercase tracking-[0.25em] text-neutral-600 mb-4">The Protocol</p>
-          <p className="text-lg md:text-xl text-neutral-300 leading-relaxed font-medium mb-3">
-            We don't add features. We remove friction.<br />
-            <span className="text-white">Coherence is what remains.</span>
-          </p>
-          <p className="text-sm text-neutral-500 mt-4">
-            DEFRAG — The manual you wish came with the people you love.
+          <p className="text-lg md:text-xl text-neutral-300 leading-relaxed font-medium">
+            The manual you wish came with<br />the people you love.
           </p>
         </div>
         <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6 pt-8 border-t border-white/[0.03]">
-          <div className="flex items-center gap-3">
-            <div className="w-1.5 h-1.5 rounded-full bg-white shadow-[0_0_8px_rgba(255,255,255,0.25)]" />
-            <span className="text-xs font-semibold tracking-tight text-neutral-500">{DEFRAG_MANIFEST.BRAND.NAME}</span>
+          <div className="flex items-center gap-2.5">
+            <svg width="14" height="14" viewBox="0 0 20 20" fill="none">
+              <circle cx="10" cy="10" r="8" stroke="rgba(255,255,255,0.1)" strokeWidth="0.75" />
+              <circle cx="10" cy="10" r="2.5" fill="white" opacity="0.4" />
+              <circle cx="10" cy="2.5" r="1" fill="white" opacity="0.2" />
+              <circle cx="16.5" cy="6.5" r="1" fill="white" opacity="0.15" />
+              <circle cx="16.5" cy="13.5" r="1" fill="white" opacity="0.12" />
+              <circle cx="10" cy="17.5" r="1" fill="white" opacity="0.18" />
+              <circle cx="3.5" cy="13.5" r="1" fill="white" opacity="0.15" />
+              <circle cx="3.5" cy="6.5" r="1" fill="white" opacity="0.2" />
+            </svg>
+            <span className="text-xs font-semibold tracking-[-0.01em] text-neutral-500">{DEFRAG_MANIFEST.BRAND.NAME}</span>
           </div>
           <div className="flex items-center gap-8 text-[11px] text-neutral-600">
             <Link to="/manifesto" className="hover:text-neutral-400 transition">Manifesto</Link>
