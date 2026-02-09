@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion, useScroll, useTransform, useInView, AnimatePresence } from 'framer-motion';
 import { DEFRAG_MANIFEST } from '../constants/manifest';
@@ -17,6 +17,22 @@ const fadeUp = {
   }),
 };
 const stagger = { visible: { transition: { staggerChildren: 0.12 } } };
+
+/* ─── Dramatic Text Animations ──────────────────────────────── */
+const lineReveal = {
+  hidden: { opacity: 0, x: -12 },
+  visible: (i: number = 0) => ({
+    opacity: 1, x: 0,
+    transition: { delay: i * 0.25 + 0.3, duration: 1, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] },
+  }),
+};
+const dramaPause = {
+  hidden: { opacity: 0, y: 8, filter: 'blur(4px)' },
+  visible: (i: number = 0) => ({
+    opacity: 1, y: 0, filter: 'blur(0px)',
+    transition: { delay: i * 0.3 + 0.6, duration: 1.2, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] },
+  }),
+};
 
 /* ─── Scroll Progress Bar ───────────────────────────────────── */
 const ScrollProgress: React.FC = () => {
@@ -343,21 +359,21 @@ export const LandingPage = () => {
       <ScrollProgress />
 
       {/* ─── NAV ──────────────────────────────────────────── */}
-      <nav className="fixed top-0 w-full z-50 flex justify-between items-center px-6 md:px-16 py-5 bg-[#050505]/60 backdrop-blur-2xl border-b border-white/[0.03]">
-        <div className="flex items-center gap-3">
+      <nav className="fixed top-0 w-full z-50 flex justify-between items-center px-4 md:px-16 py-4 md:py-5 bg-[#050505]/60 backdrop-blur-2xl border-b border-white/[0.03] safe-top">
+        <div className="flex items-center gap-2.5">
           <div className="w-2 h-2 rounded-full bg-white shadow-[0_0_12px_rgba(255,255,255,0.3)]" />
-          <span className="text-sm font-semibold tracking-tight">{DEFRAG_MANIFEST.BRAND.NAME}</span>
+          <span className="text-[13px] md:text-sm font-semibold tracking-tight">{DEFRAG_MANIFEST.BRAND.NAME}</span>
         </div>
-        <div className="flex items-center gap-8">
+        <div className="flex items-center gap-4 md:gap-8">
           <a href="#architecture" className="text-[13px] text-neutral-500 hover:text-white transition hidden sm:block">Architecture</a>
           <a href="#how-it-works" className="text-[13px] text-neutral-500 hover:text-white transition hidden sm:block">How It Works</a>
           <a href="#plans" className="text-[13px] text-neutral-500 hover:text-white transition hidden sm:block">Plans</a>
-          <Link to="/login" className="text-[13px] font-medium px-5 py-2 rounded-full border border-white/10 text-neutral-400 hover:text-white hover:border-white/25 transition-all duration-300">Sign In</Link>
+          <Link to="/login" className="text-[12px] md:text-[13px] font-medium px-4 md:px-5 py-2 rounded-full border border-white/10 text-neutral-400 hover:text-white hover:border-white/25 transition-all duration-300">Sign In</Link>
         </div>
       </nav>
 
       {/* ─── 01 // HERO ──────────────────────────────────── */}
-      <motion.section style={{ opacity: heroOpacity, scale: heroScale }} className="relative z-10 flex flex-col items-center justify-center min-h-screen text-center px-6 pt-24">
+      <motion.section style={{ opacity: heroOpacity, scale: heroScale }} className="relative z-10 flex flex-col items-center justify-center min-h-[100svh] text-center px-5 pt-20 md:pt-24">
         {/* Floating accent orbs */}
         <div className="absolute top-1/4 left-1/4 w-64 h-64 rounded-full bg-white/[0.008] blur-[100px] animate-breathe-slow pointer-events-none" />
         <div className="absolute bottom-1/3 right-1/4 w-48 h-48 rounded-full bg-white/[0.006] blur-[80px] animate-breathe pointer-events-none" />
@@ -370,9 +386,16 @@ export const LandingPage = () => {
           <motion.h1 variants={fadeUp} custom={1} className="text-[clamp(2.5rem,6.5vw,5rem)] font-extrabold leading-[1.05] tracking-[-0.03em] mb-8">
             The manual you<br />never <span className="bg-gradient-to-r from-white via-neutral-400 to-white bg-clip-text text-transparent">received.</span>
           </motion.h1>
-          <motion.p variants={fadeUp} custom={2} className="max-w-xl mx-auto text-base md:text-lg text-neutral-400 leading-relaxed mb-12">
-            Why do you keep having the same arguments? Why does everything feel harder than it should? DEFRAG shows you how you're wired — where friction builds, and exactly how to fix it.
-          </motion.p>
+          <motion.div variants={fadeUp} custom={2} className="max-w-xl mx-auto mb-12">
+            <p className="text-[15px] md:text-lg text-neutral-500 leading-[1.8]">
+              Why do you keep having the <em className="text-neutral-400 italic">same arguments?</em><br />
+              Why does everything feel <em className="text-neutral-400 italic">harder than it should?</em>
+            </p>
+            <motion.p variants={dramaPause} custom={0} className="text-[15px] md:text-lg text-neutral-300 font-medium leading-[1.8] mt-3">
+              DEFRAG shows you how you're wired —<br />
+              <span className="text-neutral-500 text-sm font-normal italic">where friction builds, and exactly how to fix it.</span>
+            </motion.p>
+          </motion.div>
           <motion.div variants={fadeUp} custom={3} className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link to="/login" className="group relative inline-flex items-center justify-center px-9 py-4 rounded-2xl bg-white text-black font-semibold text-sm overflow-hidden transition-all duration-500 hover:shadow-[0_0_60px_-5px_rgba(255,255,255,0.2)] hover:-translate-y-0.5">
               <span className="relative z-10">Get Your Free Blueprint</span>
@@ -387,24 +410,39 @@ export const LandingPage = () => {
       </motion.section>
 
       {/* ─── PROOF BAR — Emotional Hooks ─────────────────── */}
-      <section className="relative z-10 py-14 border-y border-white/[0.04]">
-        <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-6 md:gap-0 px-6">
+      <motion.section
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, margin: '-40px' }}
+        variants={stagger}
+        className="relative z-10 py-12 md:py-14 border-y border-white/[0.04]"
+      >
+        <div className="max-w-5xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-0 px-6">
           {[
             { hook: '"Why do I keep doing this?"', answer: 'Answered.' },
             { hook: 'Relationships mapped.', answer: 'Not guessed.' },
             { hook: 'Your patterns —', answer: 'finally visible.' },
             { hook: '30 seconds.', answer: 'Your first blueprint.' },
           ].map((item, i) => (
-            <div key={i} className={`text-center px-4 ${i > 0 ? 'md:border-l md:border-white/[0.04]' : ''}`}>
-              <p className="text-[14px] text-neutral-500 italic">{item.hook}</p>
-              <p className="text-[14px] text-white/80 font-semibold mt-1">{item.answer}</p>
-            </div>
+            <motion.div
+              key={i}
+              variants={lineReveal}
+              custom={i}
+              className={`text-center px-4 ${i > 0 ? 'md:border-l md:border-white/[0.04]' : ''}`}
+            >
+              <p className="text-[13px] md:text-[14px] text-neutral-500 italic leading-snug">{item.hook}</p>
+              <motion.p
+                variants={dramaPause}
+                custom={i}
+                className="text-[13px] md:text-[14px] text-white/80 font-semibold mt-1.5"
+              >{item.answer}</motion.p>
+            </motion.div>
           ))}
         </div>
-      </section>
+      </motion.section>
 
       {/* ─── 02 // THE ARCHITECTURE ──────────────────────── */}
-      <section id="architecture" className="relative z-10 py-28 md:py-40 px-6">
+      <section id="architecture" className="relative z-10 py-20 md:py-40 px-5 md:px-6">
         <motion.div
           initial="hidden"
           whileInView="visible"
@@ -416,17 +454,23 @@ export const LandingPage = () => {
           <motion.h2 variants={fadeUp} custom={1} className="text-3xl md:text-[2.75rem] font-bold mt-5 tracking-tight leading-tight">
             You're not broken.<br />You're <span className="bg-gradient-to-r from-white via-neutral-400 to-neutral-300 bg-clip-text text-transparent">fragmented.</span>
           </motion.h2>
-          <motion.p variants={fadeUp} custom={2} className="text-neutral-500 mt-8 text-base md:text-lg leading-relaxed max-w-2xl mx-auto">
-            The same arguments. The same shutdowns.<br />
-            <span className="text-neutral-300 font-medium">The same invisible friction you can't name</span> —<br className="hidden md:block" />
-            not to your partner, not to your therapist, not even to yourself.
+          <motion.p variants={lineReveal} custom={0} className="text-neutral-500 mt-8 text-[15px] md:text-lg leading-[1.8] max-w-2xl mx-auto">
+            The same arguments. <em className="text-neutral-400 italic">The same shutdowns.</em><br />
+            <motion.span variants={dramaPause} custom={1} className="inline-block mt-1 text-neutral-300 font-medium">The same invisible friction you can't name</motion.span> —<br />
+            <motion.span variants={dramaPause} custom={2} className="inline-block mt-1 text-neutral-500 text-sm md:text-base italic">not to your partner, not to your therapist, not even to yourself.</motion.span>
           </motion.p>
-          <motion.p variants={fadeUp} custom={3} className="text-neutral-400 mt-8 text-base md:text-lg leading-relaxed max-w-xl mx-auto pl-6 md:pl-10 border-l border-white/[0.06] text-left">
-            DEFRAG doesn't fix you. It <em className="text-white/80 not-italic font-medium">defragments</em> the noise — so you can finally see <strong className="text-white/70 font-semibold">how you're built</strong>, and why the friction keeps showing up.
+          <motion.div variants={lineReveal} custom={2} className="mt-10 max-w-xl mx-auto pl-5 md:pl-10 border-l-2 border-white/[0.06] text-left">
+            <p className="text-neutral-400 text-[15px] md:text-lg leading-[1.8]">
+              DEFRAG doesn't fix you.<br />
+              It <em className="text-white/80 not-italic font-medium">defragments</em> the noise —<br />
+              <span className="text-neutral-500 text-sm">so you can finally see</span> <strong className="text-white/70 font-semibold">how you're built.</strong>
+            </p>
+          </motion.div>
+          <motion.p variants={dramaPause} custom={3} className="text-white/90 font-semibold mt-10 text-lg md:text-xl tracking-tight">
+            We don't add features. We remove friction.
           </motion.p>
-          <motion.p variants={fadeUp} custom={4} className="text-white/90 font-semibold mt-8 text-lg md:text-xl tracking-tight">
-            We don't add features. We remove friction.<br />
-            <span className="text-neutral-400 font-normal text-base italic">Clarity is what remains.</span>
+          <motion.p variants={dramaPause} custom={4} className="text-neutral-400 font-normal text-sm md:text-base italic mt-2">
+            Clarity is what remains.
           </motion.p>
         </motion.div>
       </section>
@@ -434,7 +478,7 @@ export const LandingPage = () => {
       <GlowDivider />
 
       {/* ─── WHO IS THIS FOR ─────────────────────────────── */}
-      <section className="relative z-10 py-28 md:py-40 px-6">
+      <section className="relative z-10 py-20 md:py-40 px-5 md:px-6">
         <motion.div
           initial="hidden"
           whileInView="visible"
@@ -475,7 +519,7 @@ export const LandingPage = () => {
       <GlowDivider />
 
       {/* ─── 03 // THREE PILLARS ──────────────────────────── */}
-      <section id="pillars" className="relative z-10 py-28 md:py-40 px-6">
+      <section id="pillars" className="relative z-10 py-20 md:py-40 px-5 md:px-6">
         <motion.div
           initial="hidden"
           whileInView="visible"
@@ -486,10 +530,11 @@ export const LandingPage = () => {
           <motion.div variants={fadeUp} custom={0} className="text-center mb-20">
             <span className="text-[10px] font-semibold uppercase tracking-[0.25em] text-neutral-500">Three Pillars</span>
             <h2 className="text-3xl md:text-[2.75rem] font-bold mt-5 tracking-tight leading-tight">Signal. Structure. Pattern.</h2>
-            <p className="text-neutral-400 mt-6 text-base md:text-lg leading-relaxed max-w-2xl mx-auto">
+            <motion.p variants={lineReveal} custom={1} className="text-neutral-400 mt-6 text-[15px] md:text-lg leading-[1.8] max-w-2xl mx-auto">
               Three tools working together.<br />
-              Each reads a <strong className="text-white/70 font-semibold">different part of how you operate</strong> — then combines them into <em className="text-white/60 italic">one clear picture.</em>
-            </p>
+              Each reads a <strong className="text-white/70 font-semibold">different part of how you operate</strong> —<br />
+              <motion.span variants={dramaPause} custom={2} className="inline-block mt-1 italic text-white/50">then combines them into one clear picture.</motion.span>
+            </motion.p>
           </motion.div>
 
           <div className="grid md:grid-cols-3 gap-6">
@@ -521,7 +566,7 @@ export const LandingPage = () => {
       <GlowDivider />
 
       {/* ─── 03.5 // HOW IT WORKS — Bento Grid ─────────── */}
-      <section id="how-it-works" className="relative z-10 py-28 md:py-40 px-6">
+      <section id="how-it-works" className="relative z-10 py-20 md:py-40 px-5 md:px-6">
         <motion.div
           initial="hidden"
           whileInView="visible"
@@ -532,10 +577,11 @@ export const LandingPage = () => {
           <motion.div variants={fadeUp} custom={0} className="text-center mb-20">
             <span className="text-[10px] font-semibold uppercase tracking-[0.25em] text-neutral-500">How It Works</span>
             <h2 className="text-3xl md:text-[2.75rem] font-bold mt-5 tracking-tight leading-tight">Four layers. One system.</h2>
-            <p className="text-neutral-400 mt-6 text-base md:text-lg leading-relaxed max-w-2xl mx-auto">
+            <motion.p variants={lineReveal} custom={1} className="text-neutral-400 mt-6 text-[15px] md:text-lg leading-[1.8] max-w-2xl mx-auto">
               Four tools that work together to show you<br />
-              <strong className="text-white/70 font-semibold">how you're wired</strong>, where you get stuck, and <em className="text-white/60 italic">what to do about it.</em>
-            </p>
+              <strong className="text-white/70 font-semibold">how you're wired</strong>, where you get stuck,<br />
+              <motion.span variants={dramaPause} custom={2} className="inline-block mt-1 italic text-white/50">and what to do about it.</motion.span>
+            </motion.p>
           </motion.div>
 
           {/* Bento Grid — 1 featured large + 3 compact */}
@@ -635,7 +681,7 @@ export const LandingPage = () => {
       <GlowDivider />
 
       {/* ─── 04 // SEDA GAUGE SHOWCASE ───────────────────── */}
-      <section className="relative z-10 py-28 md:py-40 px-6">
+      <section className="relative z-10 py-20 md:py-40 px-5 md:px-6">
         <motion.div
           initial="hidden"
           whileInView="visible"
@@ -649,11 +695,11 @@ export const LandingPage = () => {
               <h2 className="text-3xl md:text-[2.75rem] font-bold mt-5 tracking-tight leading-tight">
                 The Stability Meter.
               </h2>
-              <p className="text-neutral-400 mt-6 text-base leading-relaxed">
+              <motion.p variants={lineReveal} custom={1} className="text-neutral-400 mt-6 text-[15px] leading-[1.8]">
                 <strong className="text-white/70 font-semibold">Real-time emotional safety monitoring.</strong><br />
-                DEFRAG reads your state and adjusts how it responds —<br />
-                <em className="text-white/60 italic">direct when you're steady, gentle when you're not.</em>
-              </p>
+                DEFRAG reads your state and adjusts —<br />
+                <motion.span variants={dramaPause} custom={2} className="inline-block mt-1 italic text-white/50">direct when you're steady, gentle when you're not.</motion.span>
+              </motion.p>
               <div className="mt-8 space-y-4">
                 {[
                   { mode: 'LOGIC MODE', desc: 'Clear, direct answers. Standard conversation.', color: 'bg-emerald-400/30' },
@@ -680,7 +726,7 @@ export const LandingPage = () => {
       <GlowDivider />
 
       {/* ─── 05 // SYSTEM MAP — Enhanced ──────────────────── */}
-      <section className="relative z-10 py-28 md:py-40 px-6">
+      <section className="relative z-10 py-20 md:py-40 px-5 md:px-6">
         <motion.div
           initial="hidden"
           whileInView="visible"
@@ -692,11 +738,13 @@ export const LandingPage = () => {
           <motion.h2 variants={fadeUp} custom={1} className="text-3xl md:text-[2.75rem] font-bold mt-5 tracking-tight leading-tight">
             Your complete<br /><span className="bg-gradient-to-r from-white via-neutral-400 to-neutral-300 bg-clip-text text-transparent">system map.</span>
           </motion.h2>
-          <motion.p variants={fadeUp} custom={2} className="text-neutral-400 mt-8 text-base md:text-lg leading-relaxed max-w-2xl mx-auto">
-            Your personality. Your relationships. Your recurring patterns.<br />
-            <span className="text-neutral-300 font-medium">Combined into one clear picture.</span><br />
-            <span className="mt-3 block text-[15px] italic text-neutral-500">Not a label. A detailed, living map of how you actually work.</span>
-          </motion.p>
+          <motion.div variants={lineReveal} custom={1} className="text-neutral-400 mt-8 text-[15px] md:text-lg leading-[1.8] max-w-2xl mx-auto">
+            <p>Your personality. Your relationships.<br /><em className="text-neutral-500 italic">Your recurring patterns.</em></p>
+            <motion.p variants={dramaPause} custom={2} className="mt-3">
+              <span className="text-neutral-300 font-medium">Combined into one clear picture.</span><br />
+              <span className="text-sm italic text-neutral-500 mt-2 block">Not a label. A living map of how you actually work.</span>
+            </motion.p>
+          </motion.div>
 
           {/* Enhanced orbiting visual */}
           <motion.div variants={fadeUp} custom={3} className="mt-16 flex justify-center">
@@ -747,7 +795,7 @@ export const LandingPage = () => {
       <GlowDivider />
 
       {/* ─── NOT LIKE THE OTHERS — Comparison ────────────── */}
-      <section className="relative z-10 py-28 md:py-36 px-6">
+      <section className="relative z-10 py-20 md:py-36 px-5 md:px-6">
         <motion.div
           initial="hidden"
           whileInView="visible"
@@ -781,7 +829,7 @@ export const LandingPage = () => {
       <GlowDivider />
 
       {/* ─── 06 // ZERO-KNOWLEDGE ────────────────────────── */}
-      <section className="relative z-10 py-24 md:py-32 px-6">
+      <section className="relative z-10 py-16 md:py-32 px-5 md:px-6">
         <motion.div
           initial="hidden"
           whileInView="visible"
@@ -796,10 +844,13 @@ export const LandingPage = () => {
           <motion.h3 variants={fadeUp} custom={1} className="text-xl md:text-2xl font-bold tracking-tight">
             Your data never leaves your device.
           </motion.h3>
-          <motion.p variants={fadeUp} custom={2} className="text-neutral-500 mt-4 text-sm leading-relaxed max-w-lg mx-auto">
-            No cloud storage. No third-party analytics.<br />
-            <span className="text-neutral-400 font-medium">Everything stays on your device</span> — encrypted, local, <em className="italic text-neutral-300">yours alone.</em>
-          </motion.p>
+          <motion.div variants={lineReveal} custom={1} className="text-neutral-500 mt-4 text-sm leading-[1.8] max-w-lg mx-auto">
+            <p>No cloud storage. No third-party analytics.</p>
+            <motion.p variants={dramaPause} custom={2} className="mt-1">
+              <span className="text-neutral-400 font-medium">Everything stays on your device</span> —<br />
+              <em className="italic text-neutral-300">encrypted, local, yours alone.</em>
+            </motion.p>
+          </motion.div>
           {/* Trust indicators */}
           <motion.div variants={fadeUp} custom={3} className="mt-10 flex flex-wrap justify-center gap-6">
             {[
@@ -819,7 +870,7 @@ export const LandingPage = () => {
       <GlowDivider />
 
       {/* ─── TESTIMONIALS — Horizontal marquee ────────────── */}
-      <section className="relative z-10 py-20 md:py-28 px-6 overflow-hidden">
+      <section className="relative z-10 py-16 md:py-28 px-5 md:px-6 overflow-hidden">
         <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={stagger} className="max-w-5xl mx-auto">
           <motion.div variants={fadeUp} custom={0} className="text-center mb-6">
             <span className="text-[10px] font-semibold uppercase tracking-[0.25em] text-neutral-500">Signal Reports</span>
@@ -830,7 +881,7 @@ export const LandingPage = () => {
       </section>
 
       {/* ─── QUICK-START DIAGNOSTIC ─────────────────────── */}
-      <section className="relative z-10 py-28 md:py-36 px-6">
+      <section className="relative z-10 py-20 md:py-36 px-5 md:px-6">
         <motion.div
           initial="hidden"
           whileInView="visible"
@@ -841,10 +892,10 @@ export const LandingPage = () => {
           <motion.div variants={fadeUp} custom={0} className="text-center mb-12">
             <span className="text-[10px] font-semibold uppercase tracking-[0.25em] text-neutral-500">Instant Diagnostic</span>
             <h2 className="text-3xl md:text-[2.75rem] font-bold mt-5 tracking-tight leading-tight">See your stability score.<br />Right now.</h2>
-            <p className="text-neutral-400 mt-6 text-base leading-relaxed max-w-xl mx-auto">
-              Enter your birth data. Get an <strong className="text-white/70 font-semibold">instant reading</strong> from the DEFRAG engine.<br />
-              <span className="text-sm italic text-neutral-500">No sign-up required.</span>
-            </p>
+            <motion.div variants={lineReveal} custom={1} className="text-neutral-400 mt-6 text-[15px] leading-[1.8] max-w-xl mx-auto">
+              <p>Enter your birth data.<br />Get an <strong className="text-white/70 font-semibold">instant reading</strong> from the engine.</p>
+              <motion.p variants={dramaPause} custom={2} className="mt-2 text-sm italic text-neutral-500">No sign-up required.</motion.p>
+            </motion.div>
           </motion.div>
 
           <QuickDiagnostic />
@@ -854,7 +905,7 @@ export const LandingPage = () => {
       <GlowDivider />
 
       {/* ─── FAQ ──────────────────────────────────────────── */}
-      <section className="relative z-10 py-28 md:py-36 px-6">
+      <section className="relative z-10 py-20 md:py-36 px-5 md:px-6">
         <motion.div
           initial="hidden"
           whileInView="visible"
@@ -877,7 +928,7 @@ export const LandingPage = () => {
       <GlowDivider />
 
       {/* ─── PLANS ────────────────────────────────────────── */}
-      <section id="plans" className="relative z-10 py-28 md:py-36 px-6">
+      <section id="plans" className="relative z-10 py-20 md:py-36 px-5 md:px-6">
         <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, margin: '-80px' }} variants={stagger} className="max-w-5xl mx-auto">
           <motion.div variants={fadeUp} custom={0} className="text-center mb-16">
             <span className="text-[10px] font-semibold uppercase tracking-[0.25em] text-neutral-500">Access</span>
@@ -894,7 +945,7 @@ export const LandingPage = () => {
       </section>
 
       {/* ─── CLOSING CTA ──────────────────────────────────── */}
-      <section className="relative z-10 py-28 md:py-36 px-6">
+      <section className="relative z-10 py-20 md:py-36 px-5 md:px-6">
         <motion.div
           initial="hidden"
           whileInView="visible"
@@ -905,10 +956,10 @@ export const LandingPage = () => {
           <motion.h2 variants={fadeUp} custom={0} className="text-3xl md:text-[2.75rem] font-bold tracking-tight leading-tight">
             Stop guessing.<br /><span className="bg-gradient-to-r from-white via-neutral-400 to-neutral-300 bg-clip-text text-transparent">Start seeing.</span>
           </motion.h2>
-          <motion.p variants={fadeUp} custom={1} className="text-neutral-400 mt-6 text-base md:text-lg leading-relaxed max-w-xl mx-auto">
-            Your free blueprint takes <strong className="text-white/70 font-semibold">30 seconds</strong> to generate.<br />
-            <span className="text-sm text-neutral-500 italic">No sign-up wall. No credit card. Just clarity.</span>
-          </motion.p>
+          <motion.div variants={lineReveal} custom={1} className="text-neutral-400 mt-6 text-[15px] md:text-lg leading-[1.8] max-w-xl mx-auto">
+            <p>Your free blueprint takes <strong className="text-white/70 font-semibold">30 seconds</strong> to generate.</p>
+            <motion.p variants={dramaPause} custom={2} className="mt-2 text-sm text-neutral-500 italic">No sign-up wall. No credit card. Just clarity.</motion.p>
+          </motion.div>
           <motion.div variants={fadeUp} custom={2} className="mt-10">
             <Link to="/login" className="group relative inline-flex items-center justify-center px-12 py-5 rounded-2xl bg-white text-black font-semibold text-[15px] overflow-hidden transition-all duration-500 hover:shadow-[0_0_80px_-5px_rgba(255,255,255,0.25)] hover:-translate-y-0.5">
               <span className="relative z-10">Get Your Free Blueprint</span>
@@ -919,7 +970,7 @@ export const LandingPage = () => {
       </section>
 
       {/* ─── FOOTER / MANIFESTO TEASE ─────────────────────── */}
-      <footer className="relative z-10 border-t border-white/[0.03] py-20 px-6">
+      <footer className="relative z-10 border-t border-white/[0.03] py-14 md:py-20 px-5 md:px-6">
         <div className="max-w-3xl mx-auto text-center mb-14">
           <p className="text-[11px] font-semibold uppercase tracking-[0.25em] text-neutral-600 mb-4">The Protocol</p>
           <p className="text-lg md:text-xl text-neutral-300 leading-relaxed font-medium mb-3">

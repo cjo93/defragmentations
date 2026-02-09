@@ -128,3 +128,13 @@ button:active:not(:disabled) {
 
 /* ─── Smooth Scroll ──────────────────────────────────────────── */
 * { scroll-behavior: smooth; }
+html { -webkit-overflow-scrolling: touch; }
+
+/* ─── Mobile Viewport Fix (iOS 100vh) ───────────────────────── */
+html, body { height: 100%; }
+@supports (height: 100dvh) {
+  html, body { height: 100dvh; }
+}
+
+/* ─── Bottom Bar Safe Area ───────────────────────────────────── */
+.pb-safe { padding-bottom: calc(1rem + env(safe-area-inset-bottom)); }
