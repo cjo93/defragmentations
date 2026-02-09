@@ -330,7 +330,7 @@ export const Dashboard = () => {
                 icon={<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-white/50"><path d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m-4-8a3 3 0 016 0v1" /></svg>}
                 title="Voice Mode"
                 desc="Talk through what's on your mind. Hands-free, real-time."
-                onClick={() => navigate('/live')}
+                onClick={() => navigate('/chatbot')}
               />
             </div>
           </motion.div>

@@ -11,18 +11,16 @@ interface BottomBarProps {
 
 /* ─── Primary tabs (always visible) ─────────────────────────── */
 const PRIMARY_TABS: { id: View; label: string; icon: string }[] = [
-  { id: View.DASHBOARD, label: 'Lab', icon: 'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-4 0h4' },
+  { id: View.DASHBOARD, label: 'Home', icon: 'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-4 0h4' },
+  { id: View.CHATBOT, label: 'The Forge', icon: 'M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z' },
   { id: View.MANUAL, label: 'Blueprint', icon: 'M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z' },
-  { id: View.CHATBOT, label: 'Forge', icon: 'M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z' },
   { id: View.ORBIT, label: 'Orbit', icon: 'M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z' },
 ];
 
-/* ─── Overflow: remaining tools ──────────────────────────────── */
+/* ─── Tools overflow ─────────────────────────────────────────── */
 const MORE_ITEMS: { id: View; label: string; icon: string }[] = [
-  { id: View.INTELLIGENCE, label: 'Research', icon: 'M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z' },
   { id: View.SIGNAL, label: 'Signal', icon: 'M13 10V3L4 14h7v7l9-11h-7z' },
   { id: View.ECHO, label: 'Echo', icon: 'M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15' },
-  { id: View.LIVE_VOICE, label: 'Live', icon: 'M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m-4-8a3 3 0 016 0v1' },
   { id: View.SAFE_PLACE, label: 'Ground', icon: 'M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z' },
 ];
 
@@ -123,7 +121,7 @@ export const BottomBar: React.FC<BottomBarProps> = ({ currentView, onNavigate, o
             <button
               onClick={() => setMoreOpen(!moreOpen)}
               className="relative flex flex-col items-center gap-1 min-w-[56px] py-1.5 transition-all active:scale-95"
-              aria-label="More"
+              aria-label="Tools"
             >
               {isMoreActive && (
                 <motion.div
@@ -139,7 +137,7 @@ export const BottomBar: React.FC<BottomBarProps> = ({ currentView, onNavigate, o
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d={MORE_ICON} />
               </svg>
               <span className={`text-[9px] font-semibold tracking-wide transition-colors duration-200 ${isMoreActive || moreOpen ? 'text-white/90' : 'text-white/20'}`}>
-                More
+                Tools
               </span>
             </button>
           </div>

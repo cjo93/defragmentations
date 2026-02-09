@@ -37,31 +37,37 @@ export const Transcriber: React.FC = () => {
   };
 
   return (
-    <div className="flex-1 flex flex-col p-8 overflow-hidden">
+    <div className="flex-1 flex flex-col p-8 md:p-12 overflow-hidden bg-gradient-to-br from-[#0A0A0A]/80 to-[#18181B]/80">
       <div className="mb-8">
-        <h2 className="text-3xl font-bold tracking-tighter">Structural Logs</h2>
-        <p className="text-neutral-500">Whisper-powered high-fidelity audio transcription.</p>
+        <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-white mb-2">Transcriber</h2>
+        <p className="text-neutral-400 text-sm">Whisper-powered high-fidelity audio transcription.</p>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 flex-1 overflow-hidden">
-        <div className="bg-neutral-900 border border-neutral-800 rounded-3xl p-12 flex flex-col items-center justify-center">
-           <button 
+        <div className="bg-white/[0.02] border border-white/[0.06] rounded-3xl p-12 flex flex-col items-center justify-center shadow-xl backdrop-blur-2xl">
+          <button
             onClick={isRecording ? stopRecording : startRecording}
-            className={`w-32 h-32 rounded-full border-4 flex items-center justify-center transition-all ${
-              isRecording ? 'border-red-500 shadow-[0_0_30px_rgba(239,68,68,0.3)] animate-pulse' : 'border-neutral-800 hover:border-neutral-600'
+            className={`w-32 h-32 rounded-full border-4 flex items-center justify-center transition-all duration-300 ${
+              isRecording
+                ? 'border-red-500 shadow-[0_0_40px_rgba(239,68,68,0.25)] animate-pulse'
+                : 'border-white/10 hover:border-white/30'
             }`}
-           >
-             <div className={`w-16 h-16 rounded-full ${isRecording ? 'bg-red-500' : 'bg-neutral-700'}`}></div>
-           </button>
-           <p className="mt-8 text-sm font-bold text-neutral-500 uppercase tracking-widest">
-             {isRecording ? 'Capturing Signal...' : 'Push to Log'}
-           </p>
+            aria-label={isRecording ? 'Stop recording' : 'Start recording'}
+          >
+            <div className={`w-16 h-16 rounded-full transition-all duration-300 ${isRecording ? 'bg-red-500' : 'bg-white/10 group-hover:bg-white/20'}`}></div>
+          </button>
+          <p className="mt-8 text-xs font-bold text-neutral-400 uppercase tracking-widest">
+            {isRecording ? 'Capturing Signal...' : 'Push to Log'}
+          </p>
         </div>
-        <div className="bg-neutral-900 border border-neutral-800 rounded-3xl p-8 flex flex-col overflow-hidden">
-          <h3 className="text-xs font-bold text-neutral-500 uppercase tracking-widest mb-4">Transcription History</h3>
-          <div className="flex-1 overflow-y-auto space-y-4">
-            {loading && <div className="text-blue-500 animate-pulse text-xs font-bold">DECODING SIGNAL...</div>}
+        <div className="bg-white/[0.02] border border-white/[0.06] rounded-3xl p-8 flex flex-col overflow-hidden shadow-xl backdrop-blur-2xl">
+          <h3 className="text-[11px] font-bold text-neutral-400 uppercase tracking-widest mb-4">Transcription History</h3>
+          <div className="flex-1 overflow-y-auto space-y-4 custom-scrollbar">
+            {loading && <div className="text-blue-400 animate-pulse text-xs font-bold">DECODING SIGNAL...</div>}
+            {logs.length === 0 && !loading && (
+              <div className="text-xs text-neutral-600 italic text-center py-8">No logs yet. Record to begin.</div>
+            )}
             {logs.map((log, i) => (
-              <div key={i} className="p-4 bg-black border border-neutral-800 rounded-xl text-sm text-neutral-300">
+              <div key={i} className="p-4 bg-white/[0.03] border border-white/[0.08] rounded-xl text-sm text-neutral-200 shadow-sm">
                 {log}
               </div>
             ))}
