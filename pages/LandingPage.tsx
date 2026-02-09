@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { motion, useScroll, useTransform, useInView, animate, AnimatePresence } from 'framer-motion';
+import { motion, useScroll, useTransform, useInView, AnimatePresence } from 'framer-motion';
 import { DEFRAG_MANIFEST } from '../constants/manifest';
 import LivingBackground from '../components/visuals/LivingBackground';
 import { initiateCheckout } from '../services/payment';
@@ -44,27 +44,6 @@ const GlowDivider: React.FC = () => (
     />
   </div>
 );
-
-/* ─── Animated Counter ──────────────────────────────────────── */
-const Counter: React.FC<{ target: number; suffix?: string; label: string; duration?: number }> = ({ target, suffix = '', label, duration = 2.2 }) => {
-  const ref = useRef<HTMLSpanElement>(null);
-  const inView = useInView(ref, { once: true, margin: '-60px' });
-  useEffect(() => {
-    if (!inView || !ref.current) return;
-    const ctrl = animate(0, target, {
-      duration,
-      ease: [0.22, 1, 0.36, 1],
-      onUpdate: (v) => { if (ref.current) ref.current.textContent = Math.floor(v).toLocaleString() + suffix; },
-    });
-    return () => ctrl.stop();
-  }, [inView, target, suffix, duration]);
-  return (
-    <div className="text-center">
-      <span ref={ref} className="block text-4xl md:text-5xl font-extrabold tracking-tight text-white">0{suffix}</span>
-      <span className="block text-[11px] font-medium uppercase tracking-[0.2em] text-neutral-500 mt-3">{label}</span>
-    </div>
-  );
-};
 
 /* ─── Horizontal Marquee Testimonials ───────────────────────── */
 const TESTIMONIALS = [
@@ -407,13 +386,20 @@ export const LandingPage = () => {
         </motion.div>
       </motion.section>
 
-      {/* ─── PROOF BAR — Animated Counters ────────────────── */}
-      <section className="relative z-10 py-16 border-y border-white/[0.04]">
-        <div className="max-w-4xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-10 px-6">
-          <Counter target={9} label="Energy Centers" />
-          <Counter target={64} label="Activation Points" />
-          <Counter target={6} label="Intelligence Layers" />
-          <Counter target={250} suffix="ms" label="Stability Response" />
+      {/* ─── PROOF BAR — Emotional Hooks ─────────────────── */}
+      <section className="relative z-10 py-14 border-y border-white/[0.04]">
+        <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-6 md:gap-0 px-6">
+          {[
+            { hook: '"Why do I keep doing this?"', answer: 'Answered.' },
+            { hook: 'Relationships mapped.', answer: 'Not guessed.' },
+            { hook: 'Your patterns —', answer: 'finally visible.' },
+            { hook: '30 seconds.', answer: 'Your first blueprint.' },
+          ].map((item, i) => (
+            <div key={i} className={`text-center px-4 ${i > 0 ? 'md:border-l md:border-white/[0.04]' : ''}`}>
+              <p className="text-[14px] text-neutral-500 italic">{item.hook}</p>
+              <p className="text-[14px] text-white/80 font-semibold mt-1">{item.answer}</p>
+            </div>
+          ))}
         </div>
       </section>
 
@@ -430,14 +416,17 @@ export const LandingPage = () => {
           <motion.h2 variants={fadeUp} custom={1} className="text-3xl md:text-[2.75rem] font-bold mt-5 tracking-tight leading-tight">
             You're not broken.<br />You're <span className="bg-gradient-to-r from-white via-neutral-400 to-neutral-300 bg-clip-text text-transparent">fragmented.</span>
           </motion.h2>
-          <motion.p variants={fadeUp} custom={2} className="text-neutral-400 mt-8 text-base md:text-lg leading-relaxed max-w-2xl mx-auto">
-            The same arguments. The same shutdowns. The same invisible friction you can't name — not to your partner, not to your therapist, not even to yourself.
+          <motion.p variants={fadeUp} custom={2} className="text-neutral-500 mt-8 text-base md:text-lg leading-relaxed max-w-2xl mx-auto">
+            The same arguments. The same shutdowns.<br />
+            <span className="text-neutral-300 font-medium">The same invisible friction you can't name</span> —<br className="hidden md:block" />
+            not to your partner, not to your therapist, not even to yourself.
           </motion.p>
-          <motion.p variants={fadeUp} custom={3} className="text-neutral-400 mt-6 text-base md:text-lg leading-relaxed max-w-2xl mx-auto">
-            DEFRAG doesn't fix you. It <em className="text-white/80 not-italic font-medium">defragments</em> the noise — so you can finally see how you're built, and why the friction keeps showing up.
+          <motion.p variants={fadeUp} custom={3} className="text-neutral-400 mt-8 text-base md:text-lg leading-relaxed max-w-xl mx-auto pl-6 md:pl-10 border-l border-white/[0.06] text-left">
+            DEFRAG doesn't fix you. It <em className="text-white/80 not-italic font-medium">defragments</em> the noise — so you can finally see <strong className="text-white/70 font-semibold">how you're built</strong>, and why the friction keeps showing up.
           </motion.p>
-          <motion.p variants={fadeUp} custom={4} className="text-white font-semibold mt-6 text-lg md:text-xl">
-            We don't add features. We remove friction. Clarity is what remains.
+          <motion.p variants={fadeUp} custom={4} className="text-white/90 font-semibold mt-8 text-lg md:text-xl tracking-tight">
+            We don't add features. We remove friction.<br />
+            <span className="text-neutral-400 font-normal text-base italic">Clarity is what remains.</span>
           </motion.p>
         </motion.div>
       </section>
@@ -498,7 +487,8 @@ export const LandingPage = () => {
             <span className="text-[10px] font-semibold uppercase tracking-[0.25em] text-neutral-500">Three Pillars</span>
             <h2 className="text-3xl md:text-[2.75rem] font-bold mt-5 tracking-tight leading-tight">Signal. Structure. Pattern.</h2>
             <p className="text-neutral-400 mt-6 text-base md:text-lg leading-relaxed max-w-2xl mx-auto">
-              Three tools working together. Each reads a different part of how you operate — then combines them into one clear picture.
+              Three tools working together.<br />
+              Each reads a <strong className="text-white/70 font-semibold">different part of how you operate</strong> — then combines them into <em className="text-white/60 italic">one clear picture.</em>
             </p>
           </motion.div>
 
@@ -543,7 +533,8 @@ export const LandingPage = () => {
             <span className="text-[10px] font-semibold uppercase tracking-[0.25em] text-neutral-500">How It Works</span>
             <h2 className="text-3xl md:text-[2.75rem] font-bold mt-5 tracking-tight leading-tight">Four layers. One system.</h2>
             <p className="text-neutral-400 mt-6 text-base md:text-lg leading-relaxed max-w-2xl mx-auto">
-              Four tools that work together to show you how you're wired, where you get stuck, and what to do about it.
+              Four tools that work together to show you<br />
+              <strong className="text-white/70 font-semibold">how you're wired</strong>, where you get stuck, and <em className="text-white/60 italic">what to do about it.</em>
             </p>
           </motion.div>
 
@@ -659,7 +650,9 @@ export const LandingPage = () => {
                 The Stability Meter.
               </h2>
               <p className="text-neutral-400 mt-6 text-base leading-relaxed">
-                Real-time emotional safety monitoring. DEFRAG reads your state and adjusts how it responds — direct when you're steady, gentle when you're not.
+                <strong className="text-white/70 font-semibold">Real-time emotional safety monitoring.</strong><br />
+                DEFRAG reads your state and adjusts how it responds —<br />
+                <em className="text-white/60 italic">direct when you're steady, gentle when you're not.</em>
               </p>
               <div className="mt-8 space-y-4">
                 {[
@@ -700,7 +693,9 @@ export const LandingPage = () => {
             Your complete<br /><span className="bg-gradient-to-r from-white via-neutral-400 to-neutral-300 bg-clip-text text-transparent">system map.</span>
           </motion.h2>
           <motion.p variants={fadeUp} custom={2} className="text-neutral-400 mt-8 text-base md:text-lg leading-relaxed max-w-2xl mx-auto">
-            Your personality, your relationships, and your recurring patterns — combined into one clear picture. Not a label. A detailed, living map of how you actually work.
+            Your personality. Your relationships. Your recurring patterns.<br />
+            <span className="text-neutral-300 font-medium">Combined into one clear picture.</span><br />
+            <span className="mt-3 block text-[15px] italic text-neutral-500">Not a label. A detailed, living map of how you actually work.</span>
           </motion.p>
 
           {/* Enhanced orbiting visual */}
@@ -802,7 +797,8 @@ export const LandingPage = () => {
             Your data never leaves your device.
           </motion.h3>
           <motion.p variants={fadeUp} custom={2} className="text-neutral-500 mt-4 text-sm leading-relaxed max-w-lg mx-auto">
-            No cloud storage. No third-party analytics. All blueprints, echo logs, and system maps persist in your browser's local storage — encrypted on your machine, accessible only to you.
+            No cloud storage. No third-party analytics.<br />
+            <span className="text-neutral-400 font-medium">Everything stays on your device</span> — encrypted, local, <em className="italic text-neutral-300">yours alone.</em>
           </motion.p>
           {/* Trust indicators */}
           <motion.div variants={fadeUp} custom={3} className="mt-10 flex flex-wrap justify-center gap-6">
@@ -846,7 +842,8 @@ export const LandingPage = () => {
             <span className="text-[10px] font-semibold uppercase tracking-[0.25em] text-neutral-500">Instant Diagnostic</span>
             <h2 className="text-3xl md:text-[2.75rem] font-bold mt-5 tracking-tight leading-tight">See your stability score.<br />Right now.</h2>
             <p className="text-neutral-400 mt-6 text-base leading-relaxed max-w-xl mx-auto">
-              Enter your birth data and get an instant reading from the DEFRAG engine. No sign-up required.
+              Enter your birth data. Get an <strong className="text-white/70 font-semibold">instant reading</strong> from the DEFRAG engine.<br />
+              <span className="text-sm italic text-neutral-500">No sign-up required.</span>
             </p>
           </motion.div>
 
@@ -885,7 +882,7 @@ export const LandingPage = () => {
           <motion.div variants={fadeUp} custom={0} className="text-center mb-16">
             <span className="text-[10px] font-semibold uppercase tracking-[0.25em] text-neutral-500">Access</span>
             <h2 className="text-3xl md:text-[2.75rem] font-bold mt-4 tracking-tight">Choose your depth.</h2>
-            <p className="text-neutral-500 mt-4 text-sm max-w-lg mx-auto">One blueprint, or continuous clarity. No trials. No data harvesting.</p>
+            <p className="text-neutral-500 mt-4 text-sm max-w-lg mx-auto">One blueprint, or <strong className="text-neutral-400 font-semibold">continuous clarity</strong>.<br /><span className="italic">No trials. No data harvesting.</span></p>
           </motion.div>
           <motion.div variants={stagger} className="grid md:grid-cols-3 gap-5">
             <PricingTier tier={tiers.SINGLE} label="Free" onSelect={() => navigate('/onboarding')} />
@@ -909,7 +906,8 @@ export const LandingPage = () => {
             Stop guessing.<br /><span className="bg-gradient-to-r from-white via-neutral-400 to-neutral-300 bg-clip-text text-transparent">Start seeing.</span>
           </motion.h2>
           <motion.p variants={fadeUp} custom={1} className="text-neutral-400 mt-6 text-base md:text-lg leading-relaxed max-w-xl mx-auto">
-            Your free blueprint takes 30 seconds to generate. No sign-up wall. No credit card. Just clarity.
+            Your free blueprint takes <strong className="text-white/70 font-semibold">30 seconds</strong> to generate.<br />
+            <span className="text-sm text-neutral-500 italic">No sign-up wall. No credit card. Just clarity.</span>
           </motion.p>
           <motion.div variants={fadeUp} custom={2} className="mt-10">
             <Link to="/login" className="group relative inline-flex items-center justify-center px-12 py-5 rounded-2xl bg-white text-black font-semibold text-[15px] overflow-hidden transition-all duration-500 hover:shadow-[0_0_80px_-5px_rgba(255,255,255,0.25)] hover:-translate-y-0.5">
