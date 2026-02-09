@@ -13,6 +13,7 @@ import { loadEntries, analyzeEcho, EchoReport } from './echoEngine';
 import { calculateSEDA } from './sedaCalculator';
 import { calculateTransits, TransitReport } from './engine';
 import { processBirthData } from './engine';
+import { hydrateMemory, memoryToPromptBlock } from './globalMemory';
 
 // ── Types ───────────────────────────────────────────────────
 
@@ -92,47 +93,24 @@ export const assembleGlobalContext = (): GlobalContext => {
  * the user's current state.
  */
 export const contextToPromptBlock = (ctx: GlobalContext): string => {
+  // Primary: use the global memory system for persistent state
+  const memory = hydrateMemory();
+  const memoryBlock = memoryToPromptBlock(memory);
+
+  // Supplement with live transit weather (computed fresh, not persisted)
   const sections: string[] = [];
 
-  // Blueprint summary
-  if (ctx.blueprint) {
-    sections.push(`[CURRENT BLUEPRINT]
-Type: ${ctx.blueprint.type}
-Strategy: ${ctx.blueprint.strategy}
-Authority: ${ctx.blueprint.authority}
-Active Gates: ${ctx.blueprint.personality.gates.join(', ')}`);
+  if (memoryBlock) {
+    sections.push(memoryBlock);
   }
 
-  // Echo patterns
-  if (ctx.echo && ctx.echo.loops.length > 0) {
-    const loopSummary = ctx.echo.loops
-      .slice(0, 3)
-      .map(l => `- ${l.theme} (appeared ${l.frequency}x in last ${ctx.echo!.windowDays} days, drag: ${l.systemDrag}/100)`)
-      .join('\n');
-    sections.push(`[ECHO PATTERNS — Active Loops]
-Status: ${ctx.echo.status}
-Overall System Drag: ${ctx.echo.overallDrag}/100
-${loopSummary}
-${ctx.echo.dominantLoop ? `Dominant: "${ctx.echo.dominantLoop.theme}" — ${ctx.echo.dominantLoop.description}` : ''}`);
-  }
-
-  // SEDA state
-  if (ctx.seda) {
-    sections.push(`[SEDA STATE]
-Stability Score: ${ctx.seda.score}/100
-Status: ${ctx.seda.status}
-Tone Directive: ${ctx.seda.toneDirective}
-${ctx.seda.toneDirective === 'HOLDING_SPACE' ? '⚠ User is under structural load. Slow down. Validate first.' : ''}
-${ctx.seda.toneDirective === 'CRISIS_MODE' ? '🛑 CRISIS DETECTED. Pause analysis. Ground the user.' : ''}`);
-  }
-
-  // Transit weather
+  // Transit weather (live-computed, supplements persistent memory)
   if (ctx.transits && ctx.transits.aspects.length > 0) {
     const topAspects = ctx.transits.aspects
       .slice(0, 5)
       .map(a => `- ${a.transitPlanet} ${a.aspect} natal ${a.natalPlanet} (orb ${a.orb}°)`)
       .join('\n');
-    sections.push(`[CURRENT WEATHER — Transit Overlay]
+    sections.push(`[CURRENT WEATHER — Live Transit Overlay]
 ${ctx.transits.weatherSummary}
 Active Gates: ${ctx.transits.activatedGates.join(', ')}
 Top Aspects:
@@ -140,7 +118,7 @@ ${topAspects}`);
   }
 
   return sections.length > 0
-    ? `\n[DEFRAG GLOBAL CONTEXT — Unified Memory]\n${sections.join('\n\n')}\n`
+    ? sections.join('\n\n')
     : '';
 };
 

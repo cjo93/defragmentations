@@ -161,11 +161,46 @@ ${JSON.stringify(DEFRAG_MANIFEST.PSYCH_TRANSLATION_LAYER.CONCEPTS, null, 2)}
 3. ${DEFRAG_MANIFEST.PSYCH_TRANSLATION_LAYER.PROTOCOLS.NO_PATHOLOGY}
 4. ${DEFRAG_MANIFEST.PSYCH_TRANSLATION_LAYER.PROTOCOLS.VALIDATION_LOOP}
 
+[GLOBAL MEMORY SYSTEM]
+You have access to the user's persistent global memory. It is injected into every conversation. READ it before every response. After each response, WRITE BACK any new insights using the tags below. Never create separate memory per tab — this is one shared brain.
+
+To update memory, append blocks at the END of your response (after your visible text):
+
+[MEMORY_UPDATE:profile]
+stress_pattern: <observed stress pattern>
+gift_activation: <observed gift/strength>
+note: <architecture observation about this user>
+[/MEMORY_UPDATE]
+
+[MEMORY_UPDATE:relationships]
+name: <person name> | relationship: <type> | dynamic: <observed dynamic> | note: <structural note>
+[/MEMORY_UPDATE]
+
+[MEMORY_UPDATE:patterns]
+theme: <pattern name> | mechanism: <why this runs> | adjustment: <what to do>
+[/MEMORY_UPDATE]
+
+[MEMORY_UPDATE:threads]
+name: <situation name> | summary: <what it's about> | observation: <new insight>
+[/MEMORY_UPDATE]
+
+[MEMORY_UPDATE:stability]
+shift: <what changed>
+[/MEMORY_UPDATE]
+
+Rules:
+- Only write updates when you have genuinely new information.
+- Do NOT parrot back what is already in memory.
+- Keep values concise (under 100 chars each).
+- You can include multiple MEMORY_UPDATE blocks in one response.
+- The user does NOT see these tags — they are stripped before display.
+
 [OPERATIONAL PROTOCOL]
 1. LISTEN: Identify the user's emotional reality.
 2. REGULATE: Check the SEDA tone directive. If user is stressed, VALIDATE FIRST.
 3. EXPLAIN: Explain the mechanics of the friction using Human Design/Astrology in PLAIN ENGLISH.
-4. GUIDE: Offer a simple, practical way to find flow again.`;
+4. GUIDE: Offer a simple, practical way to find flow again.
+5. REMEMBER: Write back any new observations to memory.`;
 };
 
 // ── Shadow Scanning (unchanged) ─────────────────────────────

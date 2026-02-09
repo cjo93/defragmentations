@@ -3,9 +3,9 @@ import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { chatWithModel, getSystemInstruction } from '../services/aiService';
-import { calculateSEDA } from '../services/sedaCalculator';
 import { assembleGlobalContext, contextToPromptBlock, parseUICommands, UICommand } from '../services/globalContext';
-import { Message, UserProfile } from '../types';
+import { loadGlobalMemory, hydrateMemory, parseMemoryUpdates, applyMemoryUpdates, processFileUpload, addUploadToMemory, buildUploadPrompt } from '../services/globalMemory';
+import { Message, UserProfile, UploadedAsset } from '../types';
 import { ChatCanvas } from './ChatCanvas';
 
 interface ChatbotProps {
@@ -54,7 +54,9 @@ export const Chatbot: React.FC<ChatbotProps> = ({ user }) => {
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const [contextActive, setContextActive] = useState(false);
+  const [pendingUpload, setPendingUpload] = useState<UploadedAsset | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Persistent storage unique to each user profile
   useEffect(() => {
@@ -76,8 +78,8 @@ export const Chatbot: React.FC<ChatbotProps> = ({ user }) => {
     scrollRef.current?.scrollTo(0, scrollRef.current.scrollHeight);
 
     // Check if unified memory is active
-    const ctx = assembleGlobalContext();
-    setContextActive(!!(ctx.blueprint || (ctx.echo && ctx.echo.loops.length > 0) || ctx.transits));
+    const memory = loadGlobalMemory();
+    setContextActive(!!(memory.profile.type || memory.relationships.length > 0 || memory.patterns.length > 0));
   }, [messages, user]);
 
   /* ─── Legacy UI Bridge (kept for backward compat) ────────── */
@@ -101,13 +103,23 @@ export const Chatbot: React.FC<ChatbotProps> = ({ user }) => {
     const msgContent = overrideInput || input;
     if (!msgContent.trim() || loading) return;
     
-    const userMsg: Message = { role: 'user', content: msgContent };
+    const currentUpload = pendingUpload;
+    const userMsg: Message = { role: 'user', content: msgContent, attachment: currentUpload || undefined };
     setMessages(prev => [...prev, userMsg]);
     setInput('');
+    setPendingUpload(null);
     setLoading(true);
 
     try {
-      // Assemble global context for unified memory
+      // Hydrate global memory (pulls from all sources)
+      let memory = hydrateMemory();
+
+      // If there's an upload, add it to memory
+      if (currentUpload) {
+        memory = addUploadToMemory(memory, currentUpload);
+      }
+
+      // Assemble global context for transit weather
       const globalCtx = assembleGlobalContext();
       const contextBlock = contextToPromptBlock(globalCtx);
 
@@ -125,25 +137,38 @@ export const Chatbot: React.FC<ChatbotProps> = ({ user }) => {
         contextEnrichment += `\n[TRIANGULATION ALERT]\nUser is describing a relational dynamic. Analyze for structural friction patterns. Explain the dynamic clearly.\n`;
       }
       if (intents.includes('PATTERN')) {
-        contextEnrichment += `\n[PATTERN ALERT]\nUser describes a recurring loop. Reference their patterns from Global Context. Use [CANVAS:PATTERN] to show tracked patterns.\n`;
+        contextEnrichment += `\n[PATTERN ALERT]\nUser describes a recurring loop. Reference their patterns from Global Memory. Use [CANVAS:PATTERN] to show tracked patterns.\n`;
       }
       if (intents.includes('TRANSIT')) {
         contextEnrichment += `\n[TRANSIT REQUEST]\nUser asking about current energy. Reference Current Weather from Global Context.\n`;
       }
 
-      // Build system prompt with canvas instructions
+      // Build the user message — augment with upload context if present
+      const userMessageForAI = currentUpload
+        ? buildUploadPrompt(currentUpload, msgContent)
+        : msgContent;
+
+      // Build system prompt with canvas instructions + full memory
       const baseInstruction = getSystemInstruction(user, 'PUCK');
       const fullPrompt = `${baseInstruction}${contextBlock}${contextEnrichment}${CANVAS_INSTRUCTIONS}`;
 
       const responseText = await chatWithModel({
         systemPrompt: fullPrompt,
-        userMessage: msgContent,
+        userMessage: userMessageForAI,
         maxTokens: 2048,
         temperature: 0.7,
       });
 
-      // Parse canvas + legacy commands from response
-      const { cleanText, commands, canvas } = parseUICommands(responseText || '');
+      // Parse memory updates from AI response
+      const { cleanText: textAfterMemory, updates: memoryUpdates } = parseMemoryUpdates(responseText || '');
+      
+      // Apply memory updates if any
+      if (memoryUpdates.length > 0) {
+        memory = applyMemoryUpdates(memory, memoryUpdates);
+      }
+
+      // Parse canvas + legacy commands from cleaned response
+      const { cleanText, commands, canvas } = parseUICommands(textAfterMemory);
 
       const aiMsg: Message = {
         role: 'model',
@@ -162,6 +187,46 @@ export const Chatbot: React.FC<ChatbotProps> = ({ user }) => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type
+    const validTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'text/plain', 'application/pdf'];
+    const validExtensions = ['.txt', '.md', '.csv', '.json'];
+    const isValidType = validTypes.includes(file.type) || validExtensions.some(ext => file.name.endsWith(ext));
+    
+    if (!isValidType) {
+      setMessages(prev => [...prev, {
+        role: 'model',
+        content: 'Supported formats: images (JPEG, PNG, WebP), text files (.txt, .md), and documents. Try again with a supported file.'
+      }]);
+      return;
+    }
+
+    // Size cap: 5MB
+    if (file.size > 5 * 1024 * 1024) {
+      setMessages(prev => [...prev, {
+        role: 'model',
+        content: 'File too large. Keep uploads under 5MB for now.'
+      }]);
+      return;
+    }
+
+    try {
+      const asset = await processFileUpload(file);
+      setPendingUpload(asset);
+    } catch {
+      setMessages(prev => [...prev, {
+        role: 'model',
+        content: 'Failed to process that file. Try again.'
+      }]);
+    }
+
+    // Reset input
+    if (fileInputRef.current) fileInputRef.current.value = '';
   };
 
   const handleRecalibrate = () => {
@@ -260,6 +325,20 @@ export const Chatbot: React.FC<ChatbotProps> = ({ user }) => {
               className={`flex flex-col ${m.role === 'user' ? 'items-end' : 'items-start'}`}
             >
               <div className="max-w-[90%] md:max-w-[75%] space-y-2">
+                {/* Upload attachment indicator */}
+                {m.attachment && (
+                  <div className={`flex items-center gap-2 px-4 py-2 rounded-2xl text-[11px] ${
+                    m.role === 'user' ? 'bg-neutral-200 text-neutral-600' : 'bg-white/[0.04] text-neutral-500'
+                  }`}>
+                    {m.attachment.type === 'image' ? (
+                      <svg className="w-3.5 h-3.5 text-blue-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                    ) : (
+                      <svg className="w-3.5 h-3.5 text-amber-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                    )}
+                    <span className="truncate">{m.attachment.filename}</span>
+                  </div>
+                )}
+                
                 <div className={`p-6 rounded-[28px] text-[13px] leading-relaxed shadow-sm transition-all ${
                   m.role === 'user' ? 'bg-white text-black font-medium' : 'bg-neutral-800/50 text-neutral-200 border border-neutral-700/50'
                 }`}>
@@ -323,12 +402,61 @@ export const Chatbot: React.FC<ChatbotProps> = ({ user }) => {
         </div>
         
         <div className="p-6 md:p-8 border-t border-neutral-800/50 bg-black/40 backdrop-blur-md">
+          {/* Pending upload indicator */}
+          <AnimatePresence>
+            {pendingUpload && (
+              <motion.div
+                initial={{ opacity: 0, y: 8, height: 0 }}
+                animate={{ opacity: 1, y: 0, height: 'auto' }}
+                exit={{ opacity: 0, y: -8, height: 0 }}
+                className="max-w-4xl mx-auto mb-3"
+              >
+                <div className="flex items-center gap-3 px-4 py-2.5 rounded-2xl bg-white/[0.04] border border-white/[0.08]">
+                  <div className="w-8 h-8 rounded-xl bg-white/[0.06] flex items-center justify-center">
+                    {pendingUpload.type === 'image' ? (
+                      <svg className="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                    ) : (
+                      <svg className="w-4 h-4 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                    )}
+                  </div>
+                  <span className="text-[11px] text-neutral-400 truncate flex-1">{pendingUpload.filename}</span>
+                  <button
+                    onClick={() => setPendingUpload(null)}
+                    className="p-1 rounded-lg hover:bg-white/[0.06] text-neutral-500 hover:text-neutral-300 transition-all"
+                  >
+                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+                  </button>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+          
           <div className="flex gap-4 max-w-4xl mx-auto">
+            {/* Hidden file input */}
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*,.txt,.md,.csv,.json,.pdf"
+              onChange={handleFileUpload}
+              className="hidden"
+            />
+            
+            {/* Upload button */}
+            <button
+              onClick={() => fileInputRef.current?.click()}
+              disabled={loading}
+              className="w-14 h-14 bg-white/[0.04] border border-white/[0.08] text-neutral-400 flex items-center justify-center rounded-full hover:bg-white/[0.08] hover:text-white active:scale-95 transition-all disabled:opacity-20 disabled:pointer-events-none"
+              aria-label="Upload file"
+              title="Upload photo or document"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" /></svg>
+            </button>
+            
             <input 
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleSend()}
-              placeholder="What's on your mind..."
+              placeholder={pendingUpload ? `Describe what you uploaded...` : "What's on your mind..."}
               className="flex-1 bg-neutral-800/50 border border-neutral-700/50 rounded-[28px] px-8 py-5 text-[13px] focus:border-white/40 focus:bg-neutral-800 outline-none transition-all placeholder:text-neutral-600"
               aria-label="Message input"
             />
