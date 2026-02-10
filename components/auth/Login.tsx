@@ -55,6 +55,9 @@ export const Login = () => {
       
       setTimeout(() => {
         const hasData = localStorage.getItem('defrag_user_data');
+        if (hasData) {
+          localStorage.setItem('defrag_onboarding_complete', 'true');
+        }
         navigate(hasData ? '/dashboard' : '/onboarding');
       }, 800);
     }, 1500);

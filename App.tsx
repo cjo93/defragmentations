@@ -31,6 +31,7 @@ const IntelligenceHub = lazy(() => import('./components/IntelligenceHub').then(m
 const SafePlace = lazy(() => import('./components/SafePlace').then(m => ({ default: m.SafePlace })));
 const Signal = lazy(() => import('./components/Signal').then(m => ({ default: m.Signal })));
 const Echo = lazy(() => import('./components/Echo').then(m => ({ default: m.Echo })));
+const ConflictRoom = lazy(() => import('./components/ConflictRoom').then(m => ({ default: m.ConflictRoom })));
 
 // Suspense fallback
 const LoadingFallback = () => (
@@ -79,6 +80,7 @@ const App = () => {
               <Route path="/safe-place" element={<Suspense fallback={<LoadingFallback />}><SafePlace /></Suspense>} />
               <Route path="/signal" element={<Suspense fallback={<LoadingFallback />}><Signal /></Suspense>} />
               <Route path="/echo" element={<Suspense fallback={<LoadingFallback />}><Echo /></Suspense>} />
+              <Route path="/conflict-room" element={<Suspense fallback={<LoadingFallback />}><ConflictRoom /></Suspense>} />
             </Route>
 
             <Route path="*" element={<NotFoundPage />} />

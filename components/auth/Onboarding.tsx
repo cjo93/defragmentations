@@ -31,13 +31,14 @@ export const Onboarding = () => {
         setBlueprint(bp);
         localStorage.setItem('defrag_user_data', JSON.stringify(bp));
         localStorage.setItem('defrag_onboarding_complete', 'true');
-        setTimeout(() => navigate('/dashboard'), 2000);
+        localStorage.setItem('defrag_auth_token', 'session_active');
+        setTimeout(() => navigate('/dashboard'), 1000);
       } catch (error) {
         console.error("Blueprint generation failed", error);
         setIsProcessing(false);
         setStep(2);
       }
-    }, 2500);
+    }, 1000);
   };
 
   return (

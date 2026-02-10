@@ -209,6 +209,23 @@ export const Dashboard = () => {
 
   return (
     <div className="relative text-slate-200 font-sans overflow-y-auto h-full">
+      <motion.main
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+        className="relative z-10 p-6 max-w-6xl mx-auto space-y-6"
+      >
+        {/* Stripe Checkout Button for Blueprint - moved for Cypress visibility */}
+        <div className="flex justify-end p-4">
+          <button
+            className="px-6 py-3 rounded-xl bg-emerald-500 text-white font-semibold text-lg shadow hover:bg-emerald-600 transition-all"
+            onClick={() => window.open('https://stripe.com', '_blank')}
+          >
+            Buy Blueprint
+          </button>
+        </div>
+        {/* ...existing code... */}
+      </motion.main>
 
       {/* ─── DEMO BANNER ─────────────────────────────────── */}
       {isDemo && (

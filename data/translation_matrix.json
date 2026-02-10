@@ -1,0 +1,52 @@
+{
+  "gate_6": {
+    "title": "The Conflict Trigger",
+    "problem": "You use emotional friction to feel connected to others.",
+    "fix": "Ask for attention directly instead of picking a fight."
+  },
+  "gate_36": {
+    "title": "Emotional Chaos",
+    "problem": "You create drama when you feel stuck or bored.",
+    "fix": "Pause before reacting. Name your feeling out loud."
+  },
+  "mars_aries": {
+    "title": "Quick to Act",
+    "problem": "You jump into action before thinking it through.",
+    "fix": "Count to five before responding in conflict."
+  },
+  "projector": {
+    "title": "Needs Recognition",
+    "problem": "You get frustrated when you aren't invited to share your ideas.",
+    "fix": "Wait for someone to ask before giving advice."
+  },
+  "split_definition": {
+    "title": "Feels Disconnected",
+    "problem": "You often feel like something is missing in relationships.",
+    "fix": "Tell others what you need instead of waiting for them to guess."
+  },
+  "gene_key_6": {
+    "title": "Shadow of Conflict",
+    "problem": "You avoid or escalate arguments instead of resolving them.",
+    "fix": "State your needs calmly and listen before reacting."
+  },
+  "triangle": {
+    "title": "Pulled Into Drama",
+    "problem": "You get caught in the middle of other people's problems.",
+    "fix": "Step back and let them resolve it themselves."
+  },
+  "cutoff": {
+    "title": "Emotional Shutdown",
+    "problem": "You withdraw when things get tense.",
+    "fix": "Tell someone you need space, but will return to talk later."
+  },
+  "abandonment_wound": {
+    "title": "Fear of Being Left",
+    "problem": "You worry people will leave you, so you cling or push away.",
+    "fix": "Remind yourself that needing space doesn't mean losing love."
+  },
+  "needs_solitude": {
+    "title": "Needs Alone Time",
+    "problem": "You get overwhelmed if you don't recharge by yourself.",
+    "fix": "Schedule regular breaks to be alone, even for a few minutes."
+  }
+}

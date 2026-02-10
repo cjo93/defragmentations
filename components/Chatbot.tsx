@@ -572,6 +572,7 @@ export const Chatbot: React.FC<ChatbotProps> = ({ user }) => {
                  </p>
                  <div className="grid grid-cols-1 gap-2 text-left">
                    {[
+                     'Ask about your design',
                      'Show me my blueprint',
                      'Why do I keep having the same argument?',
                      "What's influencing my energy today?",
