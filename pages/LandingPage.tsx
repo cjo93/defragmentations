@@ -362,10 +362,10 @@ export const LandingPage = () => {
   const [expandedBento, setExpandedBento] = useState<number | null>(null);
 
   // Scroll snap container for desktop
-  // Fix: Remove conflicting h-screen/min-h-screen/overflow-auto, ensure snap works, and add fallback for missing tiers
+  // Snap scroll: vertical, mandatory, no overflow-auto, min-h-screen for full viewport
   const hasTiers = tiers && tiers.SINGLE && tiers.BASIC && tiers.PRO;
   return (
-    <div className="relative min-h-[100vh] bg-[#050505] text-white overflow-x-hidden font-sans selection:bg-white/20 selection:text-white snap-y snap-mandatory">
+    <div className="relative min-h-screen bg-[#050505] text-white overflow-x-hidden font-sans selection:bg-white/20 selection:text-white snap-y snap-mandatory">
       <LivingBackground mode="calm" />
       <ScrollProgress />
 
@@ -394,27 +394,30 @@ export const LandingPage = () => {
 
       {/* ─── 01 // HERO (Refactored) ───────────────────── */}
       <motion.section style={{ opacity: heroOpacity, scale: heroScale }} className="snap-start relative z-10 flex flex-col items-center justify-center min-h-[90vh] text-center px-5 pt-32 pb-20">
-        {/* Parallax glow effect (kept subtle) */}
+        {/* Subtle white glow, no green */}
         <motion.div
-          className="absolute top-1/2 left-1/2 w-[600px] h-[600px] rounded-full bg-gradient-to-r from-emerald-400/10 via-white/10 to-emerald-500/10 blur-[160px] pointer-events-none"
+          className="absolute top-1/2 left-1/2 w-[600px] h-[600px] rounded-full bg-white/[0.04] blur-[160px] pointer-events-none"
           animate={{ opacity: [0.7, 1, 0.7] }}
           transition={{ duration: 6, repeat: Infinity }}
         />
         <motion.div initial="hidden" animate="visible" variants={stagger} className="max-w-3xl">
-          <motion.h1 variants={fadeUp} custom={1} className="text-[clamp(2.5rem,6vw,4.5rem)] font-extrabold leading-[1.08] tracking-[-0.04em] mb-8">
+          <motion.h1 variants={fadeUp} custom={1} className="text-[clamp(2.2rem,6vw,4rem)] font-extrabold leading-[1.12] tracking-[-0.04em] mb-8">
             <motion.span variants={lineReveal} custom={0} className="block text-white">
-              Your friction is structural.
+              Structural friction is not personal.
             </motion.span>
-            <motion.span variants={lineReveal} custom={1} className="block bg-gradient-to-r from-white via-emerald-300 to-emerald-500 bg-clip-text text-transparent">
-              DEFRAG maps your mechanics.
+            <motion.span variants={lineReveal} custom={1} className="block text-white/80">
+              DEFRAG reveals your blueprint.
             </motion.span>
           </motion.h1>
-          <motion.p variants={fadeUp} custom={2} className="text-[17px] text-neutral-400 mb-10">
-            See your real design. End confusion. Upgrade your life.
+          <motion.p variants={fadeUp} custom={2} className="text-[16px] text-neutral-400 mb-8">
+            You are not broken. You are built a certain way. The manual you never received is now visible.
           </motion.p>
-          <motion.div variants={fadeUp} custom={3} className="flex flex-col items-center gap-6">
-            <Link to="/login" className="group relative inline-flex items-center justify-center px-10 py-5 rounded-2xl bg-white text-black font-semibold text-[16px] shadow-lg hover:shadow-[0_0_80px_-5px_rgba(255,255,255,0.25)] hover:-translate-y-0.5 transition-all duration-500">
-              <span className="relative z-10">See Your Blueprint — Free</span>
+          <motion.p variants={fadeUp} custom={3} className="text-[15px] text-neutral-500 mb-10">
+            See your architecture. End confusion. Upgrade your life.
+          </motion.p>
+          <motion.div variants={fadeUp} custom={4} className="flex flex-col items-center gap-6">
+            <Link to="/login" className="group relative inline-flex items-center justify-center px-10 py-5 rounded-2xl bg-white text-black font-semibold text-[16px] shadow-lg hover:shadow-[0_0_60px_-5px_rgba(255,255,255,0.15)] hover:-translate-y-0.5 transition-all duration-500">
+              <span className="relative z-10">Initialize System Map</span>
             </Link>
             <span className="text-[12px] text-neutral-500">No sign-up. No guesswork. Zero data leaves your device.</span>
           </motion.div>
