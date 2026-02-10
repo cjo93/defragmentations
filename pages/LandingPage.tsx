@@ -362,8 +362,10 @@ export const LandingPage = () => {
   const [expandedBento, setExpandedBento] = useState<number | null>(null);
 
   // Scroll snap container for desktop
+  // Fix: Remove conflicting h-screen/min-h-screen/overflow-auto, ensure snap works, and add fallback for missing tiers
+  const hasTiers = tiers && tiers.SINGLE && tiers.BASIC && tiers.PRO;
   return (
-    <div className="relative min-h-screen bg-[#050505] text-white overflow-x-hidden font-sans selection:bg-white/20 selection:text-white snap-y snap-mandatory h-screen overflow-auto">
+    <div className="relative min-h-[100vh] bg-[#050505] text-white overflow-x-hidden font-sans selection:bg-white/20 selection:text-white snap-y snap-mandatory">
       <LivingBackground mode="calm" />
       <ScrollProgress />
 
@@ -1069,11 +1071,15 @@ export const LandingPage = () => {
             </motion.p>
             <motion.p variants={dramaPause} custom={2} className="text-neutral-500 mt-1 text-sm italic">No trials. No data harvesting.</motion.p>
           </motion.div>
-          <motion.div variants={stagger} className="grid md:grid-cols-3 gap-5">
-            <PricingTier tier={tiers.SINGLE} label="Free" onSelect={() => navigate('/onboarding')} />
-            <PricingTier tier={tiers.BASIC} label="Monthly" onSelect={() => initiateCheckout('BLUEPRINT')} featured />
-            <PricingTier tier={tiers.PRO} label="Full Access" onSelect={() => initiateCheckout('ORBIT')} />
-          </motion.div>
+          {hasTiers ? (
+            <motion.div variants={stagger} className="grid md:grid-cols-3 gap-5">
+              <PricingTier tier={tiers.SINGLE} label="Free" onSelect={() => navigate('/onboarding')} />
+              <PricingTier tier={tiers.BASIC} label="Monthly" onSelect={() => initiateCheckout('BLUEPRINT')} featured />
+              <PricingTier tier={tiers.PRO} label="Full Access" onSelect={() => initiateCheckout('ORBIT')} />
+            </motion.div>
+          ) : (
+            <div className="text-center text-red-400 font-semibold py-10">Pricing data unavailable. Please refresh or contact support.</div>
+          )}
           <motion.p variants={fadeUp} custom={4} className="text-center text-[11px] text-neutral-600 mt-10">Zero-knowledge architecture. Cancel anytime.</motion.p>
         </motion.div>
       </section>
