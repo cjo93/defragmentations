@@ -208,20 +208,20 @@ export const Dashboard = () => {
   const typeInfo = TYPE_INTROS[userData.type] || TYPE_INTROS['Generator'];
 
   return (
-    <div className="relative text-slate-200 font-sans overflow-y-auto h-full">
+     <div className="relative text-slate-200 font-sans overflow-y-auto h-full">
       <motion.main
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
         className="relative z-10 p-6 max-w-6xl mx-auto space-y-6"
       >
-        {/* Stripe Checkout Button for Blueprint - always visible for Cypress */}
+        {/* Blueprint Purchase CTA - subtle glow, no green */}
         <div className="flex justify-end p-4">
           <button
-            className="px-6 py-3 rounded-xl bg-emerald-500 text-white font-semibold text-lg shadow hover:bg-emerald-600 transition-all"
+            className="px-6 py-3 rounded-xl bg-white/[0.07] border border-white/[0.13] text-white font-semibold text-lg shadow-[0_0_40px_-10px_rgba(255,255,255,0.09)] hover:bg-white/[0.12] hover:border-white/[0.18] transition-all"
             onClick={() => window.open('https://stripe.com', '_blank')}
           >
-            Buy Blueprint
+            Access Full Blueprint
           </button>
         </div>
         {/* ...existing code... */}
@@ -232,17 +232,17 @@ export const Dashboard = () => {
         <motion.div
           initial={{ opacity: 0, y: -4 }}
           animate={{ opacity: 1, y: 0 }}
-          className="relative z-10 mx-6 mt-4 p-4 rounded-2xl bg-amber-500/5 border border-amber-500/15 flex items-center gap-4"
+          className="relative z-10 mx-6 mt-4 p-4 rounded-2xl bg-white/[0.04] border border-white/[0.09] flex items-center gap-4 shadow-[0_0_40px_-10px_rgba(255,255,255,0.09)]"
         >
-          <div className="w-8 h-8 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center shrink-0">
-            <svg className="w-4 h-4 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd"/></svg>
+          <div className="w-8 h-8 rounded-xl bg-white/[0.09] border border-white/[0.13] flex items-center justify-center shrink-0">
+            <svg className="w-4 h-4 text-white/70" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd"/></svg>
           </div>
           <div className="flex-1">
-            <p className="text-xs font-semibold text-amber-300/90">You're viewing demo data</p>
-            <p className="text-[10px] text-amber-400/50 mt-0.5">Complete onboarding to generate your real blueprint.</p>
+            <p className="text-xs font-semibold text-white/80">Demo mode: blueprint is simulated.</p>
+            <p className="text-[10px] text-white/60 mt-0.5">Complete onboarding to generate your real system map.</p>
           </div>
-          <button onClick={() => navigate('/onboarding')} className="px-4 py-2 rounded-xl bg-amber-400/10 border border-amber-400/20 text-[11px] font-semibold text-amber-300 hover:bg-amber-400/20 transition-all shrink-0">
-            Set Up Now
+          <button onClick={() => navigate('/onboarding')} className="px-4 py-2 rounded-xl bg-white/[0.09] border border-white/[0.13] text-[11px] font-semibold text-white/80 hover:bg-white/[0.13] transition-all shrink-0">
+            Begin Mapping
           </button>
         </motion.div>
       )}
@@ -322,31 +322,31 @@ export const Dashboard = () => {
             animate={{ opacity: 1 }}
             transition={{ delay: 0.3, duration: 0.6 }}
           >
-            <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-neutral-600 block mb-4 ml-1">Start Here</span>
+            <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-neutral-600 block mb-4 ml-1">Blueprint Operations</span>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
               <ActionCard
                 primary
                 icon={<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-white/60"><path d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" /></svg>}
-                title="Start Session"
-                desc="Chat with your blueprint. Ask it anything about your patterns."
+                title="Session: Structural Analysis"
+                desc="Run a diagnostic. See friction mapped to your architecture. No labels, just clarity."
                 onClick={() => navigate('/chatbot')}
               />
               <ActionCard
                 icon={<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-white/50"><path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" /></svg>}
-                title="Map a Relationship"
-                desc="See the structural dynamics between you and someone else."
+                title="Relationship Mapping"
+                desc="Map structural dynamics between you and another. See friction, not blame."
                 onClick={() => navigate('/orbit')}
               />
               <ActionCard
                 icon={<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-white/50"><path d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>}
                 title="Signal Filter"
-                desc="Separate real signals from noise in your thinking patterns."
+                desc="Distinguish real signals from noise. Identify structural stress points."
                 onClick={() => navigate('/signal')}
               />
               <ActionCard
                 icon={<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-white/50"><path d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m-4-8a3 3 0 016 0v1" /></svg>}
                 title="Voice Mode"
-                desc="Talk through what's on your mind. Hands-free, real-time."
+                desc="Speak your friction. The system maps it in real time. Hands-free, architect language."
                 onClick={() => navigate('/chatbot')}
               />
             </div>
