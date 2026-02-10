@@ -90,10 +90,9 @@ describe('DEFRAG User Flows', () => {
     cy.visit('/chatbot');
     cy.get('body').then($body => cy.log('CHATBOT HTML: ' + $body.html()));
     cy.contains('Ask about your design').should('be.visible');
-    // Export
-    cy.visit('/dashboard');
-    cy.get('body').then($body => cy.log('DASHBOARD HTML: ' + $body.html()));
-    cy.contains('Download Relationship User Manual').click();
+    // Export (Manual page)
+    cy.visit('/manual');
+    cy.get('body').then($body => cy.log('MANUAL HTML: ' + $body.html()));
     cy.contains('Download Relationship User Manual').should('be.visible');
     // Conflict Room
     cy.visit('/conflict-room');

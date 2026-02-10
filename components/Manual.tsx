@@ -253,10 +253,8 @@ export const Manual: React.FC<ManualProps> = ({ data: initialData }) => {
           >
             Map a relationship
           </button>
-          {/* ExportPDF button for Cypress test */}
+          {/* ExportPDF button for Cypress test - always visible */}
           <div className="ml-4">
-            {/* Download Relationship User Manual (PDF) button */}
-            <import path="./ExportPDF" />
             <ExportPDF />
           </div>
         </motion.div>
