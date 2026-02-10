@@ -361,8 +361,9 @@ export const LandingPage = () => {
   const [expandedPersona, setExpandedPersona] = useState<number | null>(null);
   const [expandedBento, setExpandedBento] = useState<number | null>(null);
 
+  // Scroll snap container for desktop
   return (
-    <div className="relative min-h-screen bg-[#050505] text-white overflow-x-hidden font-sans selection:bg-white/20 selection:text-white snap-container">
+    <div className="relative min-h-screen bg-[#050505] text-white overflow-x-hidden font-sans selection:bg-white/20 selection:text-white snap-y snap-mandatory h-screen overflow-auto">
       <LivingBackground mode="calm" />
       <ScrollProgress />
 
@@ -390,7 +391,14 @@ export const LandingPage = () => {
       </nav>
 
       {/* ─── 01 // HERO ──────────────────────────────────── */}
-      <motion.section style={{ opacity: heroOpacity, scale: heroScale }} className="snap-section relative z-10 flex flex-col items-center justify-center min-h-[100svh] text-center px-5 pt-20 md:pt-24">
+      <motion.section style={{ opacity: heroOpacity, scale: heroScale }} className="snap-start relative z-10 flex flex-col items-center justify-center min-h-[100svh] text-center px-5 pt-20 md:pt-24">
+        {/* Parallax glow effect */}
+        <motion.div
+          className="absolute top-1/2 left-1/2 w-[700px] h-[700px] rounded-full bg-gradient-to-r from-emerald-400/10 via-white/10 to-emerald-500/10 blur-[180px] pointer-events-none"
+          style={{ x: scrollYProgress ? scrollYProgress : 0, y: scrollYProgress ? scrollYProgress : 0 }}
+          animate={{ opacity: [0.7, 1, 0.7] }}
+          transition={{ duration: 6, repeat: Infinity }}
+        />
         {/* Atmospheric orbs */}
         <div className="absolute top-1/4 left-1/4 w-80 h-80 rounded-full bg-white/[0.01] blur-[120px] animate-breathe-slow pointer-events-none" />
         <div className="absolute bottom-1/3 right-1/5 w-56 h-56 rounded-full bg-white/[0.008] blur-[90px] animate-breathe pointer-events-none" />
@@ -446,6 +454,10 @@ export const LandingPage = () => {
               <Link to="/login" className="group relative inline-flex items-center justify-center px-10 py-5 rounded-2xl bg-white text-black font-semibold text-[15px] overflow-hidden transition-all duration-500 hover:shadow-[0_0_80px_-5px_rgba(255,255,255,0.25)] hover:-translate-y-0.5">
                 <span className="relative z-10">See Your Blueprint — Free</span>
                 <div className="absolute inset-0 bg-gradient-to-r from-white via-neutral-200 to-white bg-[length:200%_100%] opacity-0 group-hover:opacity-100 group-hover:animate-gradient-shift transition-opacity" />
+                {/* Glow effect */}
+                <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-32 bg-emerald-400/20 blur-[40px] opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
+                {/* Tooltip */}
+                <span className="absolute top-full left-1/2 -translate-x-1/2 mt-2 text-xs bg-black/80 text-white rounded px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">Start your DEFRAG journey</span>
               </Link>
               <a href="#how-it-works" className="inline-flex items-center justify-center px-9 py-5 rounded-2xl border border-white/[0.08] text-neutral-400 font-medium text-sm hover:bg-white/[0.03] hover:border-white/[0.15] transition-all duration-500 gap-2">
                 <span>How it works</span>
@@ -477,7 +489,7 @@ export const LandingPage = () => {
         whileInView="visible"
         viewport={{ once: true, margin: '-40px' }}
         variants={stagger}
-        className="snap-section relative z-10 py-14 md:py-16 border-y border-white/[0.04]"
+        className="snap-start relative z-10 py-14 md:py-16 border-y border-white/[0.04]"
       >
         <div className="max-w-5xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-0 px-6">
           {[
@@ -504,7 +516,7 @@ export const LandingPage = () => {
       </motion.section>
 
       {/* ─── 02 // THE ARCHITECTURE ──────────────────────── */}
-      <section id="architecture" className="snap-section relative z-10 py-20 md:py-40 px-5 md:px-6">
+      <section id="architecture" className="snap-start relative z-10 py-20 md:py-40 px-5 md:px-6">
         <motion.div
           initial="hidden"
           whileInView="visible"
@@ -529,7 +541,7 @@ export const LandingPage = () => {
       <GlowDivider />
 
       {/* ─── WHO IS THIS FOR ─────────────────────────────── */}
-      <section className="snap-section relative z-10 py-20 md:py-40 px-5 md:px-6">
+      <section className="snap-start relative z-10 py-20 md:py-40 px-5 md:px-6">
         <motion.div
           initial="hidden"
           whileInView="visible"
@@ -601,7 +613,7 @@ export const LandingPage = () => {
       <GlowDivider />
 
       {/* ─── 03 // THREE PILLARS ──────────────────────────── */}
-      <section id="pillars" className="snap-section relative z-10 py-20 md:py-40 px-5 md:px-6">
+      <section id="pillars" className="snap-start relative z-10 py-20 md:py-40 px-5 md:px-6">
         <motion.div
           initial="hidden"
           whileInView="visible"
@@ -951,7 +963,7 @@ export const LandingPage = () => {
       <GlowDivider />
 
       {/* ─── 06 // ZERO-KNOWLEDGE ────────────────────────── */}
-      <section className="snap-section relative z-10 py-16 md:py-32 px-5 md:px-6">
+      <section className="snap-start relative z-10 py-16 md:py-32 px-5 md:px-6">
         <motion.div
           initial="hidden"
           whileInView="visible"

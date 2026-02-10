@@ -168,11 +168,15 @@ export const AboutPage: React.FC = () => {
       {/* CTA */}
       <section className="relative z-10 py-24 md:py-32 px-6">
         <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={stagger} className="max-w-2xl mx-auto text-center">
-          <motion.h2 variants={fadeUp} custom={0} className="text-3xl md:text-4xl font-bold tracking-tight mb-5">Stop fixing. Start mapping.</motion.h2>
-          <motion.p variants={fadeUp} custom={1} className="text-[#A3A3A3] mb-10 leading-relaxed">DEFRAG uses relational physics and alchemical inversion to turn psychological friction into structural clarity.</motion.p>
+          <motion.h2 variants={fadeUp} custom={0} className="text-3xl md:text-4xl font-bold tracking-tight mb-5">Stop guessing. Start seeing.</motion.h2>
+          <motion.p variants={fadeUp} custom={1} className="text-[#A3A3A3] mb-10 leading-relaxed">DEFRAG delivers clarity, not labels. See your blueprint in seconds—no sign-up, no credit card, just actionable insight.</motion.p>
           <motion.div variants={fadeUp} custom={2}>
-            <Link to="/login" className="inline-flex items-center justify-center px-9 py-4 rounded-2xl bg-[#E2E2E8] text-black font-semibold text-sm hover:shadow-[0_0_50px_-5px_rgba(226,226,232,0.35)] hover:-translate-y-0.5 transition-all duration-500">
-              Run Initial Diagnostic
+            <Link to="/login" className="group relative inline-flex items-center justify-center px-12 py-5 rounded-2xl bg-[#E2E2E8] text-black font-semibold text-[15px] overflow-hidden transition-all duration-500 hover:shadow-[0_0_80px_-5px_rgba(226,226,232,0.35)] hover:-translate-y-0.5">
+              <span className="relative z-10">Get Your Free Blueprint</span>
+              {/* Glow effect */}
+              <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-32 bg-emerald-400/20 blur-[40px] opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
+              {/* Tooltip */}
+              <span className="absolute top-full left-1/2 -translate-x-1/2 mt-2 text-xs bg-black/80 text-white rounded px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">Start your DEFRAG journey</span>
             </Link>
           </motion.div>
         </motion.div>

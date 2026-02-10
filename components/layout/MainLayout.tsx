@@ -1,5 +1,6 @@
 
 import React from 'react';
+import AnalyticsProvider from '../../pages/_analytics';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Sidebar } from '../Sidebar';
@@ -56,6 +57,8 @@ export const MainLayout = () => {
     <div className="flex flex-col md:flex-row h-[100dvh] bg-[#050505] text-white overflow-hidden font-sans selection:bg-[#E2E2E8]/20">
       {/* Persistent Ambient World */}
       <LivingBackground mode="calm" />
+      {/* Vercel Analytics */}
+      <AnalyticsProvider />
 
       {/* Sidebar — desktop only */}
       <div className="relative z-50 h-full flex-shrink-0 hidden md:flex">
