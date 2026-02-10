@@ -397,27 +397,33 @@ export const LandingPage = () => {
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-white/[0.003] blur-[150px] animate-breathe-slow pointer-events-none" />
 
         <motion.div initial="hidden" animate="visible" variants={stagger} className="max-w-4xl">
-          {/* Provocative opening line */}
+          {/* High-impact opening line */}
           <motion.div variants={fadeUp} custom={0} className="mb-14">
             <span className="text-[11px] md:text-[12px] font-medium tracking-[0.3em] uppercase text-neutral-600">
-              You already know something is off.
+              Stop guessing. Start understanding.
             </span>
           </motion.div>
 
-          {/* Main headline — confrontational, specific, visceral */}
+          {/* Main headline — bold, urgent, value-driven */}
           <motion.h1 variants={fadeUp} custom={1} className="text-[clamp(2.8rem,7vw,5.5rem)] font-extrabold leading-[1] tracking-[-0.04em] mb-10">
             <motion.span variants={lineReveal} custom={0} className="block text-white">
-              You keep having
+              Your friction is structural.
             </motion.span>
-            <motion.span variants={lineReveal} custom={1} className="block bg-gradient-to-r from-white via-neutral-300 to-neutral-500 bg-clip-text text-transparent">
-              the same fight.
+            <motion.span variants={lineReveal} custom={1} className="block bg-gradient-to-r from-white via-emerald-300 to-emerald-500 bg-clip-text text-transparent">
+              DEFRAG maps your mechanics.
             </motion.span>
           </motion.h1>
 
-          {/* Subtext — escalating provocation → resolution */}
+          {/* Subtext — clarity, urgency, value */}
           <motion.div variants={fadeUp} custom={2} className="max-w-2xl mx-auto mb-14 space-y-5">
             <motion.p variants={lineReveal} custom={0} className="text-[16px] md:text-[19px] text-neutral-500 leading-[1.7]">
-              The same shutdown. The same spiral. The same feeling<br className="hidden md:block" /> that 
+              You’re not broken. You’re running your design. DEFRAG reveals the exact architecture behind your patterns, decisions, and relationships.<br className="hidden md:block" />
+              See your blueprint. End the confusion. Upgrade your life.
+            </motion.p>
+            <motion.p variants={lineReveal} custom={1} className="text-[15px] text-neutral-400 mt-4">
+              <span className="font-bold text-white">No guesswork. No labels. Just your real mechanics.</span>
+            </motion.p>
+          </motion.div>
               <em className="text-neutral-400 not-italic font-medium"> something about you just doesn't work right.</em>
             </motion.p>
             <motion.div variants={dramaPause} custom={1} className="relative">
