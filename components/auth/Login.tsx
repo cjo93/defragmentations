@@ -29,7 +29,7 @@ const DefragLogo: React.FC<{ size?: number }> = ({ size = 48 }) => (
       <line x1="10" y1="19" x2="20" y2="23" stroke="rgba(255,255,255,0.08)" strokeWidth="0.5" />
     </svg>
     {/* Glow */}
-    <div className="absolute inset-0 rounded-full bg-white/[0.04] blur-[20px] animate-breathe pointer-events-none" />
+    {/* Removed extra animation per strict platform alignment */}
   </div>
 );
 
@@ -88,8 +88,8 @@ export const Login = () => {
           {/* Glass layers */}
           <div className="absolute inset-0 bg-gradient-to-b from-white/[0.06] via-white/[0.02] to-white/[0.01] backdrop-blur-3xl" />
           <div className="absolute inset-0 border border-white/[0.08] rounded-[32px]" />
-          <div className="absolute -top-32 -right-32 w-64 h-64 rounded-full bg-white/[0.02] blur-[80px] animate-breathe-slow pointer-events-none" />
-          <div className="absolute -bottom-20 -left-20 w-48 h-48 rounded-full bg-white/[0.015] blur-[60px] animate-breathe pointer-events-none" />
+          {/* Removed extra animation per strict platform alignment */}
+          {/* Removed extra animation per strict platform alignment */}
           {/* Edge light */}
           <div className="absolute inset-0 rounded-[32px] shadow-[inset_0_1px_0_0_rgba(255,255,255,0.08),inset_0_-1px_0_0_rgba(255,255,255,0.02)] pointer-events-none" />
 

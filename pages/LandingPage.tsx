@@ -242,7 +242,7 @@ const SedaGauge: React.FC = () => {
         >Stability Meter</motion.span>
       </div>
       {/* Glow */}
-      <div className="absolute inset-0 rounded-full bg-white/[0.01] blur-[60px] animate-breathe pointer-events-none" />
+      {/* Removed extra animation per strict platform alignment */}
     </div>
   );
 };
@@ -822,41 +822,7 @@ export const LandingPage = () => {
           </motion.div>
 
           {/* Enhanced orbiting visual */}
-          <motion.div variants={fadeUp} custom={3} className="mt-16 flex justify-center">
-            <div className="relative">
-              {/* Outer ring glow */}
-              <div className="absolute -inset-8 rounded-full bg-gradient-to-br from-white/[0.02] to-transparent blur-[40px] animate-breathe-slow pointer-events-none" />
-              {/* Outer orbit ring */}
-              <div className="absolute inset-[-20px] rounded-full border border-white/[0.03] border-dashed" />
-              <div className="w-36 h-36 rounded-full bg-white/[0.02] border border-white/[0.06] flex items-center justify-center animate-breathe">
-                <div className="w-16 h-16 rounded-full bg-white/[0.04] border border-white/[0.08] flex items-center justify-center">
-                  <div className="w-5 h-5 rounded-full bg-white/20 shadow-[0_0_30px_rgba(255,255,255,0.25)]" />
-                </div>
-              </div>
-              {/* Orbiting labeled nodes */}
-              {[
-                { deg: 0, label: 'Signal' },
-                { deg: 72, label: 'Structure' },
-                { deg: 144, label: 'Pattern' },
-                { deg: 216, label: 'Memory' },
-                { deg: 288, label: 'Field' },
-              ].map((node) => (
-                <motion.div
-                  key={node.deg}
-                  className="absolute flex items-center gap-2"
-                  style={{ top: '50%', left: '50%' }}
-                  animate={{
-                    x: [Math.cos((node.deg * Math.PI) / 180) * 85, Math.cos(((node.deg + 360) * Math.PI) / 180) * 85],
-                    y: [Math.sin((node.deg * Math.PI) / 180) * 85, Math.sin(((node.deg + 360) * Math.PI) / 180) * 85],
-                  }}
-                  transition={{ repeat: Infinity, duration: 25, ease: 'linear' }}
-                >
-                  <div className="w-2.5 h-2.5 rounded-full bg-white/15 border border-white/[0.2] shadow-[0_0_8px_rgba(255,255,255,0.1)]" />
-                </motion.div>
-              ))}
-              <div className="absolute inset-0 rounded-full bg-white/[0.02] blur-[50px] animate-glow-ring pointer-events-none" />
-            </div>
-          </motion.div>
+          {/* Removed orbiting visual and all extra animation per strict platform alignment. Only 1 AI chat platform. */}
 
           {/* Layer labels */}
           <motion.div variants={fadeUp} custom={4} className="mt-16 flex flex-wrap justify-center gap-3">

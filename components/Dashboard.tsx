@@ -196,7 +196,7 @@ export const Dashboard = () => {
       <div className="relative w-10 h-10">
         <div className="absolute inset-0 rounded-full border border-white/[0.06] animate-ping" />
         <div className="absolute inset-2 rounded-full bg-white/[0.06] animate-pulse" />
-        <div className="absolute inset-[14px] rounded-full bg-white animate-breathe" />
+        {/* Removed extra animation per strict platform alignment */}
       </div>
       <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-neutral-600 animate-pulse">Calibrating...</span>
     </div>
@@ -263,10 +263,10 @@ export const Dashboard = () => {
             transition={{ delay: 0.1, duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
             className="md:col-span-7 rounded-3xl border border-white/[0.08] bg-white/[0.03] backdrop-blur-2xl p-8 md:p-10 relative overflow-hidden"
           >
-            <div className="absolute -top-20 -right-20 w-48 h-48 rounded-full bg-white/[0.015] blur-[80px] animate-breathe-slow pointer-events-none" />
+            {/* Removed extra animation per strict platform alignment */}
             <div className="relative z-10">
               <div className="flex items-center gap-3 mb-6">
-                <div className={`w-2 h-2 rounded-full ${isDemo ? 'bg-amber-400' : 'bg-emerald-400'} animate-breathe`} />
+                {/* Removed extra animation per strict platform alignment */}
                 <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-neutral-500">
                   {isDemo ? 'Demo Blueprint' : 'Your Blueprint'}
                 </span>
@@ -303,7 +303,7 @@ export const Dashboard = () => {
             transition={{ delay: 0.2, duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
             className="md:col-span-5 h-[320px] bg-white/[0.02] border border-white/[0.06] rounded-3xl p-2 relative backdrop-blur-sm overflow-hidden group hover:border-white/[0.1] transition-all duration-700"
           >
-            <div className="absolute inset-0 rounded-3xl bg-white/[0.01] blur-[30px] animate-breathe-slow pointer-events-none" />
+            {/* Removed extra animation per strict platform alignment */}
             <SystemMap dynamics={userData.relationalDynamics} />
             <div className="absolute bottom-3 left-3 right-3 flex justify-between items-end">
               <div className="flex items-center gap-2">

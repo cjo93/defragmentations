@@ -155,13 +155,6 @@ export const ManifestoPage = () => {
           variants={stagger}
           className="max-w-3xl mx-auto text-center"
         >
-          <motion.div variants={fadeUp} custom={0} className="relative inline-block">
-            <div className="w-20 h-20 rounded-full bg-white/[0.02] border border-white/[0.06] flex items-center justify-center animate-breathe mx-auto">
-              <div className="w-8 h-8 rounded-full bg-white/[0.04] border border-white/[0.08] flex items-center justify-center">
-                <div className="w-3 h-3 rounded-full bg-white/20 shadow-[0_0_20px_rgba(255,255,255,0.15)]" />
-              </div>
-            </div>
-          </motion.div>
           <motion.p variants={fadeUp} custom={1} className="text-neutral-500 mt-10 text-sm">
             We don't add features. We remove friction.
           </motion.p>
