@@ -362,7 +362,7 @@ export const LandingPage = () => {
   const [expandedBento, setExpandedBento] = useState<number | null>(null);
 
   // Scroll snap container for desktop
-  // Snap scroll: vertical, mandatory, no overflow-auto, min-h-screen for full viewport
+  // Snap scroll: vertical, mandatory, min-h-screen for full viewport
   const hasTiers = tiers && tiers.SINGLE && tiers.BASIC && tiers.PRO;
   return (
     <div className="relative min-h-screen bg-[#050505] text-white overflow-x-hidden font-sans selection:bg-white/20 selection:text-white snap-y snap-mandatory">
@@ -394,30 +394,30 @@ export const LandingPage = () => {
 
       {/* ─── 01 // HERO (Refactored) ───────────────────── */}
       <motion.section style={{ opacity: heroOpacity, scale: heroScale }} className="snap-start relative z-10 flex flex-col items-center justify-center min-h-[90vh] text-center px-5 pt-32 pb-20">
-        {/* Subtle white glow, no green */}
+        {/* Subtle white glow, architect tone, blueprint/manual scripting */}
         <motion.div
-          className="absolute top-1/2 left-1/2 w-[600px] h-[600px] rounded-full bg-white/[0.04] blur-[160px] pointer-events-none"
+          className="absolute top-1/2 left-1/2 w-[600px] h-[600px] rounded-full bg-white/[0.03] blur-[160px] pointer-events-none"
           animate={{ opacity: [0.7, 1, 0.7] }}
           transition={{ duration: 6, repeat: Infinity }}
         />
         <motion.div initial="hidden" animate="visible" variants={stagger} className="max-w-3xl">
           <motion.h1 variants={fadeUp} custom={1} className="text-[clamp(2.2rem,6vw,4rem)] font-extrabold leading-[1.12] tracking-[-0.04em] mb-8">
             <motion.span variants={lineReveal} custom={0} className="block text-white">
-              Structural friction is not personal.
+              Your friction is structural.
             </motion.span>
             <motion.span variants={lineReveal} custom={1} className="block text-white/80">
-              DEFRAG reveals your blueprint.
+              The manual you never received.
             </motion.span>
           </motion.h1>
           <motion.p variants={fadeUp} custom={2} className="text-[16px] text-neutral-400 mb-8">
-            You are not broken. You are built a certain way. The manual you never received is now visible.
+            DEFRAG maps your architecture—how you process, decide, and connect. Structural clarity, not labels. Blueprint in seconds.
           </motion.p>
           <motion.p variants={fadeUp} custom={3} className="text-[15px] text-neutral-500 mb-10">
-            See your architecture. End confusion. Upgrade your life.
+            See your system. End confusion. Upgrade your life.
           </motion.p>
           <motion.div variants={fadeUp} custom={4} className="flex flex-col items-center gap-6">
             <Link to="/login" className="group relative inline-flex items-center justify-center px-10 py-5 rounded-2xl bg-white text-black font-semibold text-[16px] shadow-lg hover:shadow-[0_0_60px_-5px_rgba(255,255,255,0.15)] hover:-translate-y-0.5 transition-all duration-500">
-              <span className="relative z-10">Initialize System Map</span>
+              <span className="relative z-10">Get Your Blueprint</span>
             </Link>
             <span className="text-[12px] text-neutral-500">No sign-up. No guesswork. Zero data leaves your device.</span>
           </motion.div>
