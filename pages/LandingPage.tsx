@@ -431,16 +431,13 @@ export const LandingPage = () => {
             <motion.p variants={lineReveal} custom={1} className="text-[15px] text-neutral-400 mt-4">
               <span className="font-bold text-white">No guesswork. No labels. Just your real mechanics.</span>
             </motion.p>
-          </motion.div>
-              <em className="text-neutral-400 not-italic font-medium"> something about you just doesn't work right.</em>
-            </motion.p>
-            <motion.div variants={dramaPause} custom={1} className="relative">
+            <motion.div variants={dramaPause} custom={1} className="relative mt-8">
               <div className="absolute left-1/2 -translate-x-1/2 -top-1 w-8 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
               <p className="text-[18px] md:text-[22px] text-white/90 font-semibold tracking-[-0.01em] pt-4">
                 It's not you. It's your wiring.
               </p>
             </motion.div>
-            <motion.p variants={dramaPause} custom={2} className="text-[14px] md:text-[15px] text-neutral-500 leading-[1.8]">
+            <motion.p variants={dramaPause} custom={2} className="text-[14px] md:text-[15px] text-neutral-500 leading-[1.8] mt-4">
               DEFRAG calculates your behavioral architecture from birth data —<br className="hidden md:block" />
               <span className="text-neutral-400">the patterns, the friction points, the reason every relationship</span><br className="hidden md:block" />
               <span className="text-neutral-400">hits the same wall.</span>
