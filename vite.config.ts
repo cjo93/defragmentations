@@ -23,6 +23,7 @@ export default defineConfig(({ mode }) => {
       // Ensure clean production output
       sourcemap: false,
       target: 'es2020',
+      cssMinify: false, // Disable CSS minification to avoid malformed CSS issues
       rollupOptions: {
         output: {
           manualChunks: {
